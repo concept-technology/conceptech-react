@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+#html{
+  padding: 0 !important;
+  margin: 0 !important; 
+}
+/* Styling specific to the carousel */
+#custom-carousel {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+  background-color: #000; /* fallback background */
+}
+
+#custom-carousel .swiper-slide {
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+#custom-carousel .swiper-slide::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* dark overlay for readability */
+  z-index: 2;
+}
+
+/* Caption styling */
+#custom-carousel .caption {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: #fff;
+  animation: fadeInUp 1.5s ease-out;
+}
+
+#custom-carousel .v-middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+}
+
+/* Button Styling */
+#custom-carousel .butn {
+  padding: 10px 25px;
+  border-radius: 30px;
+  font-weight: 600; 
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 20px;
+  transition: all 0.3s ease-in-out;
+}
+
+#custom-carousel .butn-light {
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #111;
+  box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+#custom-carousel .butn-light:hover {
+  background-color: #fff;
+  color: #000;
+  box-shadow: 0px 6px 20px rgba(255, 255, 255, 0.4);
+  transform: translateY(-5px);
+}
+
+/* Custom Dots Styling for Swiper */
+.swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.4);
+  width: 12px;
+  height: 12px;
+  opacity: 1;
+  margin: 0 8px;
+  transition: all 0.3s ease;
+}
+
+.swiper-pagination-bullet-active {
+  background: rgba(255, 255, 255, 0.9);
+  width: 15px;
+  height: 15px;
+}
+
+/* Typography */
+#custom-carousel h1 {
+  font-size: 3rem; 
+  font-weight: 700; 
+  line-height: 1.2;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+#custom-carousel h4 {
+  font-size: 1.5rem; 
+  font-weight: 400; 
+  margin-bottom: 15px;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#custom-carousel p {
+  font-size: 1.1rem; 
+  font-weight: 300; 
+  margin-bottom: 20px;
+  max-width: 700px;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Animation for smooth entry */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media Queries for Smaller Screens */
+@media (max-width: 576px) {
+  #custom-carousel h1 {
+    font-size: 2rem;
+  }
+
+  #custom-carousel h4 {
+    font-size: 1.2rem;
+  }
+
+  #custom-carousel p {
+    font-size: 1rem;
+  }
+
+  #custom-carousel .butn {
+    font-size: 0.85rem;
+    padding: 8px 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  #custom-carousel h1 {
+    font-size: 2.2rem;
+  }
+
+  #custom-carousel h4 {
+    font-size: 1.3rem;
+  }
+
+  #custom-carousel p {
+    font-size: 1rem;
+  }
+
+  #custom-carousel .butn {
+    font-size: 0.9rem;
+    padding: 8px 20px;
+  }
+}
+
+@media (min-width: 992px) {
+  #custom-carousel h1 {
+    font-size: 2.5rem;
+  }
+
+  #custom-carousel h4 {
+    font-size: 1.6rem;
+  }
+
+  #custom-carousel p {
+    font-size: 1.2rem;
+  }
+
+  #custom-carousel .butn {
+    font-size: 1.1rem;
+    padding: 12px 28px;
+  }
+}
+
+
+
+/* Ensure Swiper takes full height */
+.swiper-slide {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh; /* You can adjust this as needed */
+}
+
+.header {
+  position: relative;
+  height: 100vh; /* Adjust height */
+  width: 100%;
+  overflow: hidden;
+}
+
+
+
+
+
+/* tab section */
+
