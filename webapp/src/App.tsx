@@ -11,6 +11,7 @@ import projecObject from "./Home-page/Project-Page/Project-Object";
 import BlogItemDetail from "./Blog-Page/BlogItemDetail";
 import PrivacyPolicy from "./privacy/Privacy_policy";
 import Support from "./privacy/support";
+import SignupPage from "./authentication/SignUpage";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="/blog/:id/:slug" element={<BlogItemDetail />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="support" element={<Support />} />
+          <Route path="signup" element={<SignupPage/>} />
         </Routes>
       </GridItem>
     </Grid>
