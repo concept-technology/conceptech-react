@@ -1,35 +1,55 @@
 import React, { useState } from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { Box, Button, FormControl, FormLabel, Input, InputGroup, InputLeftElement, InputRightElement, Stack, Heading, Text, useToast, Icon } from '@chakra-ui/react';
-import { FaGoogle, FaFacebook, FaEnvelope, FaLock, FaPhone } from 'react-icons/fa';
+import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { useNavigate } from 'react-router-dom';
+import apiClient from './ApiClint';
 
 interface SignupFormData {
   phoneNumber: string;
-  email: string;
+  username: string;
   password: string;
-  confirmPassword: string;
+  re_password: string;
+  email: string;
 }
 
 const SignupPage: React.FC = () => {
-  const { handleSubmit, control, register, formState: { errors }, getValues } = useForm<SignupFormData>();
+  const { handleSubmit,register, formState: { errors }, getValues } = useForm<SignupFormData>();
   const toast = useToast();
-
+  const navigate = useNavigate()
   // State for password visibility
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showre_password, setShowre_password] = useState(false);
 
-  const onSubmit: SubmitHandler<SignupFormData> = (data) => {
-    toast({
-      title: 'Account created.',
-      description: `Phone: ${data.phoneNumber}, Email: ${data.email}`,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
+  const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
+    console.log(data)
+    try {
+      const response = await apiClient.post('/auth/users/', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      toast({
+        title: 'Success',
+        description: response.data.message || 'Account created successfully!',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate('/login')
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.error || 'Something went wrong!',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
+  
 
   return (
     <Box
@@ -53,7 +73,7 @@ const SignupPage: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
             {/* Phone Number Input */}
-            <FormControl isInvalid={!!errors.phoneNumber}>
+            {/* <FormControl isInvalid={!!errors.phoneNumber}>
               <FormLabel htmlFor="phoneNumber">Phone Number</FormLabel>
               <Controller
                 name="phoneNumber"
@@ -77,21 +97,21 @@ const SignupPage: React.FC = () => {
                 )}
               />
               {errors.phoneNumber && <Text color="red.500">{errors.phoneNumber.message}</Text>}
-            </FormControl>
+            </FormControl> */}
 
-            {/* Email Input */}
-            <FormControl isInvalid={!!errors.email}>
-              <FormLabel htmlFor="email">Email</FormLabel>
+            {/* username Input */}
+          <FormControl isInvalid={!!errors.username}>
+              <FormLabel htmlFor="username">email</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <Icon as={FaEnvelope} color="gray.400" />
                 </InputLeftElement>
                 <Input
-                  id="email"
+                  id="username"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                   {...register('email', { 
-                    required: 'Email is required', 
+                    required: 'email is required', 
                     pattern: {
                       value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
                       message: 'Invalid email address',
@@ -99,8 +119,31 @@ const SignupPage: React.FC = () => {
                   })}
                 />
               </InputGroup>
-              {errors.email && <Text color="red.500">{errors.email.message}</Text>}
+              {errors.username && <Text color="red.500">{errors.username.message}</Text>}
             </FormControl>
+
+
+             <FormControl isInvalid={!!errors.username}>
+              <FormLabel htmlFor="username">username</FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <Icon as={FaEnvelope} color="gray.400" />
+                </InputLeftElement>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  {...register('username', { 
+                    required: 'username is required', 
+                    // pattern: {
+                    //   value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+                    //   message: 'Invalid username address',
+                    // }
+                  })}
+                />
+              </InputGroup>
+              {errors.username && <Text color="red.500">{errors.username.message}</Text>}
+            </FormControl> 
 
             {/* Password Input */}
             <FormControl isInvalid={!!errors.password}>
@@ -129,17 +172,17 @@ const SignupPage: React.FC = () => {
             </FormControl>
 
             {/* Confirm Password Input */}
-            <FormControl isInvalid={!!errors.confirmPassword}>
-              <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+            <FormControl isInvalid={!!errors.re_password}>
+              <FormLabel htmlFor="re_password">Confirm Password</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <Icon as={FaLock} color="gray.400" />
                 </InputLeftElement>
                 <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  id="re_password"
+                  type={showre_password ? 'text' : 'password'}
                   placeholder="Confirm your password"
-                  {...register('confirmPassword', { 
+                  {...register('re_password', { 
                     required: 'Confirm password is required',
                     validate: (value) => value === getValues('password') || 'Passwords do not match'
                   })}
@@ -148,13 +191,13 @@ const SignupPage: React.FC = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() => setShowre_password(!showre_password)}
                   >
-                    {showConfirmPassword ? <ViewOffIcon /> : <ViewIcon />}
+                    {showre_password ? <ViewOffIcon /> : <ViewIcon />}
                   </Button>
                 </InputRightElement>
               </InputGroup>
-              {errors.confirmPassword && <Text color="red.500">{errors.confirmPassword.message}</Text>}
+              {errors.re_password && <Text color="red.500">{errors.re_password.message}</Text>}
             </FormControl>
 
             {/* Submit Button */}

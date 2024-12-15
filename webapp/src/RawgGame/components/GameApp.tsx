@@ -10,7 +10,7 @@ import { platform } from "./Hooks/usePlatform";
 import SortSelector from "./Hooks/SortSelector";
 import GameHeading from "./Hooks/GameHeading";
 import Footer from "../../Home-page/components/Footer";
-import NavObject from "../../Home-page/components/Nav-Object";
+
 
 export interface GameQuery {
   genres: genres_props | null
@@ -55,7 +55,7 @@ const GameApp = () => {
       </GridItem>
       <Outlet />
     </Grid>
-      <Footer footerItems={NavObject} />
+      <Footer />
     </Box>
   );
 };

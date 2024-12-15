@@ -1,7 +1,7 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import GameApp from "./RawgGame/components/GameApp";
 import NavBar from "./Home-page/components/NavBar";
-import NavObject from "./Home-page/components/Nav-Object";
+
 import { Routes, Route } from "react-router-dom";
 import HomeApp from "./Home-page/components/Home-App";
 import ExpenseApp from "./ExpenseTraker/components/ExpenseApp";
@@ -12,6 +12,10 @@ import BlogItemDetail from "./Blog-Page/BlogItemDetail";
 import PrivacyPolicy from "./privacy/Privacy_policy";
 import Support from "./privacy/support";
 import SignupPage from "./authentication/SignUpage";
+import LoginPage from "./authentication/LoginPage";
+import PrivateRoute from "./authentication/PrivateRoutes";
+import Profile from "./user/Profile";
+import ResetPassword from "./user/resetPassword";
 
 function App() {
   return (
@@ -26,7 +30,7 @@ function App() {
         bg="#2f304c"
       >
         {/* nav bar */}
-        <NavBar navbar={NavObject} />
+        <NavBar/>
       </GridItem>
 
       {/* main page */}
@@ -49,6 +53,9 @@ function App() {
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="support" element={<Support />} />
           <Route path="signup" element={<SignupPage/>} />
+          <Route path="login" element={<LoginPage/>} />
+          <Route path="account/profile" element={<PrivateRoute><Profile/></PrivateRoute>} />
+          <Route path="reset-password" element={<PrivateRoute><ResetPassword/></PrivateRoute>} />
         </Routes>
       </GridItem>
     </Grid>
