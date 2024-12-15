@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, Icon, useToast } from '@chakra-ui/react';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import apiClient from './ApiClint';
 
 interface LoginFormData {
@@ -116,7 +116,7 @@ const LoginPage: React.FC = () => {
             </Button>
 
             <Text textAlign="center" mt={2}>
-              Don't have an account? <a href="/signup">Sign up</a>
+              Don't have an account? <Link to="/signup">Sign up</Link>
             </Text>
           </Stack>
         </form>

@@ -43,10 +43,6 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeApp />} />
           <Route path="blog/" element={<BlogHome />} />
-          <Route
-            path="project"
-            element={<ProjectHome projectItems={projecObject} />}
-          />
           <Route path="gamehub" element={<GameApp />} />
           <Route path="expenseTracker" element={<ExpenseApp />} />
           <Route path="/blog/:id/:slug" element={<BlogItemDetail />} />
@@ -54,6 +50,9 @@ function App() {
           <Route path="support" element={<Support />} />
           <Route path="signup" element={<SignupPage/>} />
           <Route path="login" element={<LoginPage/>} />
+
+          <Route path="project" element={<PrivateRoute><ProjectHome projectItems={projecObject} /></PrivateRoute>}/>
+
           <Route path="account/profile" element={<PrivateRoute><Profile/></PrivateRoute>} />
           <Route path="reset-password" element={<PrivateRoute><ResetPassword/></PrivateRoute>} />
         </Routes>

@@ -4,7 +4,7 @@ import { Box, Button, FormControl, FormLabel, Input, InputGroup, InputLeftElemen
 import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import 'react-phone-input-2/lib/style.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import apiClient from './ApiClint';
 
 interface SignupFormData {
@@ -230,7 +230,7 @@ const SignupPage: React.FC = () => {
             </Button>
 
             <Text textAlign="center" mt={2}>
-              Already have an account? <a href="/login">Log in</a>
+              Already have an account? <Link to="/login">Log in</Link>
             </Text>
           </Stack>
         </form>
