@@ -80,7 +80,7 @@ const NavBar = () => {
     { id: 3, text: "Apps", icon: <FaAppStoreIos />, link: "/project" },
     {
       id: 4,
-      text: token ? "Profile" : "Signup",
+      text: token ? "Profile" : "login",
       icon: <FaRegUser />,
       link: token ? "/account/profile" : "/login",
     },

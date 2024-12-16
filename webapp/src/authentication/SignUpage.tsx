@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Box, Button, FormControl, FormLabel, Input, InputGroup, InputLeftElement, InputRightElement, Stack, Heading, Text, useToast, Icon } from '@chakra-ui/react';
 import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
@@ -50,7 +50,7 @@ const SignupPage: React.FC = () => {
     }
   };
   
-
+ 
   return (
     <Box
       minHeight="100vh"

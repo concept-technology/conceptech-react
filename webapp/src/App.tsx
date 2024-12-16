@@ -16,6 +16,7 @@ import LoginPage from "./authentication/LoginPage";
 import PrivateRoute from "./authentication/PrivateRoutes";
 import Profile from "./user/Profile";
 import ResetPassword from "./user/resetPassword";
+import SocialAuthHandler from "./authentication/SocialAuthHandler";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Route path="support" element={<Support />} />
           <Route path="signup" element={<SignupPage/>} />
           <Route path="login" element={<LoginPage/>} />
+          <Route path="/social-auth" element={<SocialAuthHandler />} />
 
           <Route path="project" element={<PrivateRoute><ProjectHome projectItems={projecObject} /></PrivateRoute>}/>
 

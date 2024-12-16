@@ -27,7 +27,7 @@ const ProjectHome = ({ projectItems }: projectProps) => {
         <Center>
 
         <Heading p={2} m={3}>
-            my projects
+            apps
         </Heading>
         </Center>
       </Box>

@@ -1,10 +1,22 @@
-import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, Icon, useToast } from '@chakra-ui/react';
-import { FaGoogle, FaFacebook } from 'react-icons/fa';
-
-import { Link, useNavigate } from 'react-router-dom';
-import apiClient from './ApiClint';
+import React, { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Stack,
+  Heading,
+  Text,
+  Icon,
+  useToast,
+} from "@chakra-ui/react";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import apiClient from "./ApiClint";
 
 interface LoginFormData {
   username: string;
@@ -12,40 +24,45 @@ interface LoginFormData {
 }
 
 const LoginPage: React.FC = () => {
-  const { handleSubmit, register, formState: { errors } } = useForm<LoginFormData>();
+  const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm<LoginFormData>();
+  const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
+  const backendUrl = "http://localhost:8000";
+
+  // Djoser login (username/password)
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
       const response = await apiClient.post("/auth/token/login/", {
         username: data.username,
         password: data.password,
       });
-  
+
       const { auth_token } = response.data;
-      localStorage.setItem('authToken', auth_token); // Save the token
+      localStorage.setItem("authToken", auth_token); // Save the token
       navigate("/account/profile");
-  
+
       toast({
-        title: 'Login successful.',
+        title: "Login successful.",
         description: `Welcome back, ${data.username}!`,
-        status: 'success',
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
     } catch (error) {
-      console.error("Login failed:", error);
+      const errorMessage =
+        error.response?.data?.non_field_errors?.[0] || "An unexpected error occurred.";
       toast({
         title: "Login failed.",
-        description: "Invalid credentials.",
+        description: errorMessage,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
     }
   };
-  
+
   return (
     <Box
       minHeight="100vh"
@@ -63,35 +80,58 @@ const LoginPage: React.FC = () => {
         bg="white"
         boxShadow="xl"
       >
-        <Heading mb={6} textAlign="center" color="purple.600">Login</Heading>
+        <Heading mb={6} textAlign="center" color="purple.600">
+          Login
+        </Heading>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
+            {/* Username Input */}
             <FormControl isInvalid={!!errors.username}>
               <FormLabel htmlFor="username">Username</FormLabel>
               <Input
                 id="username"
                 type="text"
                 placeholder="Enter your username"
-                {...register('username', { required: 'Username is required' })}
+                {...register("username", { required: "Username is required" })}
               />
             </FormControl>
 
+            {/* Password Input */}
             <FormControl isInvalid={!!errors.password}>
               <FormLabel htmlFor="password">Password</FormLabel>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                {...register('password', { required: 'Password is required' })}
-              />
+              <InputGroup>
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  {...register("password", { required: "Password is required" })}
+                />
+                <InputRightElement>
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
             </FormControl>
 
-            <Button colorScheme="blue" type="submit" width="full">
+            {/* Submit Button */}
+            <Button
+              colorScheme="blue"
+              type="submit"
+              width="full"
+              isLoading={isSubmitting}
+            >
               Log In
             </Button>
 
-            <Text textAlign="center" mt={4}>OR</Text>
+            <Text textAlign="center" mt={4}>
+              OR
+            </Text>
 
             {/* Google Login Button */}
             <Button
@@ -99,7 +139,11 @@ const LoginPage: React.FC = () => {
               colorScheme="red"
               variant="outline"
               width="full"
-              onClick={() => (window.location.href = '/auth/google/')}
+              onClick={() => {
+                // Redirect to the Django backend's Google login endpoint
+                const redirectUri = `${window.location.origin}/account/profile/`;
+                window.location.href = `${backendUrl}/accounts/google/login/?next=${encodeURIComponent(redirectUri)}`;
+              }}
             >
               Login with Google
             </Button>
@@ -110,7 +154,11 @@ const LoginPage: React.FC = () => {
               colorScheme="facebook"
               variant="outline"
               width="full"
-              onClick={() => (window.location.href = '/auth/facebook/')}
+              onClick={() => {
+                // Redirect to the Django backend's Facebook login endpoint
+                const redirectUri = `${window.location.origin}/account/profile/`;
+                window.location.href = `${backendUrl}/accounts/facebook/login/?next=${encodeURIComponent(redirectUri)}`;
+              }}
             >
               Login with Facebook
             </Button>
