@@ -18,17 +18,24 @@ import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import apiClient from "./ApiClint";
 
+
 interface LoginFormData {
   username: string;
   password: string;
 }
 
 const LoginPage: React.FC = () => {
-  const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm<LoginFormData>();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>();
   const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
+  // Backend Base URL from Environment Variables
+  // const backendUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
   const backendUrl = "http://localhost:8000";
 
   // Djoser login (username/password)
@@ -40,7 +47,11 @@ const LoginPage: React.FC = () => {
       });
 
       const { auth_token } = response.data;
-      localStorage.setItem("authToken", auth_token); // Save the token
+
+      // Use secure cookies for token storage
+      document.cookie = `authToken=${auth_token}; Secure; HttpOnly; SameSite=Strict`;
+
+      // Redirect to user profile
       navigate("/account/profile");
 
       toast({
@@ -50,9 +61,10 @@ const LoginPage: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage =
-        error.response?.data?.non_field_errors?.[0] || "An unexpected error occurred.";
+        error.response?.data?.non_field_errors?.[0] ||
+        "An unexpected error occurred. Please try again.";
       toast({
         title: "Login failed.",
         description: errorMessage,
@@ -95,6 +107,9 @@ const LoginPage: React.FC = () => {
                 placeholder="Enter your username"
                 {...register("username", { required: "Username is required" })}
               />
+              <Text color="red.500" fontSize="sm">
+                {errors.username && errors.username.message}
+              </Text>
             </FormControl>
 
             {/* Password Input */}
@@ -117,6 +132,9 @@ const LoginPage: React.FC = () => {
                   </Button>
                 </InputRightElement>
               </InputGroup>
+              <Text color="red.500" fontSize="sm">
+                {errors.password && errors.password.message}
+              </Text>
             </FormControl>
 
             {/* Submit Button */}
@@ -140,7 +158,6 @@ const LoginPage: React.FC = () => {
               variant="outline"
               width="full"
               onClick={() => {
-                // Redirect to the Django backend's Google login endpoint
                 const redirectUri = `${window.location.origin}/account/profile/`;
                 window.location.href = `${backendUrl}/accounts/google/login/?next=${encodeURIComponent(redirectUri)}`;
               }}
@@ -155,7 +172,6 @@ const LoginPage: React.FC = () => {
               variant="outline"
               width="full"
               onClick={() => {
-                // Redirect to the Django backend's Facebook login endpoint
                 const redirectUri = `${window.location.origin}/account/profile/`;
                 window.location.href = `${backendUrl}/accounts/facebook/login/?next=${encodeURIComponent(redirectUri)}`;
               }}
