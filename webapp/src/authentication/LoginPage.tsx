@@ -1,3 +1,5 @@
+//
+
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
@@ -17,7 +19,9 @@ import {
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import apiClient from "./ApiClint";
+import GoogleLoginButton from "./GoogleLogin";
 
+const backendUrl = "https://tmsx99-8000.csb.app";
 
 interface LoginFormData {
   username: string;
@@ -34,22 +38,19 @@ const LoginPage: React.FC = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
-  // Backend Base URL from Environment Variables
-  // const backendUrl = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
-  const backendUrl = "http://localhost:8000";
-
-  // Djoser login (username/password)
+  // dj-rest-auth login (username/password)
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      const response = await apiClient.post("/auth/token/login/", {
+      const response = await apiClient.post("/dj-rest-auth/login/", {
         username: data.username,
         password: data.password,
       });
 
-      const { auth_token } = response.data;
+      const { access, refresh } = response.data; // Assuming dj-rest-auth returns JWT tokens
 
-      // Use secure cookies for token storage
-      document.cookie = `authToken=${auth_token}; Secure; HttpOnly; SameSite=Strict`;
+      // Store tokens securely
+      localStorage.setItem("accessToken", access);
+      localStorage.setItem("refreshToken", refresh);
 
       // Redirect to user profile
       navigate("/account/profile");
@@ -120,7 +121,9 @@ const LoginPage: React.FC = () => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  {...register("password", { required: "Password is required" })}
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
                 />
                 <InputRightElement>
                   <Button
@@ -150,8 +153,8 @@ const LoginPage: React.FC = () => {
             <Text textAlign="center" mt={4}>
               OR
             </Text>
-
-            {/* Google Login Button */}
+{/* 
+  
             <Button
               leftIcon={<Icon as={FaGoogle} />}
               colorScheme="red"
@@ -159,13 +162,16 @@ const LoginPage: React.FC = () => {
               width="full"
               onClick={() => {
                 const redirectUri = `${window.location.origin}/account/profile/`;
-                window.location.href = `${backendUrl}/accounts/google/login/?next=${encodeURIComponent(redirectUri)}`;
+                window.location.href = `${backendUrl}/dj-rest-auth/google/?next=${encodeURIComponent(
+                  redirectUri
+                )}`;
               }}
             >
               Login with Google
-            </Button>
+            </Button> */}
 
             {/* Facebook Login Button */}
+            <GoogleLoginButton/>
             <Button
               leftIcon={<Icon as={FaFacebook} />}
               colorScheme="facebook"
@@ -173,7 +179,9 @@ const LoginPage: React.FC = () => {
               width="full"
               onClick={() => {
                 const redirectUri = `${window.location.origin}/account/profile/`;
-                window.location.href = `${backendUrl}/accounts/facebook/login/?next=${encodeURIComponent(redirectUri)}`;
+                window.location.href = `${backendUrl}/dj-rest-auth/facebook/?next=${encodeURIComponent(
+                  redirectUri
+                )}`;
               }}
             >
               Login with Facebook

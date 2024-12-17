@@ -2,6 +2,8 @@ import { useState} from 'react';
 import { login, logout, refresh } from '../utils/auth';
 
 
+export const BASE_URL = 'https://tmsx99-8000.csb.app'
+
 export const useAuth = () => {
   const [user, setUser] = useState(null);
 
