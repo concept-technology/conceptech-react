@@ -1,4 +1,4 @@
-//
+// 
 
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -16,64 +16,61 @@ import {
   Icon,
   useToast,
 } from "@chakra-ui/react";
-import { FaGoogle, FaFacebook } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import apiClient from "./ApiClint";
-import GoogleLoginButton from "./GoogleLogin";
+import { FaFacebook } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
-const backendUrl = "https://tmsx99-8000.csb.app";
+import GoogleLoginButton from "./GoogleLogin";
+import apiClient from "./ApiClint";
 
 interface LoginFormData {
   username: string;
   password: string;
+  error:string
 }
 
 const LoginPage: React.FC = () => {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>();
+  const { handleSubmit, register, formState } = useForm<LoginFormData>();
   const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
-  // dj-rest-auth login (username/password)
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      const response = await apiClient.post("/dj-rest-auth/login/", {
-        username: data.username,
-        password: data.password,
-      });
-
-      const { access, refresh } = response.data; // Assuming dj-rest-auth returns JWT tokens
+      const response = await apiClient.post("google/token/validate/", data);
+      const { access, refresh } = response.data;
 
       // Store tokens securely
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
 
-      // Redirect to user profile
-      navigate("/account/profile");
-
       toast({
-        title: "Login successful.",
+        title: "Login successful",
         description: `Welcome back, ${data.username}!`,
         status: "success",
         duration: 3000,
         isClosable: true,
       });
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.non_field_errors?.[0] ||
-        "An unexpected error occurred. Please try again.";
+
+      navigate("/account/profile");
+    } catch (error) {
       toast({
-        title: "Login failed.",
-        description: errorMessage,
+        title: "Login failed",
+        description:
+          error.response?.data?.non_field_errors?.[0] ||
+          "An unexpected error occurred",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
     }
+  };
+
+  const handleFacebookLogin = () => {
+    const redirectUri = `${window.location.origin}/account/profile/`;
+    const facebookLoginUrl = `/auth/social/facebook/?next=${encodeURIComponent(
+      redirectUri
+    )}`;
+    window.location.href = facebookLoginUrl;
   };
 
   return (
@@ -96,34 +93,19 @@ const LoginPage: React.FC = () => {
         <Heading mb={6} textAlign="center" color="purple.600">
           Login
         </Heading>
-
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
-            {/* Username Input */}
-            <FormControl isInvalid={!!errors.username}>
-              <FormLabel htmlFor="username">Username</FormLabel>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
-                {...register("username", { required: "Username is required" })}
-              />
-              <Text color="red.500" fontSize="sm">
-                {errors.username && errors.username.message}
-              </Text>
+            <FormControl>
+              <FormLabel>Username</FormLabel>
+              <Input {...register("username", { required: true })} />
             </FormControl>
 
-            {/* Password Input */}
-            <FormControl isInvalid={!!errors.password}>
-              <FormLabel htmlFor="password">Password</FormLabel>
+            <FormControl>
+              <FormLabel>Password</FormLabel>
               <InputGroup>
                 <Input
-                  id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
+                  {...register("password", { required: true })}
                 />
                 <InputRightElement>
                   <Button
@@ -135,61 +117,20 @@ const LoginPage: React.FC = () => {
                   </Button>
                 </InputRightElement>
               </InputGroup>
-              <Text color="red.500" fontSize="sm">
-                {errors.password && errors.password.message}
-              </Text>
             </FormControl>
 
-            {/* Submit Button */}
-            <Button
-              colorScheme="blue"
-              type="submit"
-              width="full"
-              isLoading={isSubmitting}
-            >
-              Log In
+            <Button type="submit" isLoading={formState.isSubmitting}>
+              Login
             </Button>
 
-            <Text textAlign="center" mt={4}>
-              OR
-            </Text>
-{/* 
-  
-            <Button
-              leftIcon={<Icon as={FaGoogle} />}
-              colorScheme="red"
-              variant="outline"
-              width="full"
-              onClick={() => {
-                const redirectUri = `${window.location.origin}/account/profile/`;
-                window.location.href = `${backendUrl}/dj-rest-auth/google/?next=${encodeURIComponent(
-                  redirectUri
-                )}`;
-              }}
-            >
-              Login with Google
-            </Button> */}
-
-            {/* Facebook Login Button */}
-            <GoogleLoginButton/>
+            <Text textAlign="center">OR</Text>
+            <GoogleLoginButton />
             <Button
               leftIcon={<Icon as={FaFacebook} />}
-              colorScheme="facebook"
-              variant="outline"
-              width="full"
-              onClick={() => {
-                const redirectUri = `${window.location.origin}/account/profile/`;
-                window.location.href = `${backendUrl}/dj-rest-auth/facebook/?next=${encodeURIComponent(
-                  redirectUri
-                )}`;
-              }}
+              onClick={handleFacebookLogin}
             >
               Login with Facebook
             </Button>
-
-            <Text textAlign="center" mt={2}>
-              Don't have an account? <Link to="/signup">Sign up</Link>
-            </Text>
           </Stack>
         </form>
       </Box>

@@ -17,6 +17,7 @@ import PrivateRoute from "./authentication/PrivateRoutes";
 import Profile from "./user/Profile";
 import ResetPassword from "./user/resetPassword";
 import SocialAuthHandler from "./authentication/SocialAuthHandler";
+import LoginCallback from "./authentication/LoginCallBack";
 
 function App() {
   return (
@@ -52,6 +53,8 @@ function App() {
           <Route path="signup" element={<SignupPage/>} />
           <Route path="login" element={<LoginPage/>} />
           <Route path="/social-auth" element={<SocialAuthHandler />} />
+          <Route path="/login/callback" element={<LoginCallback />} />
+
 
           <Route path="project" element={<PrivateRoute><ProjectHome projectItems={projecObject} /></PrivateRoute>}/>
 

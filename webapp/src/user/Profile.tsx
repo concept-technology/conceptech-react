@@ -15,9 +15,9 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('accessToken');
       try {
-        const response = await apiClient.get('/auth/users/me/', {
+        const response = await apiClient.get('api/auth/users/me/', {
           headers: { Authorization: `Token ${token}` },
         });
         setUser(response.data);
@@ -31,9 +31,9 @@ const Profile: React.FC = () => {
   }, []);
 
   const handleSave = async () => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('accessToken');
     try {
-      const response = await apiClient.put('/auth/users/me/', updatedUser, {
+      const response = await apiClient.put('api/auth/users/me/', updatedUser, {
         headers: { Authorization: `Token ${token}` },
       });
       setUser(response.data);

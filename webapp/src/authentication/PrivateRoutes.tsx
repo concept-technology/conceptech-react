@@ -1,24 +1,20 @@
-import React, { useEffect } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+// // PrivateRoute.tsx
+import React, { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 
 interface PrivateRouteProps {
-  children: React.ReactNode;
+    children: React.ReactElement;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const location = useLocation();
-  const token = localStorage.getItem('authToken');
+    const { user } = useContext(AuthContext)!; // Non-null assertion
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const newToken = params.get('token');
-    if (newToken) {
-      localStorage.setItem('authToken', newToken);
+    if (!user) {
+        return <Navigate to="/login" replace />;
     }
-  }, [location]);
 
-  const storedToken = token || new URLSearchParams(location.search).get('token');
-  return storedToken ? <>{children}</> : <Navigate to="/login" />;
+    return children;
 };
 
 export default PrivateRoute;
