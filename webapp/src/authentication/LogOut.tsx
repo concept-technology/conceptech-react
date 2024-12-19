@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, Button } from '@chakra-ui/react';
-import apiClient from './ApiClint';
 
 const Logout: React.FC = () => {
   const navigate = useNavigate();
@@ -14,20 +13,10 @@ const Logout: React.FC = () => {
         throw new Error("No token found");
       }
 
-      // Send a POST request to Djoser's logout endpoint
-      await apiClient.post(
-        "/auth/token/logout/",
-        {}, // No body is needed
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
       localStorage.removeItem('accessToken');
-
-      // Redirect to login page
-      navigate('/login');
+      localStorage.removeItem('refreshToken');
+      location.reload()
+      navigate('/');
 
       // Show success toast
       toast({

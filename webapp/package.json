@@ -23,6 +23,7 @@
     "formik": "^2.4.3",
     "framer-motion": "^11.11.1",
     "jquery": "^3.7.1",
+    "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "mdb-react-ui-kit": "^8.0.0",
     "react": "^18.2.0",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.5.31",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^22.7.4",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",

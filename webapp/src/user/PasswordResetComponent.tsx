@@ -22,7 +22,7 @@ const PasswordReset = () => {
 
   const onSubmit = async (data) => {
     try {
-      await axios.post('/api/password-reset/', {
+      await axios.post('api/password-reset/request/', {
         uidb64,
         token,
         new_password: data.newPassword,

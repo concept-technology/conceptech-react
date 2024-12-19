@@ -7,8 +7,8 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, Icon, useToast } from '@chakra-ui/react';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-import api from './ApiClint';
 import { useAuth } from './AuthContext';
+import apiClient from './ApiClint';
 
 interface LoginFormData {
   username: string;
@@ -28,14 +28,10 @@ const LoginPage: React.FC = () => {
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      const response = await api.post("/api/login/", data, {
+      const response = await apiClient.post("/api/login/", data, {
         headers: { 'Content-Type': 'application/json' },
       });
-
-      const { access, refresh } = response.data;
-      localStorage.setItem('accessToken', access);
-      localStorage.setItem('refreshToken', refresh);
-
+  
       toast({
         title: 'Login successful.',
         description: `Welcome back, ${data.username}!`,
@@ -43,17 +39,17 @@ const LoginPage: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-
+  
       login();
       navigate("/account/profile"); // Redirect to the profile page
     } catch (error: any) {
       console.error("Login error:", error);
-
+  
       const errorMessage =
         error.response?.data?.detail || 
         error.response?.data?.error || 
         "An unknown error occurred.";
-
+  
       toast({
         title: "Login failed.",
         description: errorMessage,
@@ -63,7 +59,7 @@ const LoginPage: React.FC = () => {
       });
     }
   };
-
+  
   return (
     <Box
       minHeight="100vh"

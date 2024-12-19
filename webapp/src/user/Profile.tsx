@@ -8,6 +8,7 @@ import Logout from '../authentication/LogOut';
 import { useNavigate } from 'react-router-dom';
 import api from '../authentication/ApiClint';
 import { useAuth } from '../authentication/AuthContext';
+import Cookies from 'js-cookie';
 
 interface User {
   name?: string;
@@ -23,28 +24,29 @@ const Profile: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const navigate = useNavigate();
-  const logout = useAuth()
+  const { logout } = useAuth(); // Logout function from AuthContext
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem('accessToken');
-    //   
-      console.log(token)
+      const token = Cookies.get('accessToken');
+
       if (!token) {
         navigate('/login');
         return;
       }
+
       setLoading(true);
       try {
         const response = await api.get('/api/users/me/', {
-          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true, // Ensure cookies are sent with the request
         });
         setUser(response.data);
         setUpdatedUser(response.data);
       } catch (error: any) {
         console.error("Failed to fetch user:", error);
         if (error.response?.status === 401) {
-          localStorage.removeItem('accessToken');
+          Cookies.remove('accessToken');
+          Cookies.remove('refreshToken');
           navigate('/login');
         } else {
           toast({
@@ -72,12 +74,12 @@ const Profile: React.FC = () => {
   };
 
   const handleSave = async () => {
-    const token = localStorage.getItem('accessToken');
+    const token = Cookies.get('accessToken');
     if (!token || !updatedUser) return;
     setLoading(true);
     try {
       const response = await api.put('/auth/users/me/', updatedUser, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       });
       setUser(response.data);
       setUpdatedUser(response.data);
