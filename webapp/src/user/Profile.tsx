@@ -1,44 +1,86 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Heading, Text, Stack, Avatar, Link, useToast, FormControl, FormLabel, Input, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react';
-import { FaUser, FaKey } from 'react-icons/fa';
-import apiClient from '../authentication/ApiClint';
+import {
+  Box, Button, Heading, Text, Stack, Avatar, useToast,
+  FormControl, FormLabel, Input, Modal, ModalOverlay,
+  ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
+} from '@chakra-ui/react';
 import Logout from '../authentication/LogOut';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import api from '../authentication/ApiClint';
+import { useAuth } from '../authentication/AuthContext';
+
+interface User {
+  name?: string;
+  email: string;
+  username: string;
+  profile_picture?: string; // Optional if the user doesn't have this field
+}
 
 const Profile: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [updatedUser, setUpdatedUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isEditing, setIsEditing] = useState(false);
-  const [updatedUser, setUpdatedUser] = useState<any>(null);
   const toast = useToast();
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
+  const logout = useAuth()
 
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('accessToken');
+    //   
+      console.log(token)
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+      setLoading(true);
       try {
-        const response = await apiClient.get('api/auth/users/me/', {
-          headers: { Authorization: `Token ${token}` },
+        const response = await api.get('/api/users/me/', {
+          headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data);
-        setUpdatedUser(response.data); // Initialize the state with user data for editing
-      } catch (error) {
+        setUpdatedUser(response.data);
+      } catch (error: any) {
         console.error("Failed to fetch user:", error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem('accessToken');
+          navigate('/login');
+        } else {
+          toast({
+            title: "Error fetching user.",
+            description: "Something went wrong. Please try again later.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [navigate, toast]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUpdatedUser((prev) => ({
+      ...prev!,
+      [name]: value,
+    }));
+  };
 
   const handleSave = async () => {
     const token = localStorage.getItem('accessToken');
+    if (!token || !updatedUser) return;
+    setLoading(true);
     try {
-      const response = await apiClient.put('api/auth/users/me/', updatedUser, {
-        headers: { Authorization: `Token ${token}` },
+      const response = await api.put('/auth/users/me/', updatedUser, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setUser(response.data);
-      setUpdatedUser(response.data); // Reset updated user state to the saved data
-      setIsEditing(false);
+      setUpdatedUser(response.data);
       toast({
         title: "Profile updated.",
         description: "Your profile has been successfully updated.",
@@ -46,48 +88,40 @@ const Profile: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-    } catch (error) {
+      onClose(); // Close modal after successful update
+    } catch (error: any) {
       console.error("Failed to update user:", error);
       toast({
         title: "Update failed.",
-        description: "There was an error updating your profile.",
+        description: error.response?.data || "There was an error updating your profile.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUpdatedUser({ ...updatedUser, [name]: value });
-  };
-
-  if (!user) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (!user) return <p>User details were not found.</p>;
 
   return (
     <Box maxW="lg" mx="auto" py={10} px={6}>
-      <Heading as="h1" mb={4} textAlign="center" color="purple.600">Welcome, {user.username}!</Heading>
-
+      <Heading as="h1" mb={4} textAlign="center" color="purple.600">
+        Welcome, {user.username}!
+      </Heading>
       <Box display="flex" justifyContent="center" mb={6}>
-        <Avatar size="2xl" name={user.username} src={user.profile_picture} />
+        <Avatar size="2xl" name={user.username} src={user.profile_picture || ''} />
       </Box>
-
-      <Box textAlign="center" mb={6}>
-        <Text fontSize="lg" fontWeight="medium">Email: {user.email}</Text>
-        <Text fontSize="md" mt={2}>Username: {user.username}</Text>
-      </Box>
-
+      <Text fontSize="lg" textAlign="center" mb={6}>
+        Email: {user.email}
+      </Text>
       <Stack direction="row" spacing={4} justify="center" mb={6}>
-        <Button colorScheme="blue" onClick={onOpen} leftIcon={<FaUser />} size="lg">Edit Profile</Button>
-        <Button colorScheme="red" leftIcon={<FaKey />} size="lg" onClick={() => navigate("/reset-password")}>Reset Password</Button>
+        <Button onClick={onOpen} colorScheme="blue">Edit Profile</Button>
+        <Button onClick={() => navigate('/reset-password')} colorScheme="red">Reset Password</Button>
       </Stack>
-
-      <Box textAlign="center">
-        <Logout />
-      </Box>
-
-      {/* Edit Profile Modal */}
+      <Logout />
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -96,28 +130,27 @@ const Profile: React.FC = () => {
             <FormControl mb={4}>
               <FormLabel>Username</FormLabel>
               <Input
-                value={updatedUser.username}
-                onChange={handleChange}
+                value={updatedUser?.username || ''}
                 name="username"
+                onChange={handleChange}
                 placeholder="Enter your new username"
               />
             </FormControl>
             <FormControl mb={4}>
               <FormLabel>Email</FormLabel>
               <Input
-                value={updatedUser.email}
-                onChange={handleChange}
+                value={updatedUser?.email || ''}
                 name="email"
+                onChange={handleChange}
                 placeholder="Enter your new email"
               />
             </FormControl>
-            {/* Add other fields like name, profile picture URL if available */}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSave}>
-              Save Changes
+            <Button onClick={handleSave} colorScheme="blue" isLoading={loading}>
+              Save
             </Button>
-            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose} variant="ghost">Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

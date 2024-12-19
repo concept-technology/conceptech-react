@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Box, Button, FormControl, FormLabel, Input, InputGroup, InputLeftElement, InputRightElement, Stack, Heading, Text, useToast, Icon } from '@chakra-ui/react';
 import { FaGoogle, FaFacebook, FaEnvelope, FaLock } from 'react-icons/fa';
@@ -72,32 +72,6 @@ const SignupPage: React.FC = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
-            {/* Phone Number Input */}
-            {/* <FormControl isInvalid={!!errors.phoneNumber}>
-              <FormLabel htmlFor="phoneNumber">Phone Number</FormLabel>
-              <Controller
-                name="phoneNumber"
-                control={control}
-                rules={{ required: 'Phone number is required' }}
-                render={({ field: { onChange, value } }) => (
-                  <PhoneInput
-                    country="us"
-                    value={value}
-                    onChange={(phone) => onChange(`+${phone}`)} // Ensures "+" is included
-                    inputStyle={{
-                      width: '100%',
-                      height: '40px',
-                      fontSize: '16px',
-                    }}
-                    buttonStyle={{
-                      background: 'none',
-                      border: 'none',
-                    }}
-                  />
-                )}
-              />
-              {errors.phoneNumber && <Text color="red.500">{errors.phoneNumber.message}</Text>}
-            </FormControl> */}
 
             {/* username Input */}
           <FormControl isInvalid={!!errors.username}>
@@ -232,6 +206,9 @@ const SignupPage: React.FC = () => {
             <Text textAlign="center" mt={2}>
               Already have an account? <Link to="/login">Log in</Link>
             </Text>
+            <Link to="/password-reset/request">
+            <Text> forgot password</Text>
+            </Link>
           </Stack>
         </form>
       </Box>

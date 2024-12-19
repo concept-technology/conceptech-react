@@ -9,7 +9,7 @@ const Logout: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('authToken'); // Retrieve the auth token
+      const token = localStorage.getItem('accessToken'); // Retrieve the auth token
       if (!token) {
         throw new Error("No token found");
       }
@@ -20,13 +20,11 @@ const Logout: React.FC = () => {
         {}, // No body is needed
         {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      // Clear the token from local storage
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('accessToken');
 
       // Redirect to login page
       navigate('/login');

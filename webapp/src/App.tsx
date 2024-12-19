@@ -14,10 +14,14 @@ import Support from "./privacy/support";
 import SignupPage from "./authentication/SignUpage";
 import LoginPage from "./authentication/LoginPage";
 import PrivateRoute from "./authentication/PrivateRoutes";
-import Profile from "./user/Profile";
+
 import ResetPassword from "./user/resetPassword";
 import SocialAuthHandler from "./authentication/SocialAuthHandler";
 import LoginCallback from "./authentication/LoginCallBack";
+import Profile from "./user/Profile";
+import PasswordResetRequest from "./user/PasswordResetRequest";
+import PasswordReset from "./user/PasswordResetComponent";
+
 
 function App() {
   return (
@@ -55,6 +59,8 @@ function App() {
           <Route path="/social-auth" element={<SocialAuthHandler />} />
           <Route path="/login/callback" element={<LoginCallback />} />
 
+          <Route path="/password-reset/request" element={<PasswordResetRequest />} />
+          <Route path="/password-reset/done" element={<PasswordReset />} />
 
           <Route path="project" element={<PrivateRoute><ProjectHome projectItems={projecObject} /></PrivateRoute>}/>
 

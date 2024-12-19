@@ -1,32 +1,39 @@
 import axios from 'axios';
-import { ACCESS_TOKEN } from './token';
+import refreshToken from './refreshToken';
 
-
-
-const apiUrl = "/choreo-apis/awbo/backend/rest-api-be2/v1.0";
+export const SITE_DOMAIN = 'http://localhost:8000'
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8000'
-})
+  baseURL: SITE_DOMAIN, // Base API URL
+});
 
-// apiClient.interceptors.request.use(
-//     (config) => {
-//         const accessToken = localStorage.getItem(ACCESS_TOKEN);
-//         if (accessToken) {
-//             config.headers.Authorization = `Bearer ${accessToken}`;
-//         }
+// Request Interceptor (optional, for adding Authorization header)
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-//         const googleAccessToken = localStorage.getItem("GOOGLE_ACCESS_TOKEN");
-//         if (googleAccessToken) {
-//             config.headers["X-Google-Access-Token"] = googleAccessToken
-//         }
-
-//         return config;
-//     },
-
-//     (error) => {
-//         return Promise.reject(error);
-//     }
-// );
+// Response Interceptor (to handle token expiration)
+apiClient.interceptors.response.use(
+  (response) => response, // Pass through if successful
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // Prevent infinite loops
+      try {
+        const newAccessToken = await refreshToken();
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiClient(originalRequest); // Retry the original request
+      } catch (refreshError) {
+        console.error("Refresh token failed:", refreshError);
+        return Promise.reject(refreshError); // Reject if refresh fails
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, useToast, useBreakpointValue, IconButton, InputProps } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, useToast,  IconButton,  } from '@chakra-ui/react';
 import { FaLock, FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa';
 import apiClient from '../authentication/ApiClint';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +15,7 @@ const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
 
   // Responsive padding value
-  const paddingValue = useBreakpointValue({ base: '4', md: '6' });
+  // const paddingValue = useBreakpointValue({ base: '4', md: '6' });
 
   const handleResetPassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -29,13 +29,13 @@ const ResetPassword: React.FC = () => {
       return;
     }
 
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('accessToken');
     try {
       await apiClient.put('/auth/users/reset_password/', {
         current_password: currentPassword,
         new_password: newPassword,
       }, {
-        headers: { Authorization: `Token ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       toast({
@@ -169,7 +169,7 @@ const ResetPassword: React.FC = () => {
           size="lg"
           leftIcon={<FaLock />}
           onClick={handleResetPassword}
-          isFullWidth
+          // isFullWidth={true}
         >
           Reset Password
         </Button>

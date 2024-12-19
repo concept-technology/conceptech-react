@@ -71,7 +71,7 @@ const NavBar = () => {
   }, []);
 
   // Navigation items
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("accessToken");
 
   const navItems: NavItem[] = [
     { id: 0, text: "About", icon: <FcAbout />, link: "#about" },
@@ -80,7 +80,7 @@ const NavBar = () => {
     { id: 3, text: "Apps", icon: <FaAppStoreIos />, link: "/project" },
     {
       id: 4,
-      text: token ? "Profile" : "login",
+      text: token ? user?.username : "login",
       icon: <FaRegUser />,
       link: token ? "/account/profile" : "/login",
     },

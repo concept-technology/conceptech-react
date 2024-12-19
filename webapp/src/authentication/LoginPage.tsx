@@ -1,76 +1,67 @@
 // 
 
-import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Stack,
-  Heading,
-  Text,
-  Icon,
-  useToast,
-} from "@chakra-ui/react";
-import { FaFacebook } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 
-import GoogleLoginButton from "./GoogleLogin";
-import apiClient from "./ApiClint";
+
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, Icon, useToast } from '@chakra-ui/react';
+import { FaGoogle, FaFacebook } from 'react-icons/fa';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
+import api from './ApiClint';
+import { useAuth } from './AuthContext';
 
 interface LoginFormData {
   username: string;
   password: string;
-  error:string
 }
 
 const LoginPage: React.FC = () => {
-  const { handleSubmit, register, formState } = useForm<LoginFormData>();
-  const [showPassword, setShowPassword] = useState(false);
+  const { handleSubmit, register, formState: { errors } } = useForm<LoginFormData>();
   const toast = useToast();
   const navigate = useNavigate();
+  const { isAuthenticated, login } = useAuth();
+
+  // Redirect logged-in users to the profile page
+  if (isAuthenticated) {
+    return <Navigate to="/account/profile" replace />;
+  }
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      const response = await apiClient.post("google/token/validate/", data);
-      const { access, refresh } = response.data;
+      const response = await api.post("/api/login/", data, {
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-      // Store tokens securely
-      localStorage.setItem("accessToken", access);
-      localStorage.setItem("refreshToken", refresh);
+      const { access, refresh } = response.data;
+      localStorage.setItem('accessToken', access);
+      localStorage.setItem('refreshToken', refresh);
 
       toast({
-        title: "Login successful",
+        title: 'Login successful.',
         description: `Welcome back, ${data.username}!`,
-        status: "success",
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
 
-      navigate("/account/profile");
-    } catch (error) {
+      login();
+      navigate("/account/profile"); // Redirect to the profile page
+    } catch (error: any) {
+      console.error("Login error:", error);
+
+      const errorMessage =
+        error.response?.data?.detail || 
+        error.response?.data?.error || 
+        "An unknown error occurred.";
+
       toast({
-        title: "Login failed",
-        description:
-          error.response?.data?.non_field_errors?.[0] ||
-          "An unexpected error occurred",
+        title: "Login failed.",
+        description: errorMessage,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
     }
-  };
-
-  const handleFacebookLogin = () => {
-    const redirectUri = `${window.location.origin}/account/profile/`;
-    const facebookLoginUrl = `/auth/social/facebook/?next=${encodeURIComponent(
-      redirectUri
-    )}`;
-    window.location.href = facebookLoginUrl;
   };
 
   return (
@@ -90,47 +81,61 @@ const LoginPage: React.FC = () => {
         bg="white"
         boxShadow="xl"
       >
-        <Heading mb={6} textAlign="center" color="purple.600">
-          Login
-        </Heading>
+        <Heading mb={6} textAlign="center" color="purple.600">Login</Heading>
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
-            <FormControl>
-              <FormLabel>Username</FormLabel>
-              <Input {...register("username", { required: true })} />
+            <FormControl isInvalid={!!errors.username}>
+              <FormLabel htmlFor="username">Username</FormLabel>
+              <Input
+                id="username"
+                type="text"
+                placeholder="Enter your username"
+                {...register('username', { required: 'Username is required' })}
+              />
             </FormControl>
 
-            <FormControl>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password", { required: true })}
-                />
-                <InputRightElement>
-                  <Button
-                    h="1.75rem"
-                    size="sm"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
+            <FormControl isInvalid={!!errors.password}>
+              <FormLabel htmlFor="password">Password</FormLabel>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                {...register('password', { required: 'Password is required' })}
+              />
             </FormControl>
 
-            <Button type="submit" isLoading={formState.isSubmitting}>
-              Login
+            <Button colorScheme="blue" type="submit" width="full">
+              Log In
             </Button>
 
-            <Text textAlign="center">OR</Text>
-            <GoogleLoginButton />
+            <Text textAlign="center" mt={4}>OR</Text>
+
+            <Button
+              leftIcon={<Icon as={FaGoogle} />}
+              colorScheme="red"
+              variant="outline"
+              width="full"
+            >
+              Login with Google
+            </Button>
+
             <Button
               leftIcon={<Icon as={FaFacebook} />}
-              onClick={handleFacebookLogin}
+              colorScheme="facebook"
+              variant="outline"
+              width="full"
             >
               Login with Facebook
             </Button>
+
+            <Text textAlign="center" mt={2}>
+              Don't have an account? <a href="/signup">Sign up</a>
+            </Text>
+
+            <Text textAlign="center" mt={2}>
+               forgot password <Link to="/password-reset/request" color='blue.100'> reset</Link>
+            </Text>
           </Stack>
         </form>
       </Box>

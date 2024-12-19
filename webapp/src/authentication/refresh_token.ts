@@ -1,10 +1,10 @@
-import apiClient from "./ApiClint";
+import apiClient, { SITE_DOMAIN } from "./ApiClint";
 
 const refreshTokens = async () => {
     const refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken) {
       try {
-        const response = await apiClient.post("/auth/token/refresh/", {
+        const response = await apiClient.post(`${SITE_DOMAIN}/auth/token/refresh/`, {
           refresh: refreshToken,
         });
         localStorage.setItem("accessToken", response.data.access);
