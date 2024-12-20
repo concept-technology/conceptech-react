@@ -1,20 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
-  Box, Button, Heading, Text, Stack, Avatar, useToast,
-  FormControl, FormLabel, Input, Modal, ModalOverlay,
-  ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
-} from '@chakra-ui/react';
-import Logout from '../authentication/LogOut';
-import { useNavigate } from 'react-router-dom';
-import api from '../authentication/ApiClint';
-import { useAuth } from '../authentication/AuthContext';
-import Cookies from 'js-cookie';
+  Box,
+  Button,
+  Heading,
+  Text,
+  Stack,
+  Avatar,
+  useToast,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@chakra-ui/react";
+import Logout from "../authentication/LogOut";
+import { useNavigate } from "react-router-dom";
+
+import { useAuth } from "../authentication/AuthContext";
+import Cookies from "js-cookie";
+import apiClient from "../authentication/ApiClint";
 
 interface User {
-  name?: string;
-  email: string;
+  id: number;
   username: string;
-  profile_picture?: string; // Optional if the user doesn't have this field
+  email: string;
+  profile_picture?: string;
 }
 
 const Profile: React.FC = () => {
@@ -28,26 +43,17 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = Cookies.get('accessToken');
-
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      setLoading(true);
       try {
-        const response = await api.get('/api/users/me/', {
-          withCredentials: true, // Ensure cookies are sent with the request
+        const response = await apiClient.get("/api/users/me/", {
+          withCredentials: true,
         });
         setUser(response.data);
         setUpdatedUser(response.data);
       } catch (error: any) {
         console.error("Failed to fetch user:", error);
         if (error.response?.status === 401) {
-          Cookies.remove('accessToken');
-          Cookies.remove('refreshToken');
-          navigate('/login');
+          logout(); // Clear cookies and log out user
+          navigate("/login");
         } else {
           toast({
             title: "Error fetching user.",
@@ -63,7 +69,7 @@ const Profile: React.FC = () => {
     };
 
     fetchUser();
-  }, [navigate, toast]);
+  }, [logout, navigate, toast]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -74,15 +80,11 @@ const Profile: React.FC = () => {
   };
 
   const handleSave = async () => {
-    const token = Cookies.get('accessToken');
-    if (!token || !updatedUser) return;
-    setLoading(true);
     try {
-      const response = await api.put('/auth/users/me/', updatedUser, {
+      const response = await apiClient.post("/api/users/me/", updatedUser, {
         withCredentials: true,
       });
       setUser(response.data);
-      setUpdatedUser(response.data);
       toast({
         title: "Profile updated.",
         description: "Your profile has been successfully updated.",
@@ -90,22 +92,20 @@ const Profile: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-      onClose(); // Close modal after successful update
+      onClose();
     } catch (error: any) {
       console.error("Failed to update user:", error);
       toast({
         title: "Update failed.",
-        description: error.response?.data || "There was an error updating your profile.",
+        description: "Could not update your profile. Try again later.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-    } finally {
-      setLoading(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading......</p>;
   if (!user) return <p>User details were not found.</p>;
 
   return (
@@ -114,14 +114,22 @@ const Profile: React.FC = () => {
         Welcome, {user.username}!
       </Heading>
       <Box display="flex" justifyContent="center" mb={6}>
-        <Avatar size="2xl" name={user.username} src={user.profile_picture || ''} />
+        <Avatar
+          size="2xl"
+          name={user.username}
+          src={user.profile_picture || ""}
+        />
       </Box>
       <Text fontSize="lg" textAlign="center" mb={6}>
         Email: {user.email}
       </Text>
       <Stack direction="row" spacing={4} justify="center" mb={6}>
-        <Button onClick={onOpen} colorScheme="blue">Edit Profile</Button>
-        <Button onClick={() => navigate('/reset-password')} colorScheme="red">Reset Password</Button>
+        <Button onClick={onOpen} colorScheme="blue">
+          Edit Profile
+        </Button>
+        <Button onClick={() => navigate("/reset-password")} colorScheme="red">
+          Reset Password
+        </Button>
       </Stack>
       <Logout />
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -132,7 +140,7 @@ const Profile: React.FC = () => {
             <FormControl mb={4}>
               <FormLabel>Username</FormLabel>
               <Input
-                value={updatedUser?.username || ''}
+                value={updatedUser?.username || ""}
                 name="username"
                 onChange={handleChange}
                 placeholder="Enter your new username"
@@ -141,7 +149,7 @@ const Profile: React.FC = () => {
             <FormControl mb={4}>
               <FormLabel>Email</FormLabel>
               <Input
-                value={updatedUser?.email || ''}
+                value={updatedUser?.email || ""}
                 name="email"
                 onChange={handleChange}
                 placeholder="Enter your new email"
@@ -152,7 +160,9 @@ const Profile: React.FC = () => {
             <Button onClick={handleSave} colorScheme="blue" isLoading={loading}>
               Save
             </Button>
-            <Button onClick={onClose} variant="ghost">Cancel</Button>
+            <Button onClick={onClose} variant="ghost">
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -1,14 +1,23 @@
-// 
+//
 
-
-
-import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, Icon, useToast } from '@chakra-ui/react';
-import { FaGoogle, FaFacebook } from 'react-icons/fa';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import apiClient from './ApiClint';
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Stack,
+  Heading,
+  Text,
+  Icon,
+  useToast,
+} from "@chakra-ui/react";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { useNavigate, Navigate, Link } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+import apiClient from "./ApiClint";
 
 interface LoginFormData {
   username: string;
@@ -16,7 +25,11 @@ interface LoginFormData {
 }
 
 const LoginPage: React.FC = () => {
-  const { handleSubmit, register, formState: { errors } } = useForm<LoginFormData>();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<LoginFormData>();
   const toast = useToast();
   const navigate = useNavigate();
   const { isAuthenticated, login } = useAuth();
@@ -28,28 +41,26 @@ const LoginPage: React.FC = () => {
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      const response = await apiClient.post("/api/login/", data, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-  
+      const response = await apiClient.post("/api/login/", data, {});
+
       toast({
-        title: 'Login successful.',
+        title: "Login successful.",
         description: `Welcome back, ${data.username}!`,
-        status: 'success',
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
-  
+
       login();
       navigate("/account/profile"); // Redirect to the profile page
     } catch (error: any) {
       console.error("Login error:", error);
-  
+
       const errorMessage =
-        error.response?.data?.detail || 
-        error.response?.data?.error || 
+        error.response?.data?.detail ||
+        error.response?.data?.error ||
         "An unknown error occurred.";
-  
+
       toast({
         title: "Login failed.",
         description: errorMessage,
@@ -59,7 +70,7 @@ const LoginPage: React.FC = () => {
       });
     }
   };
-  
+
   return (
     <Box
       minHeight="100vh"
@@ -77,7 +88,9 @@ const LoginPage: React.FC = () => {
         bg="white"
         boxShadow="xl"
       >
-        <Heading mb={6} textAlign="center" color="purple.600">Login</Heading>
+        <Heading mb={6} textAlign="center" color="purple.600">
+          Login
+        </Heading>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
@@ -87,7 +100,7 @@ const LoginPage: React.FC = () => {
                 id="username"
                 type="text"
                 placeholder="Enter your username"
-                {...register('username', { required: 'Username is required' })}
+                {...register("username", { required: "Username is required" })}
               />
             </FormControl>
 
@@ -97,7 +110,7 @@ const LoginPage: React.FC = () => {
                 id="password"
                 type="password"
                 placeholder="Enter your password"
-                {...register('password', { required: 'Password is required' })}
+                {...register("password", { required: "Password is required" })}
               />
             </FormControl>
 
@@ -105,7 +118,9 @@ const LoginPage: React.FC = () => {
               Log In
             </Button>
 
-            <Text textAlign="center" mt={4}>OR</Text>
+            <Text textAlign="center" mt={4}>
+              OR
+            </Text>
 
             <Button
               leftIcon={<Icon as={FaGoogle} />}
@@ -130,7 +145,11 @@ const LoginPage: React.FC = () => {
             </Text>
 
             <Text textAlign="center" mt={2}>
-               forgot password <Link to="/password-reset/request" color='blue.100'> reset</Link>
+              forgot password{" "}
+              <Link to="/password-reset/request" color="blue.100">
+                {" "}
+                reset
+              </Link>
             </Text>
           </Stack>
         </form>

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
-import Cookies from 'js-cookie';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -9,15 +9,31 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!Cookies.get('accessToken'));
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  const login = () => setIsAuthenticated(true);
+  // Check token on initial render
+  useEffect(() => {
+    const token = Cookies.get("accessToken");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const login = () => {
+    const token = Cookies.get("accessToken");
+    if (token) {
+      setIsAuthenticated(true);
+    } else {
+      console.warn("Access token not found in cookies after login.");
+    }
+  };
 
   const logout = () => {
-    // Remove cookies for access and refresh tokens
-    Cookies.remove('accessToken');
-    Cookies.remove('refreshToken');
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
     setIsAuthenticated(false);
   };
 
@@ -28,4 +44,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => useContext(AuthContext)!;
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
