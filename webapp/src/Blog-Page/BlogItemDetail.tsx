@@ -1,217 +1,241 @@
 import {
   Box,
+  Flex,
   Heading,
   Text,
   Image,
-  Grid,
   VStack,
-  HStack,
-  Button,
-  Divider,
-  IconButton,
-  Textarea,
-  SimpleGrid,
-  useColorModeValue,
   Container,
+  Divider,
+  Input,
+  Button,
+
 } from "@chakra-ui/react";
-import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaShareAlt } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import { Link as ScrollLink } from "react-scroll";
+import { Link } from "react-scroll";
 import MenuBar from "./MenuBar";
-import logo from '../../src/assets/Images/logo.jpg'
+import { useEffect, useState } from "react";
+import apiClient from "../authentication/ApiClint";
+import Footer from "../Home-page/components/Footer";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
+import ReactPlayer from "react-player";
+import VideoPlayer from "./VideoPlayer";
+
+interface videoProps{
+  id: number
+  title:string
+  url: string
+
+}
 const BlogDetail = () => {
   const { id, slug } = useParams();
+  const [comments, setComments] = useState<string[]>([]);
+  const [newComment, setNewComment] = useState("")
+
+  const [blog, setBlog] = useState({
+    title: "",
+    content: "",
+    codeSnippets: [],
+    images:[],
+    videos:[]
+  });
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const blog = await apiClient.get(`/api/blog/${id}/${slug}/`);
+        const data = blog.data;
+        setBlog({
+          title: data.title,
+          content: data.content,
+          images: data.images.map((img:any) => img.image),
+          codeSnippets: data.code_snippets,
+          videos: data.videos
+        });
+        console.log(data)
+      } catch (error) {
+        console.error("Failed to fetch blog data", error);
+      }
+    };
+
+    fetchBlog();
+  }, [id, slug]);
+
+
+  const mergeContentAndImages = (content, images,) => {
+    const paragraphs = content.split(".");
+    const mergedContent = [];
+  
+    const maxLength = Math.max(paragraphs.length, images.length,);
+  
+    for (let i = 0; i < maxLength; i++) {
+      if (i < paragraphs.length && paragraphs[i].trim()) {
+        mergedContent.push({ type: "paragraph", value: paragraphs[i].trim() });
+      }
+      if (i < images.length) {
+        mergedContent.push({ type: "image", value: images[i] });
+      }
+  
+    }
+  
+    return mergedContent;
+  };
+  
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      setComments([...comments, newComment.trim()]);
+      setNewComment("");
+    }
+  };
 
   const relatedStories = [
-    { title: "Related Story 1", slug: "related-story-1", image: "https://via.placeholder.com/150" },
-    { title: "Related Story 2", slug: "related-story-2", image: "https://via.placeholder.com/150" },
-    { title: "Related Story 3", slug: "related-story-3", image: "https://via.placeholder.com/150" },
-  ];
-
-  const trendingNews = [
-    { title: "Trending News 1", slug: "trending-news-1", image: "https://via.placeholder.com/400x250" },
-    { title: "Trending News 2", slug: "trending-news-2", image: "https://via.placeholder.com/400x250" },
-    { title: "Trending News 3", slug: "trending-news-3", image: "https://via.placeholder.com/400x250" },
-  ];
-
-  const tags = ["Technology", "Web Development", "React", "Chakra UI"];
-
-  const comments = [
-    { id: 1, name: "John Doe", text: "Great post! Really insightful." },
-    { id: 2, name: "Jane Smith", text: "I learned a lot from this, thanks for sharing!" },
-    { id: 3, name: "Samuel Green", text: "Very well-written, looking forward to more content like this." },
+    { title: "Story 1", description: "A short description of Story 1" },
+    { title: "Story 2", description: "A short description of Story 2" },
+    { title: "Story 3", description: "A short description of Story 3" },
+    { title: "Story 4", description: "A short description of Story 4" },
   ];
 
   return (
-    <Container maxW="1200px" mx="auto">
+      <>
+    <Container maxW="1200px" mx="auto" p={5}>
       <MenuBar />
 
-      {/* Main Content and Sidebar Layout */}
-      <Grid templateColumns={{ base: "1fr", md: "2fr 1fr" }} gap={8}>
-        {/* Blog Post Section */}
-        <VStack spacing={8} align="start" p={5} bg={useColorModeValue("white", "gray.800")} borderRadius="lg" boxShadow="lg">
-          <Heading fontSize="4xl" color="blue.600">Blog Post Title {slug}</Heading>
-          <Text fontSize="sm" color="gray.500">Posted on September 25, 2024 | 5 min read</Text>
+      <Flex direction={["column", "column", "row"]} gap={8}>
+        {/* Blog Content */}
+        <Box flex={3} bg="white" p={5} borderRadius="lg" boxShadow="lg">
+          {blog && (
+            <VStack spacing={8} align="start">
+              <Heading fontSize="4xl" color="blue.600">
+                {blog.title}
+              </Heading>
+                    {/* Video Section */}
+      {blog.videos  && (
+          <VideoPlayer videos={blog.videos} />
+      )}
 
-          {/* Main Blog Image */}
-          <Image
-            src={logo}
-            alt={`Blog Post ${slug}`}
-            w="100%"
-            h="auto"
-            borderRadius="lg"
-            boxShadow="md"
-          />
+              {mergeContentAndImages(blog.content, blog.images,)?.map((block, index) => {
+                if (block.type === "paragraph") {
+                  return (
+                    <Text key={index} fontSize="lg" color="gray.800" mb={4}>
+                      {block.value}
+                    </Text>
+                  );
+                }
 
-          <Text fontSize="lg" color="gray.800">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent auctor neque eu lectus auctor, et suscipit nisi vehicula. 
-            Pellentesque sit amet lorem in risus pharetra facilisis. Nulla lacinia leo eu sapien ultrices, ut pulvinar magna volutpat.
-          </Text>
+                if (block.type === "image") {
+                  return (
+                    <Image
+                      key={index}
+                      src={block.value}
+                      alt={`Blog Image ${index + 1}`}
+                      w="100%"
+                      h="auto"
+                      borderRadius="lg"
+                      boxShadow="md"
+                      mb={4}
+                      objectFit='cover'
+                    />
+                  );
+                }
+    
+                return null;
+              })}
+                    {/* Code Snippets */}
+                    {blog.codeSnippets.length > 0 && (
+        <Box w={{base:'90%', lg:'500px'}}>
+          <Heading fontSize="2xl" color="teal.500" mb={4}>
+            Code Snippets
+          </Heading>
+          {blog.codeSnippets.map((snippet) => (
+            <Box key={snippet.id} mb={8} p={4} border="1px solid #e2e8f0" borderRadius="md">
+              <Heading fontSize="lg" color="gray.700" mb={2}>
+                {snippet.title}
+              </Heading>
+              <Text fontSize="sm" color="gray.600" mb={2}>
+                {snippet.explanation}
+              </Text>
+              <SyntaxHighlighter language={snippet.language} style={materialOceanic}>
+                {snippet.code}
+              </SyntaxHighlighter>
+            </Box>
+          ))}
+        </Box>
+      )}
+            </VStack>
+            
+            
+          )}
 
-          {/* Second Blog Image */}
-          <Box>
-            <Image
-              src={logo}
-              alt="Secondary Blog Image"
-              w="100%"
-              h="auto"
-              borderRadius="lg"
-              mb={4}
-              boxShadow="sm"
+          {/* Comments Section */}
+          <Divider my={6} />
+          <Heading fontSize="2xl" color="blue.600" mb={4}>
+            Comments
+          </Heading>
+          <VStack spacing={4} align="start">
+            {comments.length > 0 ? (
+              comments.map((comment, index) => (
+                <Box key={index} bg="gray.100" p={3} borderRadius="md" w="100%">
+                  {comment}
+                </Box>
+              ))
+            ) : (
+              <Text color="gray.600">No comments yet. Be the first to comment!</Text>
+            )}
+          </VStack>
+          <Flex mt={4} gap={2}>
+            <Input
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
             />
-            <Text fontSize="lg" color="gray.600">This is the second blog image with a short description about it.</Text>
-          </Box>
+            <Button colorScheme="blue" onClick={handleAddComment}>
+              Add
+            </Button>
+          </Flex>
+        </Box>
 
-          <Text fontSize="lg" color="gray.800">
-            Curabitur ac orci in urna tristique fringilla. Aliquam consequat libero ut arcu luctus dapibus. Cras a metus ac justo viverra laoreet. 
-            Nunc id viverra arcu. Sed fermentum diam vel augue ultricies, sit amet tincidunt est auctor.
-          </Text>
-
-          {/* Third Blog Image */}
-          <Box>
-            <Image
-              src="https://via.placeholder.com/800x400?text=Blog+Post+Tertiary+Image"
-              alt="Tertiary Blog Image"
-              w="100%"
-              h="auto"
-              borderRadius="lg"
-              mb={4}
-              boxShadow="lg"
-            />
-            <Text fontSize="lg" fontStyle="italic" color="gray.600">
-              A visually appealing third blog image with italicized caption text to create a distinction.
-            </Text>
-          </Box>
-
-          {/* Ads Section */}
-          <Box w="100%" h="200px" bg="gray.200" display="flex" alignItems="center" justifyContent="center" borderRadius="md">
-            <Text fontSize="xl" color="gray.600">Ad Space - Your Ad Here</Text>
-          </Box>
-
-          {/* Social Media Sharing */}
-          <HStack spacing={4} align="center">
-            <Text>Share this post:</Text>
-            <IconButton aria-label="Share on Facebook" icon={<FaFacebook />} variant="outline" as="a" href="https://facebook.com" />
-            <IconButton aria-label="Share on Twitter" icon={<FaTwitter />} variant="outline" as="a" href="https://twitter.com" />
-            <IconButton aria-label="Share on LinkedIn" icon={<FaLinkedin />} variant="outline" as="a" href="https://linkedin.com" />
-            <IconButton aria-label="Share on Instagram" icon={<FaInstagram />} variant="outline" as="a" href="https://instagram.com" />
-            <IconButton aria-label="Share" icon={<FaShareAlt />} variant="outline" onClick={() => alert("Shared!")} />
-          </HStack>
-
-          {/* Scroll to Comments Button */}
-          <ScrollLink to="comments" smooth={true} offset={-50} duration={500}>
-            <Button colorScheme="blue">Go to Comments</Button>
-          </ScrollLink>
-
-          {/* Comment Section */}
-          <Box w="100%" p={6} bg="white" boxShadow="md" borderRadius="lg" id="comments">
-            <Heading fontSize="2xl" mb={4}>Comments</Heading>
-            <VStack spacing={4} align="start">
-              {comments.map((comment) => (
-                <Box key={comment.id} p={4} bg={useColorModeValue("gray.100", "gray.700")} borderRadius="md">
-                  <Text fontWeight="bold">{comment.name}</Text>
-                  <Text mt={2}>{comment.text}</Text>
-                </Box>
-              ))}
-            </VStack>
-
-            {/* Add Comment */}
-            <Divider my={4} />
-            <Heading fontSize="xl" mb={4}>Leave a Comment</Heading>
-            <VStack spacing={4} align="start">
-              <Textarea placeholder="Write your comment here..." size="lg" />
-              <Button colorScheme="blue" size="lg">Post Comment</Button>
-            </VStack>
-          </Box>
-        </VStack>
-
-        {/* Sidebar Section */}
-        <VStack spacing={8} align="start" p={5} bg={useColorModeValue("white", "gray.800")} borderRadius="lg" boxShadow="lg">
-          {/* Related Stories */}
-          <Box w="100%">
-            <Heading fontSize="2xl" mb={4}>Related Stories</Heading>
-            <SimpleGrid columns={{ base: 1, md: 1 }} spacing={4}>
-              {relatedStories.map((story) => (
-                <Box
-                  key={story.slug}
-                  as="a"
-                  href={`/blog/${story.slug}`}
-                  p={4}
-                  bg="white"
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  boxShadow="md"
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
+        {/* Related Stories */}
+        <Box flex={1} bg="white" p={5} borderRadius="lg" boxShadow="lg">
+          <Heading fontSize="xl" color="blue.600" mb={4}>
+            Related Stories
+          </Heading>
+          <VStack spacing={4} align="stretch">
+            {relatedStories.map((story, index) => (
+              <Box
+                key={index}
+                p={4}
+                bg="gray.50"
+                borderRadius="lg"
+                boxShadow="md"
+                _hover={{ bg: "gray.100", cursor: "pointer" }}
+              >
+                <Heading fontSize="md" color="blue.500">
+                  {story.title}
+                </Heading>
+                <Text color="gray.600" mt={2}>
+                  {story.description}
+                </Text>
+                <Link
+                  to="top"
+                  smooth={true}
+                  duration={500}
+                  offset={-70}
+                  style={{ color: "blue.400", marginTop: "10px", display: "block" }}
                 >
-                  <Image src={story.image} alt={story.title} boxSize="100px" borderRadius="md" mr={4} />
-                  <VStack align="start">
-                    <Text fontWeight="bold">{story.title}</Text>
-                  </VStack>
-                </Box>
-              ))}
-            </SimpleGrid>
-          </Box>
+                  Read More
+                </Link>
+              </Box>
 
-          {/* Trending News with Large Cards */}
-          <Box w="100%">
-            <Heading fontSize="2xl" mb={4}>Trending News</Heading>
-            <VStack spacing={6}>
-              {trendingNews.map((news) => (
-                <Box
-                  key={news.slug}
-                  as="a"
-                  href={`/news/${news.slug}`}
-                  p={4}
-                  bg="white"
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  boxShadow="md"
-                  w="100%"
-                  display="block"
-                >
-                  <Image src={news.image} alt={news.title} w="100%" h="auto" borderRadius="md" />
-                  <Text fontWeight="bold" mt={2}>{news.title}</Text>
-                </Box>
-              ))}
-            </VStack>
-          </Box>
+            ))}
+          </VStack>
 
-          {/* Tags Section */}
-          <Box w="100%">
-            <Heading fontSize="2xl" mb={4}>Tags</Heading>
-            <HStack wrap="wrap" spacing={4}>
-              {tags.map((tag) => (
-                <Button key={tag} variant="solid" colorScheme="blue" size="sm">
-                  {tag}
-                </Button>
-              ))}
-            </HStack>
-          </Box>
-        </VStack>
-      </Grid>
+          
+        </Box>
+      </Flex>
     </Container>
+    <Footer/>
+    </>
   );
 };
 

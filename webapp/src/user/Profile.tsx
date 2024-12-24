@@ -22,9 +22,8 @@ import Logout from "../authentication/LogOut";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../authentication/AuthContext";
-import Cookies from "js-cookie";
 import apiClient from "../authentication/ApiClint";
-
+import Cookies from "js-cookie";
 interface User {
   id: number;
   username: string;
@@ -35,25 +34,26 @@ interface User {
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [updatedUser, setUpdatedUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with true
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const navigate = useNavigate();
-  const { logout } = useAuth(); // Logout function from AuthContext
+  const { logout } = useAuth();
 
   useEffect(() => {
     const fetchUser = async () => {
+      const token = Cookies.get('access_token')
+
       try {
-        const response = await apiClient.get("/api/users/me/", {
-          withCredentials: true,
+        const response = await apiClient.get("/api/users/me/", { 
+         headers:{Authorization: `Bearer ${token}`}
         });
         setUser(response.data);
         setUpdatedUser(response.data);
       } catch (error: any) {
         console.error("Failed to fetch user:", error);
-        if (error.response?.status === 401) {
-          logout(); // Clear cookies and log out user
-          navigate("/login");
+        if (error.response?.status === 401) {           
+          logout()
         } else {
           toast({
             title: "Error fetching user.",
@@ -62,6 +62,7 @@ const Profile: React.FC = () => {
             duration: 3000,
             isClosable: true,
           });
+
         }
       } finally {
         setLoading(false);
@@ -80,9 +81,11 @@ const Profile: React.FC = () => {
   };
 
   const handleSave = async () => {
+    setLoading(true); // Start loading
+    const token = Cookies.get('access_token')
     try {
-      const response = await apiClient.post("/api/users/me/", updatedUser, {
-        withCredentials: true,
+      const response = await apiClient.patch("/api/users/me/", updatedUser, {
+        headers:{Authorization:`Beraer ${token}`}
       });
       setUser(response.data);
       toast({
@@ -94,14 +97,18 @@ const Profile: React.FC = () => {
       });
       onClose();
     } catch (error: any) {
+      // refreshToken()
       console.error("Failed to update user:", error);
       toast({
         title: "Update failed.",
-        description: "Could not update your profile. Try again later.",
+        description:
+          error.response?.data?.message || "Could not update your profile.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -117,7 +124,7 @@ const Profile: React.FC = () => {
         <Avatar
           size="2xl"
           name={user.username}
-          src={user.profile_picture || ""}
+          src={user.profile_picture || "/placeholder.png"}
         />
       </Box>
       <Text fontSize="lg" textAlign="center" mb={6}>
@@ -137,7 +144,7 @@ const Profile: React.FC = () => {
         <ModalContent>
           <ModalHeader>Edit Profile</ModalHeader>
           <ModalBody>
-            <FormControl mb={4}>
+            <FormControl mb={4} isRequired>
               <FormLabel>Username</FormLabel>
               <Input
                 value={updatedUser?.username || ""}
@@ -146,9 +153,10 @@ const Profile: React.FC = () => {
                 placeholder="Enter your new username"
               />
             </FormControl>
-            <FormControl mb={4}>
+            <FormControl mb={4} isRequired>
               <FormLabel>Email</FormLabel>
               <Input
+                type="email"
                 value={updatedUser?.email || ""}
                 name="email"
                 onChange={handleChange}
@@ -157,7 +165,11 @@ const Profile: React.FC = () => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={handleSave} colorScheme="blue" isLoading={loading}>
+            <Button
+              onClick={handleSave}
+              colorScheme="blue"
+              isLoading={loading}
+            >
               Save
             </Button>
             <Button onClick={onClose} variant="ghost">
@@ -169,5 +181,6 @@ const Profile: React.FC = () => {
     </Box>
   );
 };
+
 
 export default Profile;

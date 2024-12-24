@@ -19,12 +19,13 @@ import {
   IconButton,
   Box,
 } from "@chakra-ui/react";
-import { FcAbout, FcCellPhone, FcHome, FcNews, FcSearch } from "react-icons/fc";
+import { FcAbout, FcHome, FcNews, FcSearch } from "react-icons/fc";
 import { HiOutlineMenu, HiOutlineSearch } from "react-icons/hi";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAppStoreIos, FaRegUser } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 interface NavItem {
   id: number;
@@ -51,7 +52,7 @@ const NavBar = () => {
 
   // Function to decode the token and set the user
   const loadUserFromToken = () => {
-    const token = localStorage.getItem("authToken");
+    const token = Cookies.get("access_token");
     if (token) {
       try {
         const decoded = jwtDecode<{ username: string }>(token);
@@ -71,16 +72,17 @@ const NavBar = () => {
   }, []);
 
   // Navigation items
-  const token = localStorage.getItem("accessToken");
+  const token = Cookies.get("access_token");
 
   const navItems: NavItem[] = [
     { id: 0, text: "About", icon: <FcAbout />, link: "#about" },
     { id: 1, text: "Blog", icon: <FcNews />, link: "blog" },
-    { id: 2, text: "Contact", icon: <FcCellPhone />, link: "#contact" },
+    // { id: 2, text: "Contact", icon: <FcCellPhone />, link: "#contact" },
     { id: 3, text: "Apps", icon: <FaAppStoreIos />, link: "/project" },
+
     {
       id: 4,
-      text: token ? user?.username : "login",
+      text: token ?  'profile': "login",
       icon: <FaRegUser />,
       link: token ? "/account/profile" : "/login",
     },
@@ -160,12 +162,12 @@ const NavBar = () => {
             leftIcon={<FcHome />}
             fontSize={"2xl"}
             variant="link"
-            color={"white"}
+            // color={"black"}
             fontWeight="bold"
             _hover={{ textDecoration: "none", color: "#f2a365" }}
             marginLeft={"20px"}
           >
-            Concept Technologies
+            CTSS
           </Button>
         </Link>
         <Spacer />

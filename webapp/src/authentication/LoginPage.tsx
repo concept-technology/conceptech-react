@@ -1,5 +1,3 @@
-//
-
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
@@ -15,9 +13,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-import { useNavigate, Navigate, Link } from "react-router-dom";
+import { useNavigate, Navigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import apiClient from "./ApiClint";
+import Cookies from "js-cookie";
 
 interface LoginFormData {
   username: string;
@@ -33,6 +32,9 @@ const LoginPage: React.FC = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { isAuthenticated, login } = useAuth();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
 
   // Redirect logged-in users to the profile page
   if (isAuthenticated) {
@@ -41,8 +43,12 @@ const LoginPage: React.FC = () => {
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      const response = await apiClient.post("/api/login/", data, {});
+      const response = await apiClient.post("/api/login/", data);
 
+      Cookies.set("access_token", response.data.access_token, { secure: true, sameSite: "Strict" });
+      Cookies.set("refresh_token", response.data.refresh_token, { secure: true, sameSite: "Strict" });
+
+      login(); // Use login from useAuth
       toast({
         title: "Login successful.",
         description: `Welcome back, ${data.username}!`,
@@ -51,14 +57,13 @@ const LoginPage: React.FC = () => {
         isClosable: true,
       });
 
-      login();
-      navigate("/account/profile"); // Redirect to the profile page
+      navigate(from, { replace: true }); // Redirect to the referring page
     } catch (error: any) {
       console.error("Login error:", error);
 
       const errorMessage =
-        error.response?.data?.detail ||
-        error.response?.data?.error ||
+        error?.response?.data?.detail ||
+        error?.response?.data?.error ||
         "An unknown error occurred.";
 
       toast({
@@ -102,6 +107,7 @@ const LoginPage: React.FC = () => {
                 placeholder="Enter your username"
                 {...register("username", { required: "Username is required" })}
               />
+              {errors.username && <Text color="red.500">{errors.username.message}</Text>}
             </FormControl>
 
             <FormControl isInvalid={!!errors.password}>
@@ -112,6 +118,7 @@ const LoginPage: React.FC = () => {
                 placeholder="Enter your password"
                 {...register("password", { required: "Password is required" })}
               />
+              {errors.password && <Text color="red.500">{errors.password.message}</Text>}
             </FormControl>
 
             <Button colorScheme="blue" type="submit" width="full">
@@ -145,10 +152,9 @@ const LoginPage: React.FC = () => {
             </Text>
 
             <Text textAlign="center" mt={2}>
-              forgot password{" "}
+              Forgot password?{" "}
               <Link to="/password-reset/request" color="blue.100">
-                {" "}
-                reset
+                Reset
               </Link>
             </Text>
           </Stack>

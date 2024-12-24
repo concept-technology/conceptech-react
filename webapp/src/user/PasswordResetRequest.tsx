@@ -70,5 +70,5 @@ import axios from 'axios';
     );
   };
   
-  export default PasswordResetRequest;
+export default PasswordResetRequest;
   

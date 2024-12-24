@@ -1,40 +1,44 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: () => void;
+  login: () => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-  // Check token on initial render
+  // Validate token on initial render
   useEffect(() => {
-    const token = Cookies.get("accessToken");
-    if (token) {
-      setIsAuthenticated(true);
-    }
+    const validateToken = async () => {
+      const accessToken = Cookies.get("access_token");
+      if (accessToken) {
+            setIsAuthenticated(true);       
+      }
+    };
+
+    validateToken();
   }, []);
 
-  const login = () => {
-    const token = Cookies.get("accessToken");
-    if (token) {
-      setIsAuthenticated(true);
-    } else {
-      console.warn("Access token not found in cookies after login.");
+  const login = async () => {
+    const accessToken = Cookies.get("access_token");
+    if (accessToken) {
+          setIsAuthenticated(true);      
     }
   };
 
   const logout = () => {
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
+    // Clear cookies
+    Cookies.remove("access_token", { path: "/", secure: true, sameSite: "Strict" });
+    Cookies.remove("refresh_token", { path: "/", secure: true, sameSite: "Strict" });
     setIsAuthenticated(false);
+    navigate("/"); // Redirect to login
   };
 
   return (

@@ -1,6 +1,7 @@
 
 import Footer from "../Home-page/components/Footer"
-import useNews from "./api-client"
+import useBlog from "./api-client"
+
 import FeaturedNews from "./FeaturedNews"
 import MenuBar from "./MenuBar"
 
@@ -10,12 +11,12 @@ import BlogSlide from "./SwiperSlide"
 
 
 export const BlogHome = () => {
-  const { data } = useNews()
+  const { data } = useBlog()
 
   return (
   <>
     <MenuBar/>
-    <BlogSlide/>
+    <BlogSlide BlogProps={data}/>
     <FeaturedNews/>
     <Footer/>
   </>

@@ -1,7 +1,24 @@
-import React, { useRef, useState } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import React, { useRef, useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useForm } from "react-hook-form";
+import axios from "axios";
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Text,
+  Textarea,
+  VStack,
+  Heading,
+  HStack,
+  Icon,
+} from "@chakra-ui/react";
+import { PhoneIcon, EmailIcon } from "@chakra-ui/icons";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 interface FormData {
   name: string;
@@ -12,7 +29,12 @@ interface FormData {
 
 const ContactForm: React.FC = () => {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>();
   const [captchaValidated, setCaptchaValidated] = useState(false);
 
   const onSubmit = async (data: FormData) => {
@@ -22,18 +44,16 @@ const ContactForm: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('YOUR_ENDPOINT_URL', {
+      const response = await axios.post("YOUR_ENDPOINT_URL", {
         ...data,
         captcha: recaptchaRef.current?.getValue(),
       });
       console.log(response.data);
-      // Handle success (e.g., show a success message)
-      reset(); // Reset the form after successful submission
+      reset();
       recaptchaRef.current?.reset();
       setCaptchaValidated(false);
     } catch (error) {
       console.error(error);
-      // Handle error (e.g., show an error message)
     }
   };
 
@@ -42,112 +62,107 @@ const ContactForm: React.FC = () => {
   };
 
   return (
-    <section className="contact section-padding" data-scroll-index="6" id="contact">
-      <div className="container">
-        <div className="row">
-          <div className="section-head offset-md-2 col-md-8 offset-lg-3 col-lg-6">
-            <h4>Con<span>tact</span> us</h4>
-            <p>We're always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Whether you have a question, a project proposal, or just want to say hello, feel free to reach out!</p>
-          </div>
-          <div className="col-lg-5">
-            <div className="contact-info mb-md50">
-              <h5>Contact Me :</h5>
-              <p>Please fill out the form below, and I'll get back to you as soon as possible.</p>
-              <div className="item">
-                <span className="icon icon-basic-tablet"></span>
-                <div className="cont">
-                  <h6>Phone : </h6>
-                  <p>+234 814 300 6319</p>
-                </div>
-              </div>
-              <div className="item">
-                <span className="icon icon-basic-mail-open-text"></span>
-                <div className="cont">
-                  <h6>Email : </h6>
-                  <p>samuelandrew145@gmail.com</p>
-                </div>
-              </div>
-              <div className="item">
-                <span className="icon icon-basic-geolocalize-05"></span>
-                <div className="cont">
-                  <h6>Address : </h6>
-                  <p>No. 160, Samuel Ladoke Akintola Boulevard, Garki 2, Abuja</p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <Box py={10} px={5} bg="gray.50" id="contact">
+      <Container maxW="container.lg">
+        <VStack spacing={10} align="stretch">
+          <Box textAlign="center">
+            <Heading>Contact Us</Heading>
+            <Text mt={3} color="gray.600">
+              We’re always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Feel free to reach out!
+            </Text>
+          </Box>
 
-          <div className="col-lg-7">
-            <form className="form" id="contact-form" onSubmit={handleSubmit(onSubmit)}>
-              <div className="messages"></div>
-              <div className="controls">
-                <div className="row">
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <input
-                        id="form_name"
-                        type="text"
-                        {...register("name", { required: "Name is required" })}
-                        placeholder="Name"
-                      />
-                      {errors.name && <span className="text-danger">{errors.name.message}</span>}
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <input
-                        id="form_email"
-                        type="email"
-                        {...register("email", { required: "Email is required" })}
-                        placeholder="Email"
-                      />
-                      {errors.email && <span className="error">{errors.email.message}</span>}
-                    </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="form-group">
-                      <input
-                        id="form_subject"
-                        type="text"
-                        {...register("subject", { required: "Subject is required" })}
-                        placeholder="Subject"
-                      />
-                      {errors.subject && <span className="error">{errors.subject.message}</span>}
-                    </div>
-                  </div>
-                  <div className="col-md-12">
-                    <div className="form-group">
-                      <textarea
-                        id="form_message"
-                        {...register("message", { required: "Message is required" })}
-                        placeholder="Message"
-                      />
-                      {errors.message && <span className="error">{errors.message.message}</span>}
-                    </div>
-                  </div>
+          <HStack spacing={10} alignItems="flex-start">
+            {/* Contact Info */}
+            <VStack align="stretch" flex="1" spacing={6}>
+              <Box>
+                <Heading as="h5" size="sm" mb={2}>
+                  Contact Me:
+                </Heading>
+                <Text color="gray.600">Please fill out the form below, and I'll get back to you as soon as possible.</Text>
+              </Box>
+              <HStack>
+                <Icon as={PhoneIcon} w={6} h={6} color="blue.500" />
+                <Box>
+                  <Text fontWeight="bold">Phone:</Text>
+                  <Text color="gray.600">+234 814 300 6319</Text>
+                </Box>
+              </HStack>
+              <HStack>
+                <Icon as={EmailIcon} w={6} h={6} color="blue.500" />
+                <Box>
+                  <Text fontWeight="bold">Email:</Text>
+                  <Text color="gray.600">samuelandrew145@gmail.com</Text>
+                </Box>
+              </HStack>
+              <HStack>
+                <Icon as={FaMapMarkerAlt} w={6} h={6} color="blue.500" />
+                <Box>
+                  <Text fontWeight="bold">Address:</Text>
+                  <Text color="gray.600">No. 160, Samuel Ladoke Akintola Boulevard, Garki 2, Abuja</Text>
+                </Box>
+              </HStack>
+            </VStack>
 
-                  <div className="col-md-12">
+            {/* Contact Form */}
+            <Box flex="2" bg="white" boxShadow="md" p={6} rounded="md">
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <VStack spacing={4} align="stretch">
+                  <FormControl isInvalid={!!errors.name}>
+                    <FormLabel htmlFor="form_name">Name</FormLabel>
+                    <Input id="form_name" placeholder="Name" {...register("name", { required: "Name is required" })} />
+                    <FormErrorMessage>{errors.name && errors.name.message}</FormErrorMessage>
+                  </FormControl>
 
-                      <ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey='6LfsolYqAAAAAFQHMfwc8y6-ErwehLSMnA2luE1e'
-                        onChange={handleCaptchaChange}
-                      />
-          
-                  </div>
+                  <FormControl isInvalid={!!errors.email}>
+                    <FormLabel htmlFor="form_email">Email</FormLabel>
+                    <Input
+                      id="form_email"
+                      type="email"
+                      placeholder="Email"
+                      {...register("email", { required: "Email is required" })}
+                    />
+                    <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
+                  </FormControl>
 
-                  <div className="col-md-12">
-                    <button type="submit" className="btn btn-primary m-3" disabled={!captchaValidated}>
-                      <span>Send Message</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
+                  <FormControl isInvalid={!!errors.subject}>
+                    <FormLabel htmlFor="form_subject">Subject</FormLabel>
+                    <Input
+                      id="form_subject"
+                      placeholder="Subject"
+                      {...register("subject", { required: "Subject is required" })}
+                    />
+                    <FormErrorMessage>{errors.subject && errors.subject.message}</FormErrorMessage>
+                  </FormControl>
+
+                  <FormControl isInvalid={!!errors.message}>
+                    <FormLabel htmlFor="form_message">Message</FormLabel>
+                    <Textarea
+                      id="form_message"
+                      placeholder="Message"
+                      {...register("message", { required: "Message is required" })}
+                    />
+                    <FormErrorMessage>{errors.message && errors.message.message}</FormErrorMessage>
+                  </FormControl>
+
+                  <Box>
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      sitekey="6LfsolYqAAAAAFQHMfwc8y6-ErwehLSMnA2luE1e"
+                      onChange={handleCaptchaChange}
+                    />
+                  </Box>
+
+                  <Button type="submit" colorScheme="blue"  disabled={!captchaValidated}>
+                    Send Message
+                  </Button>
+                </VStack>
+              </form>
+            </Box>
+          </HStack>
+        </VStack>
+      </Container>
+    </Box>
   );
 };
 

@@ -21,6 +21,8 @@ import LoginCallback from "./authentication/LoginCallBack";
 import Profile from "./user/Profile";
 import PasswordResetRequest from "./user/PasswordResetRequest";
 import PasswordReset from "./user/PasswordResetComponent";
+import NotFound from "./Home-page/components/NotFound";
+import ContactForm from "./Home-page/components/ContactForm";
 
 
 function App() {
@@ -33,7 +35,7 @@ function App() {
         w={"100%"}
         zIndex={999}
         borderBottom="3px solid brown"
-        bg="#2f304c"
+        // bg="#2f304c"
       >
         {/* nav bar */}
         <NavBar/>
@@ -47,6 +49,7 @@ function App() {
         w={"100%"}
       >
         <Routes>
+          <Route path="*" element={<NotFound/>}/>
           <Route path="/" element={<HomeApp />} />
           <Route path="blog/" element={<BlogHome />} />
           <Route path="gamehub" element={<GameApp />} />
@@ -59,12 +62,16 @@ function App() {
           <Route path="/social-auth" element={<SocialAuthHandler />} />
           <Route path="/login/callback" element={<LoginCallback />} />
 
-          <Route path="/password-reset/request" element={<PasswordResetRequest />} />
-          <Route path="/password-reset/done" element={<PasswordReset />} />
+          <Route path="password-reset/request" element={<PasswordResetRequest />} />
+
+          <Route path="password-reset/done" element={<PasswordReset />} />
 
           <Route path="project" element={<PrivateRoute><ProjectHome projectItems={projecObject} /></PrivateRoute>}/>
 
+          <Route path="contact" element={<PrivateRoute><ContactForm/></PrivateRoute>}/>
+
           <Route path="account/profile" element={<PrivateRoute><Profile/></PrivateRoute>} />
+
           <Route path="reset-password" element={<PrivateRoute><ResetPassword/></PrivateRoute>} />
         </Routes>
       </GridItem>

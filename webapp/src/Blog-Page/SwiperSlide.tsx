@@ -13,36 +13,29 @@ import {
 import "swiper/css";
 import "swiper/css/pagination";
 import "./BlogSlide.css";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import logo from "../assets/Images/logo.jpg";
+import { useNavigate } from "react-router-dom";
 
-const BlogSlide = () => {
-  const blogPosts = [
-    {
-      id: 1,
-      title: "Post 1",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      slug: "post-1",
-      image: logo,
-    },
-    {
-      id: 2,
-      title: "Post 2",
-      description: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      slug: "post-2",
-      image: "https://via.placeholder.com/800x400",
-    },
-    {
-      id: 3,
-      title: "Post 3",
-      description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-      slug: "post-3",
-      image: "https://via.placeholder.com/800x400",
-    },
-  ];
+// Blog Interface
+interface Blog {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  description: string;
+  image: string;
+  created_at: Date;
+  updated_at: Date;
+}
 
-  const navigate = useNavigate(); // Hook to navigate to another route
+// Props for BlogSlide Component
+interface BlogSlideProps {
+  BlogProps: Blog[];
+}
 
+const BlogSlide = ({ BlogProps }: BlogSlideProps) => {
+  const navigate = useNavigate();
+  
+  // Navigate to blog detail page
   const handleCardClick = (id: number, slug: string) => {
     navigate(`/blog/${id}/${slug}`);
   };
@@ -73,8 +66,8 @@ const BlogSlide = () => {
           loop={true}
           modules={[Pagination, Autoplay]}
         >
-          {blogPosts.map((post, index) => (
-            <SwiperSlide key={index}>
+          {BlogProps.map((post) => (
+            <SwiperSlide key={post.id}>
               <Box
                 height="400px"
                 backgroundImage={`url(${post.image})`}
@@ -87,7 +80,7 @@ const BlogSlide = () => {
                 textAlign="center"
                 position="relative"
                 cursor="pointer"
-                onClick={() => handleCardClick(post.id, post.slug)} // Navigate on click with both ID and slug
+                onClick={() => handleCardClick(post.id, post.slug)} // Navigate on click
                 _before={{
                   content: '""',
                   position: "absolute",
@@ -114,9 +107,9 @@ const BlogSlide = () => {
 
       {/* Right Cards Section */}
       <Grid templateColumns={{ base: "1fr", md: "1fr" }} gap={6} flex="1">
-        {blogPosts.map((post, index) => (
+        {BlogProps.map((post) => (
           <Card
-            key={index}
+            key={post.id}
             direction="row"
             alignItems="center"
             bg={useColorModeValue("white", "gray.800")}
@@ -126,7 +119,7 @@ const BlogSlide = () => {
             rounded="lg"
             overflow="hidden"
             cursor="pointer"
-            onClick={() => handleCardClick(post.id, post.slug)} // Navigate on click with both ID and slug
+            onClick={() => handleCardClick(post.id, post.slug)} // Navigate on click
           >
             <Image
               src={post.image}
@@ -139,7 +132,7 @@ const BlogSlide = () => {
                 {post.title}
               </Heading>
               <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
-                {post.description.slice(0, 50)}...
+                {post.content.slice(0, 50)}...
               </Text>
             </CardBody>
           </Card>
