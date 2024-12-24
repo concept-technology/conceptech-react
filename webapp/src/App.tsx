@@ -23,6 +23,9 @@ import PasswordResetRequest from "./user/PasswordResetRequest";
 import PasswordReset from "./user/PasswordResetComponent";
 import NotFound from "./Home-page/components/NotFound";
 import ContactForm from "./Home-page/components/ContactForm";
+import CreateDatabaseForm from "./database/CreateDB";
+import DatabaseDetailView from "./database/dbDetails";
+import DatabaseHomePage from "./database/Homepage";
 
 
 function App() {
@@ -73,6 +76,10 @@ function App() {
           <Route path="account/profile" element={<PrivateRoute><Profile/></PrivateRoute>} />
 
           <Route path="reset-password" element={<PrivateRoute><ResetPassword/></PrivateRoute>} />
+          <Route path="create/databse" element={<CreateDatabaseForm/>} />
+          <Route path="database/view" element={<DatabaseDetailView/>} />
+          <Route path="database/" element={<DatabaseHomePage/>} />
+
         </Routes>
       </GridItem>
     </Grid>

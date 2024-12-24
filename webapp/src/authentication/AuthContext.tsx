@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import refreshToken from "./refresh_token";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -30,6 +31,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const accessToken = Cookies.get("access_token");
     if (accessToken) {
           setIsAuthenticated(true);      
+    }else{
+      refreshToken()
     }
   };
 

@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
     try {
       const response = await apiClient.post("/api/login/", data);
 
-      Cookies.set("access_token", response.data.access_token, { secure: true, sameSite: "Strict" });
+      Cookies.set("access_token", response.data.access_token, { secure: true, sameSite: "Strict"});
       Cookies.set("refresh_token", response.data.refresh_token, { secure: true, sameSite: "Strict" });
 
       login(); // Use login from useAuth

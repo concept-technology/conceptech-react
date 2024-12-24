@@ -6,6 +6,7 @@ const refreshToken = async () => {
   const refreshToken = Cookies.get("refresh_token");
 
   if (!refreshToken) {
+  
     console.error("No refresh token found.");
     throw new Error("No refresh token available. Please log in again.");
   }
