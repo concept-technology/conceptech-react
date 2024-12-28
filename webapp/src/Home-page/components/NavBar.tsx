@@ -24,8 +24,9 @@ import { HiOutlineMenu, HiOutlineSearch } from "react-icons/hi";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAppStoreIos, FaRegUser } from "react-icons/fa";
-import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie";
+import axios from "axios";
+import { SITE_DOMAIN } from "../../authentication/ApiClint";
+import { useAuth } from "../../authentication/AuthContext";
 
 interface NavItem {
   id: number;
@@ -46,33 +47,30 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const {isAuthenticated} = useAuth()
 
   const searchRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<{ username?: string } | null>(null);
 
-  // Function to decode the token and set the user
-  const loadUserFromToken = () => {
-    const token = Cookies.get("access_token");
-    if (token) {
-      try {
-        const decoded = jwtDecode<{ username: string }>(token);
-        setUser(decoded);
-      } catch (error) {
-        console.error("Invalid token:", error);
-        setUser(null);
-      }
-    } else {
-      setUser(null);
-    }
-  };
 
   // Load user on component mount or token change
   useEffect(() => {
-    loadUserFromToken();
+
+    const FechUser= async ()=>{
+
+      const response = await axios.get(`${SITE_DOMAIN}/api/users/me/`, {
+        withCredentials:true
+      });
+
+      if (response.status== 200){
+        setUser(response.data)
+      }
+    } 
+    ()=>FechUser()
   }, []);
 
   // Navigation items
-  const token = Cookies.get("access_token");
+
 
   const navItems: NavItem[] = [
     { id: 0, text: "About", icon: <FcAbout />, link: "#about" },
@@ -82,9 +80,9 @@ const NavBar = () => {
 
     {
       id: 4,
-      text: token ?  'profile': "login",
+      text: isAuthenticated ?  'profile': "login",
       icon: <FaRegUser />,
-      link: token ? "/account/profile" : "/login",
+      link: isAuthenticated ? "/account/profile" : "/login",
     },
   ];
 

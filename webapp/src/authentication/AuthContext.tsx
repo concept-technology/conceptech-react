@@ -1,47 +1,67 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import refreshToken from "./refresh_token";
+import apiClient from "./ApiClint";
+import Cookies from "js-cookie";
+
 
 interface AuthContextType {
   isAuthenticated: boolean;
   login: () => Promise<void>;
   logout: () => void;
 }
-
+export interface RefreshTokenResponse {
+  access: string;
+  refresh?: string;
+  validateToken: ()=>void
+}
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const navigate = useNavigate();
 
+
+  const validateToken = async (): Promise<void> => {
+    try {
+      const response = await apiClient.post<RefreshTokenResponse>(
+        `/api/token/refresh/`,
+        {},
+        { withCredentials: true }
+      );
+      console.log(response.data)
+        setIsAuthenticated(true);
+      
+    } catch (error: any) {
+      setIsAuthenticated(false);
+      console.error("Token validation failed:", error.response?.data || error.message);
+    }
+  };
+
   // Validate token on initial render
   useEffect(() => {
-    const validateToken = async () => {
-      const accessToken = Cookies.get("access_token");
-      if (accessToken) {
-            setIsAuthenticated(true);       
-      }
-    };
 
     validateToken();
   }, []);
 
   const login = async () => {
-    const accessToken = Cookies.get("access_token");
-    if (accessToken) {
-          setIsAuthenticated(true);      
-    }else{
-      refreshToken()
+    try {
+      const response = await apiClient.post<RefreshTokenResponse>(
+        `/api/token/refresh/`,
+        {},
+        { withCredentials: true }
+      );
+      console.log(response.data)
+        setIsAuthenticated(true);
+      
+    } catch (error: any) {
+      setIsAuthenticated(false);
+      console.error("Token validation failed:", error.response?.data || error.message);
     }
   };
 
   const logout = () => {
-    // Clear cookies
-    Cookies.remove("access_token", { path: "/", secure: true, sameSite: "Strict" });
-    Cookies.remove("refresh_token", { path: "/", secure: true, sameSite: "Strict" });
     setIsAuthenticated(false);
-    navigate("/"); // Redirect to login
+    navigate("/");
   };
 
   return (

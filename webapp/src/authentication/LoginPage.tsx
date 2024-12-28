@@ -1,3 +1,5 @@
+//
+
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
@@ -14,9 +16,10 @@ import {
 } from "@chakra-ui/react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { useNavigate, Navigate, Link, useLocation } from "react-router-dom";
+
+import axios from "axios";
+import { SITE_DOMAIN } from "./ApiClint";
 import { useAuth } from "./AuthContext";
-import apiClient from "./ApiClint";
-import Cookies from "js-cookie";
 
 interface LoginFormData {
   username: string;
@@ -35,20 +38,17 @@ const LoginPage: React.FC = () => {
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
-
   // Redirect logged-in users to the profile page
   if (isAuthenticated) {
     return <Navigate to="/account/profile" replace />;
   }
-
+  
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
-      const response = await apiClient.post("/api/login/", data);
-
-      Cookies.set("access_token", response.data.access_token, { secure: true, sameSite: "Strict"});
-      Cookies.set("refresh_token", response.data.refresh_token, { secure: true, sameSite: "Strict" });
-
-      login(); // Use login from useAuth
+      const response = await axios.post(`${SITE_DOMAIN}/api/auth/user/login/`, data, {
+        withCredentials: true, // Allow cookies in the request/response
+      });
+  
       toast({
         title: "Login successful.",
         description: `Welcome back, ${data.username}!`,
@@ -56,16 +56,17 @@ const LoginPage: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-
+  
+      login(); // Set authentication state
       navigate(from, { replace: true }); // Redirect to the referring page
     } catch (error: any) {
       console.error("Login error:", error);
-
+  
       const errorMessage =
-        error?.response?.data?.detail ||
-        error?.response?.data?.error ||
+        error.response?.data?.detail ||
+        error.response?.data?.error ||
         "An unknown error occurred.";
-
+  
       toast({
         title: "Login failed.",
         description: errorMessage,
@@ -75,7 +76,7 @@ const LoginPage: React.FC = () => {
       });
     }
   };
-
+  
   return (
     <Box
       minHeight="100vh"
@@ -107,7 +108,6 @@ const LoginPage: React.FC = () => {
                 placeholder="Enter your username"
                 {...register("username", { required: "Username is required" })}
               />
-              {errors.username && <Text color="red.500">{errors.username.message}</Text>}
             </FormControl>
 
             <FormControl isInvalid={!!errors.password}>
@@ -118,7 +118,6 @@ const LoginPage: React.FC = () => {
                 placeholder="Enter your password"
                 {...register("password", { required: "Password is required" })}
               />
-              {errors.password && <Text color="red.500">{errors.password.message}</Text>}
             </FormControl>
 
             <Button colorScheme="blue" type="submit" width="full">
@@ -152,9 +151,10 @@ const LoginPage: React.FC = () => {
             </Text>
 
             <Text textAlign="center" mt={2}>
-              Forgot password?{" "}
+              forgot password{" "}
               <Link to="/password-reset/request" color="blue.100">
-                Reset
+                {" "}
+                reset
               </Link>
             </Text>
           </Stack>
@@ -165,3 +165,5 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
+
+

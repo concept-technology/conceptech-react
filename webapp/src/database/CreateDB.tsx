@@ -37,7 +37,7 @@ const CreateDatabaseForm: React.FC = () => {
 
   // Submit handler
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-   const  token = Cookies.get('access_token')
+   const  token = Cookies.get('access')
    console.log(data)
     try {
       const response = await apiClient.post(`/api/database/`, data,{

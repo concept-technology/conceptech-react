@@ -14,8 +14,11 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { FaDatabase } from "react-icons/fa"; // Database Icon
-import Cookies from "js-cookie";
+import { FiCopy, FiSave } from "react-icons/fi"; // Copy and Save Icons
 import apiClient from "../authentication/ApiClint";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+
 
 interface DatabaseDetail {
   id: number;
@@ -30,23 +33,21 @@ const DatabaseDetailView: React.FC = () => {
   const [databaseDetail, setDatabaseDetail] = useState<DatabaseDetail[]>([]);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
-
+  const navigate = useNavigate();
+  
+  
   useEffect(() => {
     const fetchDatabaseDetail = async () => {
-      const token = Cookies.get("access_token");
+      const token = Cookies.get('access')
+      console.log('acces_token',token)
       try {
         setLoading(true);
-        const response = await apiClient.get(`/api/database/view/`, {
-          headers: { Authorization: `Bearer ${token}` },
+        const response = await apiClient.get(`/api/database/view/`,{
+          headers:{Authorization: `Bearer ${token}` }
         });
-
-        // Log API response for debugging
-        console.log("API Response:", response.data);
-
         const details = Array.isArray(response.data)
           ? response.data
           : response.data.databases || [];
-
         setDatabaseDetail(details);
       } catch (err: any) {
         const errorMsg = err.response?.data?.error || "Failed to load data";
@@ -75,6 +76,36 @@ const DatabaseDetailView: React.FC = () => {
       duration: 3000,
       isClosable: true,
     });
+  };
+
+  const handleBackup = async (db_name: string) => {
+    const token = Cookies.get('access')
+
+    try {
+      const response = await apiClient.post(
+        `/api/database/backup/`,
+        { db_name },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast({
+        title: "Backup Successful",
+        description: `Backup for '${db_name}' completed successfully.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      console.log("Backup Response:", response.data);
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || "Backup failed";
+      toast({
+        title: "Error",
+        description: errorMsg,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   if (loading) {
@@ -110,60 +141,69 @@ const DatabaseDetailView: React.FC = () => {
   }
 
   return (
-    <Box
-      maxW="md"
-      mx="auto"
-      mt={10}
-      p={6}
-      borderWidth="1px"
-      borderRadius="lg"
-      boxShadow="lg"
-      bg="white"
-    >
-      <Heading size="lg" mb={4} textAlign="center">
-        Database Details
-      </Heading>
-      <VStack spacing={4} align="start">
-        {databaseDetail.map((db) => (
-          <Box
-            key={db.id}
-            p={5}
-            borderWidth="1px"
-            borderRadius="md"
-            w="full"
-            bg="gray.50"
-            boxShadow="sm"
-          >
-            <Flex align="center" mb={3}>
-              <Box as={FaDatabase} color="teal.500" boxSize="6" mr={3} />
-              <Heading size="md">{db.db_name}</Heading>
-            </Flex>
-            <Text>
-              <strong>Username:</strong> {db.db_username}
-            </Text>
-            <Text mb={3}>
-              <strong>Password:</strong> {db.db_password}
-            </Text>
-            <Flex align="center">
-              <Text flex="1">
-                <strong>Connection URL:</strong> {db.db_url}
+    <>
+      <Button mt={{ base: "10p", lg: "50px" }} onClick={() => navigate("/create/database")}>
+        Create Database
+      </Button>
+      <Box
+        maxW="md"
+        mx="auto"
+        mt={10}
+        p={6}
+        borderWidth="1px"
+        borderRadius="lg"
+        boxShadow="lg"
+        bg="white"
+      >
+        <Heading size="lg" mb={4} textAlign="center">
+          Database Details
+        </Heading>
+        <VStack spacing={4} align="start">
+          {databaseDetail.map((db) => (
+            <Box
+              key={db.id}
+              p={5}
+              borderWidth="1px"
+              borderRadius="md"
+              w="full"
+              bg="gray.50"
+              boxShadow="sm"
+            >
+              <Flex align="center" mb={3}>
+                <Box as={FaDatabase} color="teal.500" boxSize="6" mr={3} />
+                <Heading size="md">{db.db_name}</Heading>
+              </Flex>
+              <Text>
+                <strong>Username:</strong> {db.db_username}
               </Text>
-              <Tooltip label="Copy URL to clipboard" aria-label="Copy URL">
-                <IconButton
-                  aria-label="Copy URL"
-                  icon={<FaDatabase />}
-                  onClick={() => copyToClipboard(db.db_url)}
+              <Text mb={3}>
+                <strong>Password:</strong> {db.db_password}
+              </Text>
+              <Flex align="center" justify="space-between">
+                <Tooltip label="Copy URL to clipboard" aria-label="Copy URL">
+                  <IconButton
+                    aria-label="Copy URL"
+                    icon={<FiCopy />}
+                    onClick={() => copyToClipboard(db.db_url)}
+                    size="sm"
+                    variant="outline"
+                    colorScheme="teal"
+                  />
+                </Tooltip>
+                <Button
                   size="sm"
-                  variant="outline"
-                  colorScheme="teal"
-                  ml={3}
-                />
-              </Tooltip>
-            </Flex>
-          </Box>
-        ))}
-      </VStack>
-    </Box>
+                  colorScheme="blue"
+                  leftIcon={<FiSave />}
+                  onClick={() => handleBackup(db.db_name)}
+                >
+                  Backup
+                </Button>
+              </Flex>
+            </Box>
+          ))}
+        </VStack>
+      </Box>
+    </>
   );
 };
 
