@@ -1,27 +1,65 @@
-
-import Footer from "../Home-page/components/Footer"
-import useBlog from "./api-client"
-
-import FeaturedNews from "./FeaturedNews"
-import MenuBar from "./MenuBar"
-
-import BlogSlide from "./SwiperSlide"
+import { Grid, GridItem, Show, SimpleGrid } from "@chakra-ui/react";
 
 
+import BlogHeader from "./BlogHeader";
+import BlogCard from "./BlogCard";
+import BlogSlide from "./SwiperSlide";
+import RightBlogCard from "./RightBlogCard";
+import useBlog from "./hooks/useBlog";
 
-
-export const BlogHome = () => {
-  const { data } = useBlog()
+const BlogHome = () => {
+  const { data = [] } = useBlog(); // Provide a default value to prevent errors if data is undefined
 
   return (
-  <>
-    <MenuBar/>
-    <BlogSlide BlogProps={data}/>
-    <FeaturedNews/>
-    <Footer/>
-  </>
+    <>
+      {/* Main Grid Layout */}
+      <Grid
+        templateAreas={{
+          base: `"nav" "main"`,
+          lg: `"nav nav" "aside main"`,
+        }}
+        mt={{ base: "6px", lg: "50px" }}
+        gap={6}
+        px={{ base: 4, lg: 8 }}
+      >
+        {/* Header */}
+        <GridItem area="nav">
+          <BlogHeader />
+        </GridItem>
 
+        {/* Sidebar - Only visible on large screens */}
+        <Show above="lg">
+          <GridItem area="aside" bg="gold" p={4} borderRadius="md">
+            <h6>Side Bar</h6>
+          </GridItem>
+        </Show>
 
-  )
-}
-export default BlogHome
+        {/* Main Content */}
+        <GridItem area="main">
+          {/* Featured Blog Slide */}
+          <SimpleGrid columns={{ base: 1, lg: 4 }} gap={6} mb={8}>
+            <GridItem colSpan={{ base: 1, lg: 3 }}>
+              <BlogSlide BlogProps={data} />
+            </GridItem>
+            <GridItem>
+              <RightBlogCard BlogProps={data} />
+            </GridItem>
+          </SimpleGrid>
+
+          {/* Blog Cards */}
+          <SimpleGrid
+            columns={{ base: 1, sm: 2, md: 3, xl: 4 }}
+            gap={6}
+            spacingY={10}
+          >
+            {data.map((blog) => (
+              <BlogCard cardContents={blog} key={blog.id} />
+            ))}
+          </SimpleGrid>
+        </GridItem>
+      </Grid>
+    </>
+  );
+};
+
+export default BlogHome;

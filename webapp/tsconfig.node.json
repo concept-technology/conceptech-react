@@ -5,6 +5,7 @@
     "moduleResolution": "bundler",
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "composite": true,
     "paths": {
       "@/*": ["./src/*"]
     }

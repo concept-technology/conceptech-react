@@ -22,26 +22,26 @@ import {
   Stack,
   Tooltip,
 } from "@chakra-ui/react";
-import { useParams, Link as RouterLink } from "react-router-dom";
+import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import MenuBar from "./MenuBar";
 import apiClient from "../authentication/ApiClint";
 import Footer from "../Home-page/components/Footer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
 import Cookies from "js-cookie";
 import VideoPlayer from "./VideoPlayer";
-import { FaComments, FaCopy, FaFacebook, FaReply, FaShareAlt, FaThumbsUp, FaWhatsapp } from "react-icons/fa";
+import { FaComments, FaCopy, FaFacebook, FaThumbsUp, FaWhatsapp } from "react-icons/fa";
 import { formatDistanceToNow } from 'date-fns';
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from "react-share";
 import { BsTwitterX } from "react-icons/bs";
+import BlogHeader from "./BlogHeader";
 
 interface RelatedBlogProps {
   id: number;
   title: string;
   slug: string;
-  img: string;
+  image: string;
   description: string;
 }
 
@@ -69,13 +69,15 @@ const BlogDetail = () => {
   const { register, handleSubmit, reset } = useForm<{ content: string }>();
   const [replyInputVisible, setReplyInputVisible] = useState<number | null>(null);
   const [likes, setLikes] = useState<number>(0);
-  const [reactions, setReactions] = useState<{ emoji: string; count: number }[]>([]);
+  // const [reactions, setReactions] = useState<{ emoji: string; count: number }[]>([]);
+  const navigate = useNavigate()
   
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const response = await apiClient.get(`/api/blog/${id}/${slug}/`);
         const data = response.data;
+        console.log(data)
         setBlog({
           title: data.title,
           content: data.content,
@@ -160,22 +162,22 @@ const BlogDetail = () => {
     }
     return mergedContent;
   };
-  const handleReplyToggle = (commentId: number) => {
-    setReplyInputVisible((prev) => (prev === commentId ? null : commentId));
-  };
-  const handleLike = () => setLikes((prev) => prev + 1);
+  // const handleReplyToggle = (commentId: number) => {
+  //   setReplyInputVisible((prev) => (prev === commentId ? null : commentId));
+  // };
+  // const handleLike = () => setLikes((prev) => prev + 1);
 
-  const handleReaction = (emoji: string) => {
-    setReactions((prev) => {
-      const reactionIndex = prev.findIndex((r) => r.emoji === emoji);
-      if (reactionIndex > -1) {
-        const updated = [...prev];
-        updated[reactionIndex].count += 1;
-        return updated;
-      }
-      return [...prev, { emoji, count: 1 }];
-    });
-  };
+  // const handleReaction = (emoji: string) => {
+  //   setReactions((prev) => {
+  //     const reactionIndex = prev.findIndex((r) => r.emoji === emoji);
+  //     if (reactionIndex > -1) {
+  //       const updated = [...prev];
+  //       updated[reactionIndex].count += 1;
+  //       return updated;
+  //     }
+  //     return [...prev, { emoji, count: 1 }];
+  //   });
+  // };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -183,10 +185,10 @@ const BlogDetail = () => {
   };
 
   return (
-    <>
+    <Box mt={{lg:50}}>
+    <BlogHeader/>
+    <Button onClick={()=>navigate(-1)}>back</Button>
       <Container maxW="1200px" mx="auto" p={5}>
-        <MenuBar />
-
         <Flex direction={{ base: "column", md: "row" }} gap={8}>
           <Box flex={3} bg="white" p={5} borderRadius="lg" boxShadow="lg">
             {blog && (
@@ -229,12 +231,14 @@ const BlogDetail = () => {
                         border="1px solid #e2e8f0"
                         borderRadius="md"
                       >
+                        <Text>{snippet.title}</Text>
                         <SyntaxHighlighter
                           language={snippet.language}
                           style={materialOceanic}
                         >
                           {snippet.code}
                         </SyntaxHighlighter>
+                        <Text>{snippet.explanation}</Text>
                       </Box>
                     ))}
                   </Box>
@@ -263,7 +267,7 @@ const BlogDetail = () => {
                                 <IconButton
                                   icon={<FaThumbsUp />}
                                   colorScheme="blue"
-                                  onClick={handleLike}
+                                  // onClick={handleLike}
                                   aria-label="Like"
                                 />
                               </Tooltip>
@@ -293,13 +297,13 @@ const BlogDetail = () => {
                                   aria-label="Copy Link"
                                 />
                               </Tooltip>
-                            <Flex gap={2}>
+                            {/* <Flex gap={2}>
                               {reactions.map((reaction) => (
                                 <Text key={reaction.emoji}>
                                   {reaction.emoji} {reaction.count}
                                 </Text>
                               ))}
-                            </Flex>
+                            </Flex> */}
               </Flex>
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -384,7 +388,7 @@ const BlogDetail = () => {
                   >
                     <RouterLink to={`/blog/${story.id}/${story.slug}`}>
                       <Image
-                        src={story.img}
+                        src={story.image}
                         alt={story.title}
                         w="100%"
                         h="150px"
@@ -396,7 +400,7 @@ const BlogDetail = () => {
                         {story.title}
                       </Heading>
                       <Text color="gray.600" mt={2}>
-                        {story.description}
+                        {/* {story.description} */}
                       </Text>
                     </RouterLink>
                   </Box>
@@ -407,7 +411,7 @@ const BlogDetail = () => {
         </Flex>
       </Container>
       <Footer />
-    </>
+    </Box>
 
           )}
 export default BlogDetail

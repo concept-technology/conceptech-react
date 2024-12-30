@@ -41,15 +41,8 @@ const BlogSlide = ({ BlogProps }: BlogSlideProps) => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection={{ base: "column", md: "row" }}
-      gap={8}
-      p={6}
-      maxW="1200px"
-      mx="auto"
-    >
-      {/* Left Swiper Section */}
+
+
       <Box
         flex={{ base: "1", md: "2" }}
         bg={useColorModeValue("white", "gray.800")}
@@ -69,7 +62,7 @@ const BlogSlide = ({ BlogProps }: BlogSlideProps) => {
           {BlogProps.map((post) => (
             <SwiperSlide key={post.id}>
               <Box
-                height="400px"
+                height="320px"
                 backgroundImage={`url(${post.image})`}
                 backgroundPosition="center"
                 backgroundSize="cover"
@@ -104,41 +97,6 @@ const BlogSlide = ({ BlogProps }: BlogSlideProps) => {
           ))}
         </Swiper>
       </Box>
-
-      {/* Right Cards Section */}
-      <Grid templateColumns={{ base: "1fr", md: "1fr" }} gap={6} flex="1">
-        {BlogProps.map((post) => (
-          <Card
-            key={post.id}
-            direction="row"
-            alignItems="center"
-            bg={useColorModeValue("white", "gray.800")}
-            boxShadow="md"
-            _hover={{ boxShadow: "xl", transform: "scale(1.02)" }}
-            transition="all 0.3s ease"
-            rounded="lg"
-            overflow="hidden"
-            cursor="pointer"
-            onClick={() => handleCardClick(post.id, post.slug)} // Navigate on click
-          >
-            <Image
-              src={post.image}
-              alt={post.title}
-              boxSize="150px"
-              objectFit="cover"
-            />
-            <CardBody p={4}>
-              <Heading fontSize="lg" mb={2}>
-                {post.title}
-              </Heading>
-              <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
-                {post.content.slice(0, 50)}...
-              </Text>
-            </CardBody>
-          </Card>
-        ))}
-      </Grid>
-    </Box>
   );
 };
 
