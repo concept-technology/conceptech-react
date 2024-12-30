@@ -3,7 +3,6 @@ import {
   Flex,
   Text,
   IconButton,
-  Button,
   useColorMode,
   useColorModeValue,
   Stack,
@@ -14,6 +13,7 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import { FaMoon, FaSun, FaSearch } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const BlogHeader = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -24,27 +24,11 @@ const BlogHeader = () => {
     <Box bg={bgColor} px={4} shadow="md">
       <Flex h={16} alignItems="center" justifyContent="space-between">
         {/* Logo */}
+        <Link to="/blog">
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
           CTS2Blog
         </Text>
-
-      
-        {/* <Flex as="nav" display={{ base: 'none', md: 'flex' }} ml={10}>
-          <Stack direction="row" spacing={4}>
-            <Button variant="link" color={textColor}>
-              Home
-            </Button>
-            <Button variant="link" color={textColor}>
-              About
-            </Button>
-            <Button variant="link" color={textColor}>
-              Blog
-            </Button>
-            <Button variant="link" color={textColor}>
-              Contact
-            </Button>
-          </Stack> */}
-        {/* </Flex> */}
+        </Link>
         <Spacer/>
 
         {/* Search Bar */}

@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import "./BlogSlide.css";
 import { useNavigate } from "react-router-dom";
 
 // Blog Interface
@@ -26,6 +25,7 @@ interface Blog {
   created_at: Date;
   updated_at: Date;
 }
+
 
 // Props for BlogSlide Component
 interface BlogSlideProps {

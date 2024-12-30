@@ -1,14 +1,14 @@
 import { Grid, GridItem, Show, SimpleGrid } from "@chakra-ui/react";
-
-
 import BlogHeader from "./BlogHeader";
 import BlogCard from "./BlogCard";
 import BlogSlide from "./SwiperSlide";
 import RightBlogCard from "./RightBlogCard";
 import useBlog from "./hooks/useBlog";
+import Footer from "../Home-page/components/Footer";
+import Categories from "./Categories";
 
 const BlogHome = () => {
-  const { data = [] } = useBlog(); // Provide a default value to prevent errors if data is undefined
+  const { data = [] } = useBlog("/api/blog/"); // Provide a default value to prevent errors if data is undefined
 
   return (
     <>
@@ -29,8 +29,8 @@ const BlogHome = () => {
 
         {/* Sidebar - Only visible on large screens */}
         <Show above="lg">
-          <GridItem area="aside" bg="gold" p={4} borderRadius="md">
-            <h6>Side Bar</h6>
+          <GridItem area="aside" p={4} borderRadius="md">
+            <Categories/>
           </GridItem>
         </Show>
 
@@ -58,6 +58,7 @@ const BlogHome = () => {
           </SimpleGrid>
         </GridItem>
       </Grid>
+      <Footer/>
     </>
   );
 };

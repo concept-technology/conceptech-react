@@ -30,7 +30,7 @@ import Footer from "../Home-page/components/Footer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
 import Cookies from "js-cookie";
-import VideoPlayer from "./VideoPlayer";
+import VideoPlayer, { VideoProps } from "./VideoPlayer";
 import { FaComments, FaCopy, FaFacebook, FaThumbsUp, FaWhatsapp } from "react-icons/fa";
 import { formatDistanceToNow } from 'date-fns';
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from "react-share";
@@ -53,11 +53,37 @@ interface Comment {
   profile_picture?: string;
 }
 
+
+interface code{
+  code: string
+  created_at:string
+  explanation: string
+  id:number
+  title:string
+  }
+  
+interface imgprops{
+  id: number
+  image:string
+  uploaded_at: string
+}
+
+interface props{
+  title: string
+  images: imgprops[]
+  comments: Comment[]
+  codeSnippets:code[]
+  videoss:VideoProps[]
+  
+
+}
+
+
 const BlogDetail = () => {
   const { id, slug } = useParams<{ id: string; slug: string }>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [relatedStories, setRelatedStories] = useState<RelatedBlogProps[]>([]);
-  const [blog, setBlog] = useState({
+  const [blog, setBlog] = useState<props>({
     title: "",
     content: "",
     codeSnippets: [],
@@ -67,15 +93,14 @@ const BlogDetail = () => {
   const [loadingRelated, setLoadingRelated] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, reset } = useForm<{ content: string }>();
-  const [replyInputVisible, setReplyInputVisible] = useState<number | null>(null);
-  const [likes, setLikes] = useState<number>(0);
-  // const [reactions, setReactions] = useState<{ emoji: string; count: number }[]>([]);
+
   const navigate = useNavigate()
-  
+  const url =`/api/blog/${id}/${slug}/`
+
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await apiClient.get(`/api/blog/${id}/${slug}/`);
+        const response = await apiClient.get(url);
         const data = response.data;
         console.log(data)
         setBlog({
@@ -162,22 +187,6 @@ const BlogDetail = () => {
     }
     return mergedContent;
   };
-  // const handleReplyToggle = (commentId: number) => {
-  //   setReplyInputVisible((prev) => (prev === commentId ? null : commentId));
-  // };
-  // const handleLike = () => setLikes((prev) => prev + 1);
-
-  // const handleReaction = (emoji: string) => {
-  //   setReactions((prev) => {
-  //     const reactionIndex = prev.findIndex((r) => r.emoji === emoji);
-  //     if (reactionIndex > -1) {
-  //       const updated = [...prev];
-  //       updated[reactionIndex].count += 1;
-  //       return updated;
-  //     }
-  //     return [...prev, { emoji, count: 1 }];
-  //   });
-  // };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);

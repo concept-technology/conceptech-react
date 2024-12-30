@@ -2,12 +2,14 @@ import { useState } from "react";
 import ReactPlayer from "react-player";
 import { Box, Button, Heading } from "@chakra-ui/react";
 
-interface VideoProps {
+export interface VideoProps {
   id: number;
   title: string;
   url: string;
   video: string;
+  description:string
 }
+
 
 interface VideoPlayerProps {
   videos: VideoProps[];

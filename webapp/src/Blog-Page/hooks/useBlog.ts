@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { CanceledError } from "axios";
 import apiClient from "../../authentication/ApiClint";
 
-export interface Blog {
+
+ interface Blog{
   title: string;
   slug: string;
   author: string;
@@ -15,7 +16,7 @@ export interface Blog {
   description:string
 }
 
-const useBlog = () => {
+const useBlog = (url:string) => {
   const [data, setData] = useState<Blog[]>([]); // State is an array of Blog objects
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
@@ -25,7 +26,7 @@ const useBlog = () => {
     setLoading(true)
     const fetchBlogs = async () => {
       try {
-        const response = await apiClient.get<Blog[]>("/api/blog/",{signal:controller.signal}); // Ensure the response matches the type
+        const response = await apiClient.get<Blog[]>(url,{signal:controller.signal}); // Ensure the response matches the type
         setLoading(false)
         setData(response.data);
         console.log(response.data)
@@ -40,7 +41,7 @@ const useBlog = () => {
     fetchBlogs();
   }, []);
 
-  return { data, loading, error };
+  return { data, loading, error , setData};
 };
 
 export default useBlog;
