@@ -1,88 +1,121 @@
-import { Swiper, SwiperSlide } from 'swiper/react';
-// import 'swiper/swiper-bundle.min.css';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-fade';
+import { Box, Flex, Text, VStack, Button } from "@chakra-ui/react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+import bgImage1 from "../../assets/img/bg1.jpg";
+import bgImage2 from "../../assets/img/bg2.jpg";
+import bgImage3 from "../../assets/img/bg4.jpg";
+import { Pagination, EffectFade, Autoplay } from "swiper/modules";
 
-import bgImage1 from '../../assets/img/bg1.jpg';
-import bgImage2 from '../../assets/img/bg2.jpg';
-import bgImage3 from '../../assets/img/bg4.jpg';
-import {  Pagination, EffectFade, Autoplay } from 'swiper/modules';
-
+const slides = [
+  {
+    image: bgImage1,
+    title: "Empower Businesses",
+    subtitle: "Through Cutting-Edge Technologies",
+    description: "Harnessing the latest in technology to elevate business performance.",
+  },
+  {
+    image: bgImage2,
+    title: "Transforming Ideas",
+    subtitle: "into Digital Solutions with Advanced Technologies",
+    description:
+      "From concept to execution, delivering tailored software solutions for modern challenges.",
+  },
+  {
+    image: bgImage3,
+    title: "We Drive Innovation",
+    subtitle: "",
+    description: "Building seamless digital ecosystems to drive efficiency and growth.",
+  },
+];
 
 const CarouselComponent = () => {
   return (
-    <header className="header pos-re slider-fade" data-scroll-index="0" >
+    <Box as="header" w="100%" h="100vh" overflow="hidden">
       <Swiper
-        modules={[Autoplay, Pagination, EffectFade]} // Include modules
-        slidesPerView={1} // Show one slide at a time
+        modules={[Autoplay, Pagination, EffectFade]}
+        slidesPerView={1}
         loop={true}
         autoplay={{ delay: 4000 }}
-        effect="fade" // Use fade effect
-        pagination={{ clickable: true }} // Show pagination dots
-        speed={1000} // Adjust the speed
-        className="swiper-container"
-        style={{ height: '100vh', width: '100%' }}
-        
+        effect="fade"
+        pagination={{ clickable: true }}
+        speed={1000}
+        style={{ height: "100%", width: "100%" }}
       >
-        <div id='swiper'>
-        <SwiperSlide>
-          
-          <div className="item bg-img" data-overlay-dark="5" style={{ backgroundImage: `url(${bgImage3})` }} >
-            <div className="text-center v-middle caption mt-30" >
-              <h4>We</h4>
-              <h1>Drive Innovation</h1>
-              <div className="row">
-                <div className="offset-md-1 col-md-10 offset-lg-2 col-lg-8">
-                  <p>Building seamless digital ecosystems to drive efficiency and growth.</p>
-                </div>
-              </div>
-              <a href="#0" className="butn butn-light mt-30">
-                <span>Explore Our Services</span>
-              </a>
-            </div>
-          </div>
-        </SwiperSlide>
-        </div>
-
-        <div id='swiper'>
-        <SwiperSlide>
-          <div className="item bg-img" data-overlay-dark="5" style={{ backgroundImage: `url(${bgImage1})` }}>
-            <div className="text-center v-middle caption mt-30" >
-              <h4>Empower Businesses</h4>
-              <h1>Through Cutting-Edge Technologies</h1>
-              <div className="row">
-                <div className="offset-md-1 col-md-10 offset-lg-2 col-lg-8">
-                  <p>Harnessing the latest in technology to elevate business performance.</p>
-                </div>
-              </div>
-              <a href="#0" className="butn butn-light mt-30">
-                <span>Explore Our Services</span>
-              </a>
-            </div>
-          </div>
-        </SwiperSlide>
-        </div>
-
-        <div id='swiper'>
-        <SwiperSlide>
-          <div className="item bg-img" data-overlay-dark="5" style={{ backgroundImage: `url(${bgImage2})` }}>
-            <div className="text-center v-middle caption mt-30">
-              <h4>Transforming Ideas</h4>
-              <h1>into Digital Solutions with Advanced Technologies</h1>
-              <div className="row">
-                <div className="offset-md-1 col-md-10 offset-lg-2 col-lg-8">
-                  <p>From concept to execution, delivering tailored software solutions for modern challenges.</p>
-                </div>
-              </div>
-              <a href="#0" className="butn butn-light mt-30">
-                <span>Explore Our Services</span>
-              </a>
-            </div>
-          </div>
-        </SwiperSlide>
-        </div>
+        {slides.map((slide, index) => (
+          <SwiperSlide key={index}>
+            <Box
+              h="100%"
+              w="100%"
+              bgImage={`url(${slide.image})`}
+              bgSize="cover"
+              bgPosition="center"
+              position="relative"
+              borderRadius={10}
+            >
+              {/* Dark overlay */}
+              <Box
+                position="absolute"
+                top={0}
+                left={0}
+                w="100%"
+                h="100%"
+                bg="rgba(0, 0, 0, 0.5)"
+                zIndex={0}
+              />
+              <Flex
+                h="100%"
+                align="center"
+                justify="center"
+                position="relative"
+                zIndex={1}
+              >
+                <VStack spacing={5} textAlign="center" color="white" px={4}>
+                  <Text
+                    fontSize="2xl"
+                    fontWeight="medium"
+                    fontFamily="Poppins, sans-serif"
+                    textTransform="uppercase"
+                    letterSpacing="wider"
+                  >
+                    {slide.title}
+                  </Text>
+                  <Text
+                    fontSize="5xl"
+                    fontWeight="bold"
+                    fontFamily="Poppins, sans-serif"
+                    lineHeight="1.2"
+                  >
+                    {slide.subtitle}
+                  </Text>
+                  <Text
+                    fontSize="lg"
+                    fontFamily="Roboto, sans-serif"
+                    maxW="600px"
+                    lineHeight="1.6"
+                  >
+                    {slide.description}
+                  </Text>
+                  <Button
+                    colorScheme="teal"
+                    size="lg"
+                    px={8}
+                    py={6}
+                    fontSize="lg"
+                    fontWeight="semibold"
+                    fontFamily="Poppins, sans-serif"
+                    _hover={{ bg: "teal.400" }}
+                  >
+                    Explore Our Services
+                  </Button>
+                </VStack>
+              </Flex>
+            </Box>
+          </SwiperSlide>
+        ))}
       </Swiper>
-    </header>
+    </Box>
   );
 };
 

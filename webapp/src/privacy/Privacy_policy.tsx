@@ -19,6 +19,7 @@ const PrivacyPolicy = () => {
         bg="gray.50"
         borderRadius="md"
         boxShadow="sm"
+        mt={{lg:'30px'}}
       >
         <Heading as="h1" size="xl" mb={4} color="teal.600">
           Privacy Policy

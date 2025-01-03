@@ -40,7 +40,7 @@ const LoginPage: React.FC = () => {
   const from = location.state?.from?.pathname || "/";
   // Redirect logged-in users to the profile page
   if (isAuthenticated) {
-    return <Navigate to="/account/profile" replace />;
+    return 
   }
   
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {

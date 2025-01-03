@@ -12,8 +12,8 @@ import ProcessSection from './Process'
 const HomeApp = () => {
     return (
     <>
-        <HomePage/>
         <CarouselComponent/>
+        <HomePage/>
         <ProcessSection/>
         <About_us/>
         <ImageSection/>

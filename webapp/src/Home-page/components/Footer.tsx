@@ -1,51 +1,63 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, Image, Link, Text, VStack, HStack, Icon } from "@chakra-ui/react";
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaBehance, FaPinterestP } from "react-icons/fa";
 import logo from "../../assets/Images/logo.jpg";
-import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <>
-      <footer className="text-center pos-re">
-        <div className="container">
-          <a className="logo" href="#">
-            <img src={logo} alt="logo" />
-          </a>
-          <div className="social">
-            <a href="#0">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#0">
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a href="#0">
-              <i className="fab fa-linkedin-in"></i>
-            </a>
-            <a href="#0">
-              <i className="fab fa-behance"></i>
-            </a>
-            <a href="#0">
-              <i className="fab fa-pinterest-p"></i>
-            </a>
-          </div>
-          <p>
-            <a target="_blank" href="">
-              Concept Technologies
-            </a>
-          </p>
-        </div>
+    <Box as="footer" bg="gray.800" color="white" py={10} textAlign="center" w={"100%"}>
+      {/* Logo Section */}
+      <Box mb={6}>
+        <Link href="#">
+          <Image src={logo} alt="logo" mx="auto" boxSize="80px" objectFit="contain" />
+        </Link>
+      </Box>
 
-        <div className="curve curve-top curve-center"></div>
-        <Box as="ul" listStyleType="circle" className="d-flex p-5">
-          <li className="footer-list"></li>
-          <li className="footer-list">
-            <Link to="/support">Support</Link> {/* Updated to absolute path */}
-          </li>
-          <li className="footer-list">
-            <Link to="/privacy">Privacy</Link> {/* Updated to absolute path */}
-          </li>
-        </Box>
-      </footer>
-    </>
+      {/* Social Links */}
+      <HStack justify="center" spacing={6} mb={6}>
+        <Link href="#0" isExternal>
+          <Icon as={FaFacebookF} boxSize={6} _hover={{ color: "teal.400" }} />
+        </Link>
+        <Link href="#0" isExternal>
+          <Icon as={FaTwitter} boxSize={6} _hover={{ color: "teal.400" }} />
+        </Link>
+        <Link href="#0" isExternal>
+          <Icon as={FaLinkedinIn} boxSize={6} _hover={{ color: "teal.400" }} />
+        </Link>
+        <Link href="#0" isExternal>
+          <Icon as={FaBehance} boxSize={6} _hover={{ color: "teal.400" }} />
+        </Link>
+        <Link href="#0" isExternal>
+          <Icon as={FaPinterestP} boxSize={6} _hover={{ color: "teal.400" }} />
+        </Link>
+      </HStack>
+
+      {/* Company Info */}
+      <Text mb={6}>
+        <Link href="" isExternal color="teal.400">
+          Concept Technologies
+        </Link>
+      </Text>
+
+      {/* Footer Navigation */}
+      <Flex justify="center" wrap="wrap" gap={4}>
+        <Link href="/support" fontWeight="bold" _hover={{ color: "teal.400" }}>
+          Support
+        </Link>
+        <Link href="/privacy" fontWeight="bold" _hover={{ color: "teal.400" }}>
+          Privacy
+        </Link>
+      </Flex>
+
+      {/* Footer Curve (Optional) */}
+      <Box
+        mt={10}
+        bgGradient="linear(to-r, gray.700, gray.800)"
+        h="6px"
+        borderRadius="full"
+        mx="auto"
+        w="40%"
+      />
+    </Box>
   );
 };
 

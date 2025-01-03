@@ -36,7 +36,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from "react-share";
 import { BsTwitterX } from "react-icons/bs";
 import BlogHeader from "./BlogHeader";
-
+import { IoMdArrowRoundBack } from "react-icons/io";
 interface RelatedBlogProps {
   id: number;
   title: string;
@@ -74,8 +74,6 @@ interface props{
   comments: Comment[]
   codeSnippets:code[]
   videoss:VideoProps[]
-  
-
 }
 
 
@@ -194,9 +192,12 @@ const BlogDetail = () => {
   };
 
   return (
-    <Box mt={{lg:50}}>
+    <Box>
     <BlogHeader/>
-    <Button onClick={()=>navigate(-1)}>back</Button>
+    <Button onClick={()=>navigate(-1)}>
+    <IoMdArrowRoundBack />
+
+    </Button>
       <Container maxW="1200px" mx="auto" p={5}>
         <Flex direction={{ base: "column", md: "row" }} gap={8}>
           <Box flex={3} bg="white" p={5} borderRadius="lg" boxShadow="lg">

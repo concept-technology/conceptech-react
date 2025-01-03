@@ -18,7 +18,6 @@ const BlogHome = () => {
           base: `"nav" "main"`,
           lg: `"nav nav" "aside main"`,
         }}
-        mt={{ base: "6px", lg: "50px" }}
         gap={6}
         px={{ base: 4, lg: 8 }}
       >

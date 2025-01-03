@@ -1,91 +1,181 @@
-import { Box, Heading, Icon, SimpleGrid, VStack , Text} from "@chakra-ui/react"
-import TabsSection from "./About"
-import { FaCloud, FaCode, FaMobileAlt, FaUsers } from "react-icons/fa"
+import { useState, useEffect } from 'react';
+import {
+  Box,
+  VStack,
+  HStack,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Text,
+  Image,
+  Progress,
+  Button,
+  Flex,
+} from '@chakra-ui/react';
+import logo from '../../assets/Images/logo.jpg';
+import img4 from '../../assets/img/4.jpg';
+import img3 from '../../assets/img/3.jpg';
 
-const About_us = ()=>{
-    return(
-        <div>
-            {/* about our us session */}
-    <section className="hero" data-scroll-index="1">
-            <div className="section-padding pos-re">
-                <div className="container">
-            
-                  {/* Services Section */}
-                  <Box textAlign="center" py={8}>
-                    <Heading as="h2" size="xl" mb={4}>
-                      Our Services
-                    </Heading>
-                    <Text fontSize="lg" color="gray.600" mb={8}>
-                      We specialize in a wide range of services to empower your business.
+const AboutUs = () => {
+  const [progressWidths, setProgressWidths] = useState({
+    design: 0,
+    branding: 0,
+    development: 0,
+  });
+
+  useEffect(() => {
+    setTimeout(() => {
+      setProgressWidths({
+        design: 90,
+        branding: 75,
+        development: 95,
+      });
+    }, 200); // Animation delay for progress bars
+  }, []);
+const color= 'black'
+  return (
+    <Box py={12} id="about">
+      <Box maxW="1200px" mx="auto" px={6}>
+        <Tabs variant="soft-rounded" colorScheme="teal" isFitted>
+          <TabList mb={6}>
+            <Tab fontSize="lg" _selected={{ color: 'white', bg: 'teal.500' }}>
+              About Us
+            </Tab>
+            <Tab fontSize="lg" _selected={{ color: 'white', bg: 'teal.500' }}>
+              Our Mission
+            </Tab>
+            <Tab fontSize="lg" _selected={{ color: 'white', bg: 'teal.500' }}>
+              Why Us?
+            </Tab>
+          </TabList>
+
+          <TabPanels>
+            {/* About Us Section */}
+            <TabPanel>
+              <Flex direction={['column', 'row']} gap={6}>
+                <VStack align="start" flex={1} spacing={4}>
+                  <Text fontSize="2xl" fontWeight="bold" color="teal.600">
+                    About Us
+                  </Text>
+                  <Text fontSize="lg">
+                    Concept Technology and Software Solutions is a full-service
+                    technology firm specializing in custom software development,
+                    web design, IT consulting, and digital solutions. 
+                    {/* Shortened for brevity */}
+                  </Text>
+                  <VStack align="start" w="full" spacing={4}>
+                    <HStack justify="space-between" w="full">
+                      <Text fontWeight="bold" >Website Design</Text>
+                      <Text >{`${progressWidths.design}%`}</Text>
+                    </HStack>
+                    <Progress
+                      value={progressWidths.design}
+                      size="sm"
+                      colorScheme="teal"
+                      w="full"
+                      
+                    />
+                    <HStack justify="space-between" w="full">
+                      <Text fontWeight="bold" >Branding</Text>
+                      <Text>{`${progressWidths.branding}%`}</Text>
+                    </HStack>
+                    <Progress
+                      value={progressWidths.branding}
+                      size="sm"
+                      colorScheme="blue"
+                      w="full"
+                      
+                    />
+                    <HStack justify="space-between" w="full">
+                      <Text fontWeight="bold" >Software Development</Text>
+                      <Text >{`${progressWidths.development}%`}</Text>
+                    </HStack>
+                    <Progress
+                      value={progressWidths.development}
+                      size="sm"
+                      colorScheme="green"
+                      w="full"
+                      
+                    />
+                  </VStack>
+                  <Button colorScheme="teal" size="lg" mt={4}>
+                    Get Started
+                  </Button>
+                </VStack>
+                <Box flex={1}>
+                  <Image src={logo} borderRadius="md" shadow="lg" />
+                </Box>
+              </Flex>
+            </TabPanel>
+
+            {/* Our Mission Section */}
+            <TabPanel>
+              <Flex direction={['column', 'row']} gap={6}>
+                <VStack align="start" flex={1} spacing={4}>
+                  <Text fontSize="2xl" fontWeight="bold" color="teal.600">
+                    Our Mission
+                  </Text>
+                  <Text fontSize="lg"  >
+                    Our mission is to deliver cutting-edge, tailor-made
+                    technology solutions that align with our clients' visions
+                    {/* Shortened for brevity */}
+                  </Text>
+                  <Text fontSize="2xl" fontWeight="bold" color="teal.600">
+                    Our Vision
+                  </Text>
+                  <Text fontSize="lg" >
+                    To be a global leader in providing innovative technology
+                    solutions that empower businesses.
+                  </Text>
+                </VStack>
+                <Box flex={1}>
+                  <Image src={img3} borderRadius="md" shadow="lg" />
+                </Box>
+              </Flex>
+            </TabPanel>
+
+            {/* Why Us Section */}
+            <TabPanel>
+              <Flex direction={['column', 'row']} gap={6}>
+                <VStack align="start" flex={1} spacing={4}>
+                  <Text fontSize="2xl" fontWeight="bold" color="teal.600">
+                    Why Us?
+                  </Text>
+                  <VStack align="start" spacing={3}>
+                    <Text fontSize="lg" >
+                      <strong>Tailored Solutions:</strong> We work closely with
+                      you to understand your needs and provide personalized
+                      solutions.
                     </Text>
-                    <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-                      {[
-                        {
-                          icon: FaCode,
-                          title: "Custom Software Development",
-                          description:
-                            "Tailored software solutions that meet your unique business needs.",
-                        },
-                        {
-                          icon: FaMobileAlt,
-                          title: "Mobile App Development",
-                          description:
-                            "Robust and user-friendly mobile applications for all platforms.",
-                        },
-                        {
-                          icon: FaCloud,
-                          title: "Cloud Solutions",
-                          description:
-                            "Scalable and secure cloud solutions to transform your business.",
-                        },
-                        {
-                          icon: FaUsers,
-                          title: "Consulting Services",
-                          description:
-                            "Expert guidance to accelerate your digital transformation journey.",
-                        },
-                      ].map((service, index) => (
-                        <VStack
-                          key={index}
-                          p={6}
-                          bg="white"
-                          shadow="md"
-                          borderRadius="lg"
-                          align="center"
-                        >
-                          <Icon as={service.icon} boxSize={12} color="teal.500" mb={4} />
-                          <Heading as="h3" size="md">
-                            {service.title}
-                          </Heading>
-                          <Text fontSize="sm" color="gray.600" textAlign="center">
-                            {service.description}
-                          </Text>
-                        </VStack>
-                      ))}
-                    </SimpleGrid>
-                  </Box>
-            
-                </div>
+                    <Text fontSize="lg" >
+                      <strong>Expert Team:</strong> Our team consists of
+                      experienced developers and designers.
+                    </Text>
+                    <Text fontSize="lg" >
+                      <strong>Client-Centric Approach:</strong> Your success is
+                      our priority.
+                    </Text>
+                    <Text fontSize="lg" >
+                      <strong>Commitment to Excellence:</strong> We ensure
+                      quality and scalability in every project.
+                    </Text>
+                  </VStack>
+                  <Button colorScheme="teal" size="lg" mt={4}>
+                    Get Started
+                  </Button>
+                </VStack>
+                <Box flex={1}>
+                  <Image src={img4} borderRadius="md" shadow="lg" />
+                </Box>
+              </Flex>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Box>
+    </Box>
+  );
+};
 
-                <div className="curve curve-gray-b curve-bottom"></div>
-            </div>
-
-            <div className="tabs-section section-padding bg-gray" id='about'>
-                <div className="container">
-                    <div className="row">
-                        <ul className="col-md-12 nav nav-pills tabs">
-                 
-                        </ul>
-                        
-                      <TabsSection/>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        </div>
-    )
-}
-
-export default About_us
+export default AboutUs;
