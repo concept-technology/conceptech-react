@@ -4,7 +4,7 @@ import { CanceledError } from "axios";
 import apiClient from "../../authentication/ApiClint";
 
 
- interface Blog{
+ export interface Blog{
   title: string;
   slug: string;
   author: string;
@@ -29,7 +29,6 @@ const useBlog = (url:string) => {
         const response = await apiClient.get<Blog[]>(url,{signal:controller.signal}); // Ensure the response matches the type
         setLoading(false)
         setData(response.data);
-        console.log(response.data)
       } catch (err: any) {
         if (err instanceof CanceledError) return;
         setError(err.message);

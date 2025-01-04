@@ -3,12 +3,13 @@ import BlogHeader from "./BlogHeader";
 import BlogCard from "./BlogCard";
 import BlogSlide from "./SwiperSlide";
 import RightBlogCard from "./RightBlogCard";
-import useBlog from "./hooks/useBlog";
 import Footer from "../Home-page/components/Footer";
 import Categories from "./Categories";
+import useFetch from "./hooks/useFetch";
+import { Blog } from "./hooks/useBlog";
 
 const BlogHome = () => {
-  const { data = [] } = useBlog("/api/blog/"); // Provide a default value to prevent errors if data is undefined
+  const { data = [] } = useFetch<Blog>("/api/blog/"); // Provide a default value to prevent errors if data is undefined
 
   return (
     <>

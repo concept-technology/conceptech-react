@@ -24,6 +24,7 @@ import LoginCallback from "./authentication/LoginCallBack";
 import CreateDatabaseForm from "./database/CreateDB";
 import DatabaseDetailView from "./database/dbDetails";
 import DatabaseHomePage from "./database/Homepage";
+import ProductDetail from "./products/ProductDetail";
 
 function App() {
   return (
@@ -92,6 +93,7 @@ function App() {
             <Route path="create/database" element={<CreateDatabaseForm />} />
             <Route path="database/view" element={<DatabaseDetailView />} />
             <Route path="database/" element={<DatabaseHomePage />} />
+            <Route path="/products/:id/:slug" element={<ProductDetail />} />
           </Routes>
         </Box>
       </GridItem>
