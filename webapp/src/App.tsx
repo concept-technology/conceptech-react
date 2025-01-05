@@ -25,6 +25,8 @@ import CreateDatabaseForm from "./database/CreateDB";
 import DatabaseDetailView from "./database/dbDetails";
 import DatabaseHomePage from "./database/Homepage";
 import ProductDetail from "./products/ProductDetail";
+import CheckoutPage from "./products/Checkout";
+
 
 function App() {
   return (
@@ -94,6 +96,8 @@ function App() {
             <Route path="database/view" element={<DatabaseDetailView />} />
             <Route path="database/" element={<DatabaseHomePage />} />
             <Route path="/products/:id/:slug" element={<ProductDetail />} />
+
+            <Route path="product/:id/:slug/checkout" element={<PrivateRoute><CheckoutPage/></PrivateRoute>}/>
           </Routes>
         </Box>
       </GridItem>

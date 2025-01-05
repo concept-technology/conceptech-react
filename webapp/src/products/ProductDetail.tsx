@@ -1,48 +1,19 @@
-import {
-    Box,
-    Image,
-    Text,
-    Heading,
-    VStack,
-    HStack,
-    Badge,
-    List,
-    ListItem,
-    Icon,
-    Button,
-    Divider,
-    Spinner,
-    useColorModeValue,
-  } from "@chakra-ui/react";
-  import { ImCheckmark2 } from "react-icons/im";
-  import { useParams } from "react-router-dom";
-  import BackButton from "../utils/BackButton";
-  import useFetch from "../Blog-Page/hooks/useFetch";
-  import { Props } from "./ProductsCard";
-  
-  const ProductDetail = () => {
-    const { id, slug } = useParams<{ id: string; slug: string }>();
-    const { data:product, loading, error } = useFetch<Props>(`/api/products/${id}/${slug}/`);
-  
-    if (loading) {
-      return (
-        <Box textAlign="center" mt={8}>
-          <Spinner size="xl" />
-          <Text mt={4}>Loading product details...</Text>
-        </Box>
-      );
-    }
-  
-    if (error || !product || product.length === 0) {
-      return (
-        <Box textAlign="center" mt={8}>
-          <Text color="red.500">Failed to load product details. Please try again.</Text>
-        </Box>
-      );
-    }
-  
-    return (
-      <Box
+import {useColorModeValue, Badge, Box, Button, Divider, Heading, HStack, VStack, Image, Text, ListItem, List, Icon } from "@chakra-ui/react"
+import BackButton from "../utils/BackButton"
+import useFetch from "../Blog-Page/hooks/useFetch"
+import { useNavigate, useParams } from "react-router-dom"
+import { Props } from "./ProductsCard"
+import { ImCheckmark2 } from "react-icons/im"
+
+const ProductDetail = () => {
+    const {id, slug} = useParams<{id:string, slug:string}>()
+    const { data} = useFetch<Props>(`/api/products/${id}/${slug}/`);
+    const navigate = useNavigate()
+    // const data =[
+    //     {id: 1, image:'', name:'saome produts', description:'some descriptions', basse_price:200, discount_price:300, }
+    // ]
+    return(
+        <Box
         maxW="7xl"
         mx="auto"
         p={6}
@@ -51,7 +22,7 @@ import {
         boxShadow="lg"
       >
         <BackButton />
-        { product && product.map((product) => (
+        { data && data.map((product) => (
           <HStack
             key={product.id}
             flexDirection={{ base: "column", md: "row" }}
@@ -75,7 +46,7 @@ import {
               w="full"
               align="start"
               spacing={6}
-              bg={useColorModeValue("gray.50", "gray.700")}
+            //   bg={useColorModeValue("gray.50", "gray.700")}
               p={6}
               borderRadius="md"
             >
@@ -110,7 +81,7 @@ import {
               </HStack>
   
               {/* Features */}
-              {product.features && product.features.length > 0 ? (
+              {product.features ? (
                 <Box w="full">
                   <Text fontWeight="bold" mb={2}>
                     Features:
@@ -118,7 +89,7 @@ import {
                   <List spacing={3}>
                     {product.features.map((feature) => (
                       <ListItem key={feature.id} display="flex" alignItems="center">
-                        <Icon as={ImCheckmark2} color="teal.500" mr={2} />
+                        <Icon color="teal.500" mr={2} ><ImCheckmark2/></Icon>
                         <Text>{feature.feature}</Text>
                       </ListItem>
                     ))}
@@ -137,6 +108,7 @@ import {
                 w="full"
                 mt={4}
                 aria-label="Buy Now"
+                onClick={()=>navigate(`/product/${id}/${slug}/checkout`)}
               >
                 Buy Now
               </Button>
@@ -144,8 +116,7 @@ import {
           </HStack>
         ))}
       </Box>
-    );
-  };
-  
-  export default ProductDetail;
-  
+    )
+}
+
+export default ProductDetail

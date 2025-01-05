@@ -31,6 +31,7 @@ interface User {
   email: string;
   profile_picture?: string;
 }
+export const token = Cookies.get('access')
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -40,7 +41,6 @@ const Profile: React.FC = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { logout, isAuthenticated } = useAuth();
-  const token = Cookies.get('access')
 
   useEffect(() => {
     const fetchUser = async () => {

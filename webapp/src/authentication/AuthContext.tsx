@@ -28,7 +28,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         {},
         { withCredentials: true }
       );
-      console.log(response.data)
         setIsAuthenticated(true);
       
     } catch (error: any) {
