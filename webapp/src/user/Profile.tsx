@@ -1,201 +1,55 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Heading,
-  Text,
-  Stack,
-  Avatar,
-  useToast,
-  FormControl,
-  FormLabel,
-  Input,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Spinner,
-  useDisclosure,
-} from "@chakra-ui/react";
-import Logout from "../authentication/LogOut";
-import { useNavigate } from "react-router-dom";
-import apiClient from "../authentication/ApiClint";
-import { useAuth } from "../authentication/AuthContext";
+import { Box, Text, Button, VStack, useBreakpointValue } from "@chakra-ui/react";
 import Cookies from "js-cookie";
+import { useState } from "react";
+import UserAccount from "./UserAccount";
+import OrderDetails from "./Orders";
+import { validateToken } from "../authentication/AuthContext";
+import PaidOrderDetails from "./OderPaid";
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  profile_picture?: string;
-}
-export const token = Cookies.get('access')
+export const token = Cookies.get("access");
 
-const Profile: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [updatedUser, setUpdatedUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
-  const navigate = useNavigate();
-  const { logout, isAuthenticated } = useAuth();
+const Profile = () => {
+  validateToken();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await apiClient.get<User>(`/api/users/me/`, {
-          headers:{Authorization: `Bearer ${token}` }
-        });
-        setUser(response.data);
-        setUpdatedUser(response.data);
-      } catch (error: any) {
-        console.error("Failed to fetch user:", error);
-        if (error.response?.status === 401) {
-          toast({
-            title: "Session expired",
-            description: "Please log in again.",
-            status: "warning",
-            duration: 3000,
-            isClosable: true,
-          });
-          logout();
-          navigate("/login");
-        } else {
-          toast({
-            title: "Error",
-            description: "Unable to fetch user details.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Define the valid keys for the pages object
+  type PageKey = "Profile" | "Orders" | "Services" | "Contact";
+  const [currentPage, setCurrentPage] = useState<PageKey>("Profile");
 
-    fetchUser();
-  }, [logout, navigate, toast]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUpdatedUser((prev) => (prev ? { ...prev, [name]: value } : null));
+  const pages: Record<PageKey, JSX.Element> = {
+    Profile: <UserAccount />,
+    Orders: <PaidOrderDetails />,
+    Services: <Text fontSize="xl">These are our Services.</Text>,
+    Contact: <Text fontSize="xl">Get in touch with us on the Contact Page.</Text>,
   };
 
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      const response = await apiClient.patch(`/api/users/me/`, updatedUser, {
-        headers:{Authorization: `Bearer ${token}` }
-      });
-      setUser(response.data);
-      toast({
-        title: "Profile updated.",
-        description: "Your profile has been successfully updated.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      onClose();
-    } catch (error: any) {
-      console.error("Failed to update user:", error);
-      toast({
-        title: "Error",
-        description: "Unable to update profile.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" py={10}>
-        <Spinner size="xl" color="purple.500" />
-      </Box>
-    );
-  }
-
-  if (!user) return <p>User details were not found.</p>;
-
-  const hasChanges =
-    updatedUser?.username !== user?.username ||
-    updatedUser?.email !== user?.email;
+  // Use Chakra's responsive `flexDirection` for layout
+  const flexDirection = useBreakpointValue({ base: "column", md: "row" });
+  const leftColumnWidth = useBreakpointValue({ base: "100%", md: "10%" });
+  const rightColumnWidth = useBreakpointValue({ base: "100%", md: "90%" });
 
   return (
-    <>
-      {isAuthenticated && (
-        <Box maxW="lg" mx="auto" py={10} px={6}>
-          <Heading as="h1" mb={4} textAlign="center" color="purple.600">
-            Welcome, {user.username}!
-          </Heading>
-          <Box display="flex" justifyContent="center" mb={6}>
-            <Avatar
-              size="2xl"
-              name={user.username}
-              src={user.profile_picture ?? "/placeholder.png"}
-            />
-          </Box>
-          <Text fontSize="lg" textAlign="center" mb={6}>
-            Email: {user.email}
-          </Text>
-          <Stack direction="row" spacing={4} justify="center" mb={6}>
-            <Button onClick={onOpen} colorScheme="blue">
-              Edit Profile
+    <Box display="flex" flexDirection={flexDirection} height="100vh" >
+      {/* Left Column */}
+      <Box width={leftColumnWidth} bg="gray.100" p={4}>
+        <VStack spacing={4} align="stretch">
+          {Object.keys(pages).map((page) => (
+            <Button
+              key={page}
+              onClick={() => setCurrentPage(page as PageKey)}
+              colorScheme="teal"
+              variant={currentPage === page ? "solid" : "outline"}
+            >
+              {page}
             </Button>
-            <Button onClick={() => navigate("/reset-password")} colorScheme="red">
-              Reset Password
-            </Button>
-          </Stack>
-          <Logout />
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Edit Profile</ModalHeader>
-              <ModalBody>
-                <FormControl mb={4} isRequired>
-                  <FormLabel>Username</FormLabel>
-                  <Input
-                    value={updatedUser?.username || ""}
-                    name="username"
-                    onChange={handleChange}
-                    placeholder="Enter your new username"
-                  />
-                </FormControl>
-                <FormControl mb={4} isRequired>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    type="email"
-                    value={updatedUser?.email || ""}
-                    name="email"
-                    onChange={handleChange}
-                    placeholder="Enter your new email"
-                  />
-                </FormControl>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  onClick={handleSave}
-                  colorScheme="blue"
-                  isLoading={loading}
-                  isDisabled={!hasChanges}
-                >
-                  Save
-                </Button>
-                <Button onClick={onClose} variant="ghost">
-                  Cancel
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </Box>
-      )}
-    </>
+          ))}
+        </VStack>
+      </Box>
+
+      {/* Right Column */}
+      <Box width={rightColumnWidth} bg="gray.50" p={8}>
+        {pages[currentPage]}
+      </Box>
+    </Box>
   );
 };
 

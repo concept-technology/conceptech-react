@@ -6,6 +6,7 @@ import useFetch from '../../Blog-Page/hooks/useFetch'
 import DigitalProductsList from '../../products/DiditalProducts'
 import useProduct from '../../products/hook/useProduct'
 import ProductsCard from '../../products/ProductsCard'
+import { token } from '../../user/UserAccount'
 import About_us from './About_us'
 import BlogSection from './BlogSection'
 import CarouselComponent from './Carousel'
@@ -28,7 +29,7 @@ interface Product{
 
   
 const HomeApp = () => {
-    const {data:products} = useFetch<Product>(`/api/products/view/`)
+    const {data:products} = useFetch<Product>(`/api/products/view/`,token)
     return (
     <>
         <CarouselComponent/>

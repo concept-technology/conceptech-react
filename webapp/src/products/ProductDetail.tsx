@@ -4,10 +4,13 @@ import useFetch from "../Blog-Page/hooks/useFetch"
 import { useNavigate, useParams } from "react-router-dom"
 import { Props } from "./ProductsCard"
 import { ImCheckmark2 } from "react-icons/im"
+import { token } from "../user/UserAccount"
 
 const ProductDetail = () => {
     const {id, slug} = useParams<{id:string, slug:string}>()
-    const { data} = useFetch<Props>(`/api/products/${id}/${slug}/`);
+    const { data} = useFetch<Props>(`/api/products/${id}/${slug}/`, token);
+    const {status} = useFetch('/api/address/check/', token)
+
     const navigate = useNavigate()
     // const data =[
     //     {id: 1, image:'', name:'saome produts', description:'some descriptions', basse_price:200, discount_price:300, }
@@ -17,7 +20,7 @@ const ProductDetail = () => {
         maxW="7xl"
         mx="auto"
         p={6}
-        // bg={useColorModeValue("white", "gray.800")}
+        bg={useColorModeValue("white", "gray.800")}
         borderRadius="lg"
         boxShadow="lg"
       >
@@ -108,7 +111,7 @@ const ProductDetail = () => {
                 w="full"
                 mt={4}
                 aria-label="Buy Now"
-                onClick={()=>navigate(`/product/${id}/${slug}/checkout`)}
+                onClick={()=> status ? navigate('/order/payment'): navigate(`/product/${id}/${slug}/checkout`)}
               >
                 Buy Now
               </Button>

@@ -26,6 +26,9 @@ import DatabaseDetailView from "./database/dbDetails";
 import DatabaseHomePage from "./database/Homepage";
 import ProductDetail from "./products/ProductDetail";
 import CheckoutPage from "./products/Checkout";
+import PaymentGate from "./products/PaymentGate";
+import SuccessPage from "./products/PaymentSuccess";
+
 
 
 function App() {
@@ -56,10 +59,10 @@ function App() {
         as="main"
         area="main"
         overflowY="auto"
-        px={{ base: 4, md: 8 }}
-        py={6}
+        // px={{ base: 4, md: 8 }}
+        // py={6}
       >
-        <Box maxW="1200px" mx="auto">
+        <Box maxW="1400px" mx="auto">
           <Routes>
             {/* Routes */}
             <Route path="*" element={<NotFound />} />
@@ -98,6 +101,8 @@ function App() {
             <Route path="/products/:id/:slug" element={<ProductDetail />} />
 
             <Route path="product/:id/:slug/checkout" element={<PrivateRoute><CheckoutPage/></PrivateRoute>}/>
+            <Route path="order/payment" element={<PrivateRoute><PaymentGate /></PrivateRoute>}/>
+            <Route path="order/payment/success" element={<PrivateRoute><SuccessPage/></PrivateRoute>}/>
           </Routes>
         </Box>
       </GridItem>

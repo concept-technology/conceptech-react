@@ -15,7 +15,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-import { useNavigate, Navigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 import axios from "axios";
 import { SITE_DOMAIN } from "./ApiClint";
@@ -55,10 +55,9 @@ const LoginPage: React.FC = () => {
         status: "success",
         duration: 3000,
         isClosable: true,
-      });
-  
-      login(); // Set authentication state
-      navigate(from, { replace: true }); // Redirect to the referring page
+      });  
+      login()
+      navigate('/account/profile'); // Redirect to the referring page
     } catch (error: any) {
       console.error("Login error:", error);
   

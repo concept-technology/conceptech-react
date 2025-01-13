@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import BackButton from "../utils/BackButton";
 import useFetch from "../Blog-Page/hooks/useFetch";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SITE_DOMAIN } from "../authentication/ApiClint";
 import axios from "axios";
 import { token } from "../user/Profile";
@@ -44,9 +44,10 @@ interface FormValues {
 
 const CheckoutPage = () => {
   const { id, slug } = useParams<{ id: string; slug: string }>();
-  const { data } = useFetch<Props[]>(`/api/products/${id}/${slug}/`);
+  const { data } = useFetch<Props[]>(`/api/products/${id}/${slug}/`, token);
   const { login } = useAuth();
   const toast = useToast();
+  const navigate = useNavigate()
 
   const {
     handleSubmit,
@@ -85,7 +86,7 @@ const CheckoutPage = () => {
         duration: 3000,
         isClosable: true,
       });
-
+      navigate('/order/payment')
       console.log("Order Response:", response.data);
     } catch (error: any) {
       if (error.response && error.response.status === 401) {

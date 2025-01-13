@@ -26,7 +26,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAppStoreIos, FaRegUser } from "react-icons/fa";
 import axios from "axios";
 import { SITE_DOMAIN } from "../../authentication/ApiClint";
-import { useAuth } from "../../authentication/AuthContext";
+import { token } from "../../user/UserAccount";
 
 interface NavItem {
   id: number;
@@ -35,9 +35,7 @@ interface NavItem {
   icon: JSX.Element;
 }
 
-// interface NavBarProps {
-//   navbar: NavItem[];
-// }
+
 
 const NavBar = () => {
   const [active, setActive] = useState(-1);
@@ -47,7 +45,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const {isAuthenticated} = useAuth()
+  const tokens = token
 
   const searchRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<{ username?: string } | null>(null);
@@ -80,9 +78,9 @@ const NavBar = () => {
 
     {
       id: 4,
-      text: isAuthenticated ?  'profile': "login",
+      text: token ?  'profile': "login",
       icon: <FaRegUser />,
-      link: isAuthenticated ? "/account/profile" : "/login",
+      link: token ? "/account/profile" : "/login",
     },
   ];
 
@@ -155,7 +153,7 @@ const NavBar = () => {
   return (
     <>
       <HStack p={"10px"} w="100%" bg="#2f304c" boxShadow="sm">
-        <Link to="/" onClick={() => (window.location.href = "/")}>
+        <Link to="/" >
           <Button
             leftIcon={<FcHome />}
             fontSize={"2xl"}

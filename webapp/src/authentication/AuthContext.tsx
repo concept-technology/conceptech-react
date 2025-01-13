@@ -14,6 +14,21 @@ export interface RefreshTokenResponse {
   refresh?: string;
   validateToken: ()=>void
 }
+
+
+export const validateToken = async (): Promise<void> => {
+  try {
+    const response = await apiClient.post<RefreshTokenResponse>(
+      `/api/token/refresh/`,
+      {},
+      { withCredentials: true }
+    );
+    localStorage.setItem('authenticated','true')
+  } catch (error: any) {
+    console.error("Token validation failed:", error.response?.data || error.message);
+  }
+};
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -21,20 +36,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
 
 
-  const validateToken = async (): Promise<void> => {
-    try {
-      const response = await apiClient.post<RefreshTokenResponse>(
-        `/api/token/refresh/`,
-        {},
-        { withCredentials: true }
-      );
-        setIsAuthenticated(true);
-      
-    } catch (error: any) {
-      setIsAuthenticated(false);
-      console.error("Token validation failed:", error.response?.data || error.message);
-    }
-  };
 
   // Validate token on initial render
   useEffect(() => {
@@ -44,6 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async () => {
     validateToken()
+
     setIsAuthenticated(true);
   };
 

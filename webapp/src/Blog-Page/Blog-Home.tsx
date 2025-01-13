@@ -7,9 +7,10 @@ import Footer from "../Home-page/components/Footer";
 import Categories from "./Categories";
 import useFetch from "./hooks/useFetch";
 import { Blog } from "./hooks/useBlog";
+import { token } from "../user/UserAccount";
 
 const BlogHome = () => {
-  const { data = [] } = useFetch<Blog>("/api/blog/"); // Provide a default value to prevent errors if data is undefined
+  const { data = [] } = useFetch<Blog>("/api/blog/",token); // Provide a default value to prevent errors if data is undefined
 
   return (
     <>
