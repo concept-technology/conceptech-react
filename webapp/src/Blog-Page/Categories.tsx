@@ -7,7 +7,7 @@ const Categories = ()=>{
     return(
         <VStack>
             <List>
-            {data.map(cate=>
+            { data.length >0 && data.map(cate=>
             <>
                 <HStack>
 

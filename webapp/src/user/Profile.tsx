@@ -1,20 +1,15 @@
 import { Box, Text, Button, VStack, useBreakpointValue } from "@chakra-ui/react";
-import Cookies from "js-cookie";
+
 import { useState } from "react";
 import UserAccount from "./UserAccount";
-import OrderDetails from "./Orders";
-import { validateToken } from "../authentication/AuthContext";
 import PaidOrderDetails from "./OderPaid";
 
-export const token = Cookies.get("access");
 
 const Profile = () => {
-  validateToken();
-
   // Define the valid keys for the pages object
   type PageKey = "Profile" | "Orders" | "Services" | "Contact";
   const [currentPage, setCurrentPage] = useState<PageKey>("Profile");
-
+  
   const pages: Record<PageKey, JSX.Element> = {
     Profile: <UserAccount />,
     Orders: <PaidOrderDetails />,
@@ -54,3 +49,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

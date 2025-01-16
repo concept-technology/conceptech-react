@@ -20,7 +20,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { SITE_DOMAIN } from "./ApiClint";
 import { useAuth } from "./AuthContext";
-
+import Cookies from "js-cookie";
 interface LoginFormData {
   username: string;
   password: string;
@@ -37,27 +37,28 @@ const LoginPage: React.FC = () => {
   const { isAuthenticated, login } = useAuth();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/";
-  // Redirect logged-in users to the profile page
   if (isAuthenticated) {
-    return 
+    return navigate('/account/profile')
   }
   
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
       const response = await axios.post(`${SITE_DOMAIN}/api/auth/user/login/`, data, {
-        withCredentials: true, // Allow cookies in the request/response
       });
   
       toast({
         title: "Login successful.",
-        description: `Welcome back, ${data.username}!`,
+        description: `Welcome back ${data.username}!`,
         status: "success",
         duration: 3000,
         isClosable: true,
       });  
       login()
-      navigate('/account/profile'); // Redirect to the referring page
+      localStorage.setItem('__AccessTOKen__',response.data.__AccessTOKen__)
+      Cookies.set('refresh',response.data.__AccessTOKenref__)
+      localStorage.setItem('__AccessTOKenref__', response.data.__AccessTOKenref__)
+
+      navigate('/account/profile');
     } catch (error: any) {
       console.error("Login error:", error);
   
@@ -67,7 +68,7 @@ const LoginPage: React.FC = () => {
         "An unknown error occurred.";
   
       toast({
-        title: "Login failed.",
+        title: "invalid user.",
         description: errorMessage,
         status: "error",
         duration: 3000,

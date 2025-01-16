@@ -1,4 +1,11 @@
-import { Grid, GridItem, Show, SimpleGrid } from "@chakra-ui/react";
+import {
+  Box,
+  Grid,
+  GridItem,
+  Show,
+  SimpleGrid,
+  Heading,
+} from "@chakra-ui/react";
 import BlogHeader from "./BlogHeader";
 import BlogCard from "./BlogCard";
 import BlogSlide from "./SwiperSlide";
@@ -7,10 +14,10 @@ import Footer from "../Home-page/components/Footer";
 import Categories from "./Categories";
 import useFetch from "./hooks/useFetch";
 import { Blog } from "./hooks/useBlog";
-import { token } from "../user/UserAccount";
+import { token } from "../authentication/ApiClint";
 
 const BlogHome = () => {
-  const { data = [] } = useFetch<Blog>("/api/blog/",token); // Provide a default value to prevent errors if data is undefined
+  const { data = [] } = useFetch<Blog>("/api/blog/", token); // Ensure data is initialized to an empty array
 
   return (
     <>
@@ -31,35 +38,43 @@ const BlogHome = () => {
         {/* Sidebar - Only visible on large screens */}
         <Show above="lg">
           <GridItem area="aside" p={4} borderRadius="md">
-            <Categories/>
+            <Categories />
           </GridItem>
         </Show>
 
         {/* Main Content */}
         <GridItem area="main">
-          {/* Featured Blog Slide */}
-          <SimpleGrid columns={{ base: 1, lg: 4 }} gap={6} mb={8}>
-            <GridItem colSpan={{ base: 1, lg: 3 }}>
-              <BlogSlide BlogProps={data} />
-            </GridItem>
-            <GridItem>
-              <RightBlogCard BlogProps={data} />
-            </GridItem>
-          </SimpleGrid>
+          {data.length > 0 ? (
+            <>
+              {/* Featured Blog Slide */}
+              <SimpleGrid columns={{ base: 1, lg: 4 }} gap={6} mb={8}>
+                <GridItem colSpan={{ base: 1, lg: 3 }}>
+                  <BlogSlide BlogProps={data} />
+                </GridItem>
+                <GridItem>
+                  <RightBlogCard BlogProps={data} />
+                </GridItem>
+              </SimpleGrid>
 
-          {/* Blog Cards */}
-          <SimpleGrid
-            columns={{ base: 1, sm: 2, md: 3, xl: 4 }}
-            gap={6}
-            spacingY={10}
-          >
-            {data.map((blog) => (
-              <BlogCard cardContents={blog} key={blog.id} />
-            ))}
-          </SimpleGrid>
+              {/* Blog Cards */}
+              <SimpleGrid
+                columns={{ base: 1, sm: 2, md: 3, xl: 4 }}
+                gap={6}
+                spacingY={10}
+              >
+                {data.map((blog) => (
+                  <BlogCard cardContents={blog} key={blog.id} />
+                ))}
+              </SimpleGrid>
+            </>
+          ) : (
+            <Box textAlign="center" py={10}>
+              <Heading>No blogs found</Heading>
+            </Box>
+          )}
         </GridItem>
       </Grid>
-      <Footer/>
+      <Footer />
     </>
   );
 };

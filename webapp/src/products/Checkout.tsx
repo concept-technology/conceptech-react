@@ -20,9 +20,8 @@ import {
 import BackButton from "../utils/BackButton";
 import useFetch from "../Blog-Page/hooks/useFetch";
 import { useNavigate, useParams } from "react-router-dom";
-import { SITE_DOMAIN } from "../authentication/ApiClint";
+import { SITE_DOMAIN, token } from "../authentication/ApiClint";
 import axios from "axios";
-import { token } from "../user/Profile";
 import { useAuth } from "../authentication/AuthContext";
 
 interface Props {

@@ -15,8 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { PaystackButton } from 'react-paystack';
 import useFetch from '../Blog-Page/hooks/useFetch';
-import { token } from '../user/UserAccount';
-import apiClient from '../authentication/ApiClint';
+import apiClient, { token } from '../authentication/ApiClint';
 import { useNavigate } from 'react-router-dom';
 
 interface Order {

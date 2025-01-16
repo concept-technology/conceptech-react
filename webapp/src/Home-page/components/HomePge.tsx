@@ -8,6 +8,7 @@ import {
   VStack,
 
 } from "@chakra-ui/react";
+import clogo from '../../assets/Images/logo.jpg'
 
 import { Link, useNavigate } from "react-router-dom";
 import logo from '../../assets/mylogo.png'
@@ -33,7 +34,7 @@ const HomePage = () => {
       >
         <VStack align="start" spacing={4}>
           <Heading as="h1" size="2xl" fontWeight="bold">
-            Welcome to Concept Technologies and Software Solutions
+            Concept Technologies and Software Solutions
           </Heading>
           <Text fontSize="lg" color='whiteAlpha.800'>
             Innovating the future through cutting-edge technology and tailored
@@ -46,7 +47,7 @@ const HomePage = () => {
           </Link>
         </VStack>
         <Image
-          src={logo}
+          src={clogo}
           alt="Hero Image"
           maxW="500px"
           mt={{ base: 8, md: 0 }}

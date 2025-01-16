@@ -21,9 +21,9 @@ import {
 } from "@chakra-ui/react";
 import Logout from "../authentication/LogOut";
 import { useNavigate } from "react-router-dom";
-import apiClient from "../authentication/ApiClint";
+import apiClient, { token } from "../authentication/ApiClint";
 import { useAuth, validateToken } from "../authentication/AuthContext";
-import Cookies from "js-cookie";
+
 
 interface User {
   id: number;
@@ -31,7 +31,8 @@ interface User {
   email: string;
   profile_picture?: string;
 }
-export const token = Cookies.get('access')
+// export const token = Cookies.get('access')
+
 const UserAccount: React.FC = () => {
 const {login} = useAuth()
   const [user, setUser] = useState<User | null>(null);
@@ -54,9 +55,9 @@ const {login} = useAuth()
         console.error("Failed to fetch user:", error);
         if (error.response?.status === 401) {
           try{
-        login()
-
+            
           }catch{
+            login()
 
             toast({
               title: "Session expired",

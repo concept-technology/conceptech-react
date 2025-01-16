@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate} from "react-router-dom";
-import { useAuth} from "./AuthContext";
-import {  token } from "../user/UserAccount";
+import { token } from "./ApiClint";
+
 
 
 interface PrivateRouteProps {
@@ -9,13 +9,8 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const {login} =useAuth()
-  const tokens = token
-  if (!tokens) {
-      return <Navigate to="/login"  replace />;
-    }
-    login()
-  return children;
+
+      return token ? children :<Navigate to="/login" />; 
 };
 
 export default PrivateRoute;

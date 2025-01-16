@@ -24,9 +24,8 @@ import { HiOutlineMenu, HiOutlineSearch } from "react-icons/hi";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAppStoreIos, FaRegUser } from "react-icons/fa";
-import axios from "axios";
-import { SITE_DOMAIN } from "../../authentication/ApiClint";
-import { token } from "../../user/UserAccount";
+import { token } from "../../authentication/ApiClint";
+
 
 interface NavItem {
   id: number;
@@ -45,40 +44,18 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const tokens = token
 
   const searchRef = useRef<HTMLDivElement>(null);
-  const [user, setUser] = useState<{ username?: string } | null>(null);
-
-
-  // Load user on component mount or token change
-  useEffect(() => {
-
-    const FechUser= async ()=>{
-
-      const response = await axios.get(`${SITE_DOMAIN}/api/users/me/`, {
-        withCredentials:true
-      });
-
-      if (response.status== 200){
-        setUser(response.data)
-      }
-    } 
-    ()=>FechUser()
-  }, []);
-
-  // Navigation items
-
 
   const navItems: NavItem[] = [
     { id: 0, text: "About", icon: <FcAbout />, link: "#about" },
     { id: 1, text: "Blog", icon: <FcNews />, link: "blog" },
     // { id: 2, text: "Contact", icon: <FcCellPhone />, link: "#contact" },
-    { id: 3, text: "Apps", icon: <FaAppStoreIos />, link: "/project" },
+    { id: 3, text: "Apps", icon: <FaAppStoreIos />, link: "/products/services" },
 
     {
       id: 4,
-      text: token ?  'profile': "login",
+      text: token ?  'acount': "login",
       icon: <FaRegUser />,
       link: token ? "/account/profile" : "/login",
     },

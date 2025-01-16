@@ -4,7 +4,8 @@ import useFetch from "../Blog-Page/hooks/useFetch"
 import { useNavigate, useParams } from "react-router-dom"
 import { Props } from "./ProductsCard"
 import { ImCheckmark2 } from "react-icons/im"
-import { token } from "../user/UserAccount"
+import { token } from "../authentication/ApiClint"
+
 
 const ProductDetail = () => {
     const {id, slug} = useParams<{id:string, slug:string}>()

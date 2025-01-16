@@ -28,10 +28,12 @@ import ProductDetail from "./products/ProductDetail";
 import CheckoutPage from "./products/Checkout";
 import PaymentGate from "./products/PaymentGate";
 import SuccessPage from "./products/PaymentSuccess";
+import useTokenRefresh from "./authentication/RefreshToken";
 
 
 
 function App() {
+  useTokenRefresh()
   return (
     <Grid
       templateRows="auto 1fr"
@@ -62,7 +64,7 @@ function App() {
         // px={{ base: 4, md: 8 }}
         // py={6}
       >
-        <Box maxW="1400px" mx="auto">
+        <Box maxW={{g:"90%",sm:"100%"}} mx="auto">
           <Routes>
             {/* Routes */}
             <Route path="*" element={<NotFound />} />
@@ -80,7 +82,7 @@ function App() {
             <Route path="password-reset/request" element={<PasswordResetRequest />} />
             <Route path="password-reset/done" element={<PasswordReset />} />
             <Route
-              path="project"
+              path="products/services"
               element={<PrivateRoute><ProjectHome projectItems={projecObject} /></PrivateRoute>}
             />
             <Route

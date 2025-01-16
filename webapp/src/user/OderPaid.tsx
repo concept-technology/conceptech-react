@@ -12,8 +12,7 @@ import {
     Divider,
   } from '@chakra-ui/react';
   import useFetch from '../Blog-Page/hooks/useFetch';
-  import { token } from './UserAccount';
-  import { ProductsProps } from '../products/ProductsCard';
+import { token } from '../authentication/ApiClint';
   
   interface Product {
     id: number;

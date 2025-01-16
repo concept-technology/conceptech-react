@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import apiClient from "./ApiClint";
-
+import apiClient, { token } from "./ApiClint";
+import Cookies from "js-cookie";
 
 
 interface AuthContextType {
@@ -12,6 +12,8 @@ interface AuthContextType {
 export interface RefreshTokenResponse {
   access: string;
   refresh?: string;
+  __AccessTOKen__:string
+  __AccessTOKenref__:string
   validateToken: ()=>void
 }
 
@@ -21,9 +23,13 @@ export const validateToken = async (): Promise<void> => {
     const response = await apiClient.post<RefreshTokenResponse>(
       `/api/token/refresh/`,
       {},
-      { withCredentials: true }
+      {withCredentials: true }
     );
+
     localStorage.setItem('authenticated','true')
+    Cookies.set('refresh',response.data.__AccessTOKenref__)
+    localStorage.setItem('__AccessTOKen__', response.data.__AccessTOKen__)
+    localStorage.setItem('__AccessTOKenref__', response.data.__AccessTOKenref__)
   } catch (error: any) {
     console.error("Token validation failed:", error.response?.data || error.message);
   }
@@ -36,17 +42,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
 
 
-
-  // Validate token on initial render
-  useEffect(() => {
-
-    validateToken();
-  }, []);
-
   const login = async () => {
-    validateToken()
+    useEffect(()=>{
+      validateToken()
+      setIsAuthenticated(true);
+    },[])
 
-    setIsAuthenticated(true);
   };
 
   const logout = () => {
