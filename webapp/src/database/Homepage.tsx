@@ -47,7 +47,7 @@ const DatabaseHomePage: React.FC = () => {
 
         {/* Action Buttons Section */}
         <Stack direction="row" spacing={6} justify="center">
-          <Link href="/create/databse">
+          <Link href="/create/database">
             <Button
               colorScheme="teal"
               leftIcon={<Icon as={FaPlusCircle} />}

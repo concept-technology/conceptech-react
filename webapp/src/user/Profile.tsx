@@ -1,13 +1,15 @@
 import { Box, Text, Button, VStack, useBreakpointValue } from "@chakra-ui/react";
 
-import { useState } from "react";
+import {  useState } from "react";
 import UserAccount from "./UserAccount";
 import PaidOrderDetails from "./OderPaid";
+import Logout from "../authentication/LogOut";
+
 
 
 const Profile = () => {
   // Define the valid keys for the pages object
-  type PageKey = "Profile" | "Orders" | "Services" | "Contact";
+  type PageKey = "Profile" | "Orders" | "Services" | "Contact"| "logout";
   const [currentPage, setCurrentPage] = useState<PageKey>("Profile");
   
   const pages: Record<PageKey, JSX.Element> = {
@@ -15,6 +17,7 @@ const Profile = () => {
     Orders: <PaidOrderDetails />,
     Services: <Text fontSize="xl">These are our Services.</Text>,
     Contact: <Text fontSize="xl">Get in touch with us on the Contact Page.</Text>,
+    logout: <Logout/>
   };
 
   // Use Chakra's responsive `flexDirection` for layout

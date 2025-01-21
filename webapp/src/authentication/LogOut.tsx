@@ -2,23 +2,22 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, Button } from '@chakra-ui/react';
 import Cookies from 'js-cookie';
+import { token } from './ApiClint';
+import { useAuth } from './AuthContext';
 const Logout: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  
+  const {logout} = useAuth()
   const handleLogout = async () => {
     try {
-      const token = Cookies.get('ac'); // Retrieve the auth token
       if (!token) {
         throw new Error("No token found");
       }
 
-      Cookies.remove('ac');
-      Cookies.remove('re');
-      location.reload()
+      logout()
       navigate('/');
-
-      // Show success toast
+      location.reload()
+           
       toast({
         title: "Logged out successfully.",
         description: "You have been logged out.",

@@ -28,12 +28,10 @@ import ProductDetail from "./products/ProductDetail";
 import CheckoutPage from "./products/Checkout";
 import PaymentGate from "./products/PaymentGate";
 import SuccessPage from "./products/PaymentSuccess";
-import useTokenRefresh from "./authentication/RefreshToken";
 
 
 
 function App() {
-  useTokenRefresh()
   return (
     <Grid
       templateRows="auto 1fr"

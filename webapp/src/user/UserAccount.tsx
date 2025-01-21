@@ -22,7 +22,8 @@ import {
 import Logout from "../authentication/LogOut";
 import { useNavigate } from "react-router-dom";
 import apiClient, { token } from "../authentication/ApiClint";
-import { useAuth, validateToken } from "../authentication/AuthContext";
+import { validateToken } from "../authentication/AuthContext";
+import useFetch from "../Blog-Page/hooks/useFetch";
 
 
 interface User {
@@ -34,31 +35,26 @@ interface User {
 // export const token = Cookies.get('access')
 
 const UserAccount: React.FC = () => {
-const {login} = useAuth()
   const [user, setUser] = useState<User | null>(null);
   const [updatedUser, setUpdatedUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const navigate = useNavigate();
-  // const { logout, isAuthenticated } = useAuth();
+  const {data} = useFetch<User>(`/api/users/me/`,token)
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await apiClient.get<User>(`/api/users/me/`, {
-          headers:{Authorization: `Bearer ${token}` }
-        });
-        setUser(response.data);
-        setUpdatedUser(response.data);
+  validateToken()
+  useEffect(()=>{
+    const fetchUser =  () => {
+      try{
+        setUser(data);
+        setUpdatedUser(data);
       } catch (error: any) {
         console.error("Failed to fetch user:", error);
         if (error.response?.status === 401) {
           try{
             
           }catch{
-            login()
-
             toast({
               title: "Session expired",
               description: "Please log in again.",
@@ -83,7 +79,7 @@ const {login} = useAuth()
     };
 
     fetchUser();
-  }, [ validateToken, navigate, toast]);
+  },[loading])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

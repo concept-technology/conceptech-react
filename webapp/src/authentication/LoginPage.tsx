@@ -1,6 +1,5 @@
-//
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   Box,
@@ -13,14 +12,16 @@ import {
   Text,
   Icon,
   useToast,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import axios from "axios";
-import { SITE_DOMAIN } from "./ApiClint";
+import apiClient, { SITE_DOMAIN } from "./ApiClint";
 import { useAuth } from "./AuthContext";
 import Cookies from "js-cookie";
+
 interface LoginFormData {
   username: string;
   password: string;
@@ -34,49 +35,51 @@ const LoginPage: React.FC = () => {
   } = useForm<LoginFormData>();
   const toast = useToast();
   const navigate = useNavigate();
-  const { isAuthenticated, login } = useAuth();
-  const location = useLocation();
+  const { isAuthenticated} = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
-  if (isAuthenticated) {
-    return navigate('/account/profile')
-  }
-  
+    if (isAuthenticated) {
+      navigate("/account/profile");
+    }
+
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+    setIsLoading(true);
     try {
-      const response = await axios.post(`${SITE_DOMAIN}/api/auth/user/login/`, data, {
-      });
-  
+      const response = await apiClient.post(`/api/auth/user/login/`, data);
+      Cookies.set("access", response.data.__AccessTOKen__, { secure: false });
+      Cookies.set('refresh',response.data.__AccessTOKenref__)
+      setIsLoading(false)
+      navigate("/account/profile");
+      // Display success message
       toast({
         title: "Login successful.",
-        description: `Welcome back ${data.username}!`,
+        description: `Welcome back, ${data.username}!`,
         status: "success",
         duration: 3000,
         isClosable: true,
-      });  
-      login()
-      localStorage.setItem('__AccessTOKen__',response.data.__AccessTOKen__)
-      Cookies.set('refresh',response.data.__AccessTOKenref__)
-      localStorage.setItem('__AccessTOKenref__', response.data.__AccessTOKenref__)
-
-      navigate('/account/profile');
+      });
+      
+      
     } catch (error: any) {
       console.error("Login error:", error);
-  
+      
       const errorMessage =
-        error.response?.data?.detail ||
-        error.response?.data?.error ||
-        "An unknown error occurred.";
-  
+      error.response?.data?.detail ||
+      error.response?.data?.error ||
+      "An unknown error occurred.";
+      
+      // Display error message
+      setIsLoading(false)
       toast({
-        title: "invalid user.",
+        title: "Invalid login attempt.",
         description: errorMessage,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-    }
+    } 
   };
-  
+
   return (
     <Box
       minHeight="100vh"
@@ -106,8 +109,14 @@ const LoginPage: React.FC = () => {
                 id="username"
                 type="text"
                 placeholder="Enter your username"
-                {...register("username", { required: "Username is required" })}
+                {...register("username", {
+                  required: "Username is required",
+                  minLength: { value: 4, message: "Username must be at least 4 characters" },
+                })}
               />
+              <Text color="red.500" fontSize="sm">
+                {errors.username?.message}
+              </Text>
             </FormControl>
 
             <FormControl isInvalid={!!errors.password}>
@@ -116,11 +125,22 @@ const LoginPage: React.FC = () => {
                 id="password"
                 type="password"
                 placeholder="Enter your password"
-                {...register("password", { required: "Password is required" })}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: { value: 6, message: "Password must be at least 6 characters" },
+                })}
               />
+              <Text color="red.500" fontSize="sm">
+                {errors.password?.message}
+              </Text>
             </FormControl>
 
-            <Button colorScheme="blue" type="submit" width="full">
+            <Button
+              colorScheme="blue"
+              type="submit"
+              width="full"
+              isLoading={isLoading}
+            >
               Log In
             </Button>
 
@@ -147,14 +167,16 @@ const LoginPage: React.FC = () => {
             </Button>
 
             <Text textAlign="center" mt={2}>
-              Don't have an account? <a href="/signup">Sign up</a>
+              Don't have an account?{" "}
+              <ChakraLink href="/signup" color="blue.500">
+                Sign up
+              </ChakraLink>
             </Text>
 
             <Text textAlign="center" mt={2}>
-              forgot password{" "}
-              <Link to="/password-reset/request" color="blue.100">
-                {" "}
-                reset
+              Forgot password?{" "}
+              <Link to="/password-reset/request" style={{ color: "blue.500" }}>
+                Reset it here
               </Link>
             </Text>
           </Stack>
@@ -165,5 +187,3 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
-
-

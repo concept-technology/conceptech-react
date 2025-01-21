@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate} from "react-router-dom";
 import { token } from "./ApiClint";
+import { validateToken } from "./AuthContext";
 
 
 
@@ -9,8 +10,13 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-
-      return token ? children :<Navigate to="/login" />; 
+      if (!token){
+        <Navigate to="/login" replace/>
+      }
+      useEffect(()=>{
+        validateToken()
+      },[])
+      return  children 
 };
 
 export default PrivateRoute;

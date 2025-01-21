@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import apiClient, { token } from "./ApiClint";
+import apiClient from "./ApiClint";
 import Cookies from "js-cookie";
 
 
@@ -28,8 +28,7 @@ export const validateToken = async (): Promise<void> => {
 
     localStorage.setItem('authenticated','true')
     Cookies.set('refresh',response.data.__AccessTOKenref__)
-    localStorage.setItem('__AccessTOKen__', response.data.__AccessTOKen__)
-    localStorage.setItem('__AccessTOKenref__', response.data.__AccessTOKenref__)
+    Cookies.set('accessToken',response.data.__AccessTOKen__)
   } catch (error: any) {
     console.error("Token validation failed:", error.response?.data || error.message);
   }
@@ -52,6 +51,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setIsAuthenticated(false);
+    Cookies.remove('accessToken')
+    Cookies.remove('refresh')
     navigate("/");
   };
 

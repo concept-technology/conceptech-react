@@ -14,8 +14,7 @@ import {
 import { useForm, SubmitHandler } from "react-hook-form";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import apiClient, { SITE_DOMAIN } from "../authentication/ApiClint";
-import axios from "axios";
+import apiClient, { token }  from "../authentication/ApiClint";
 import Footer from "../Home-page/components/Footer";
 
 // Define the form input types
@@ -37,7 +36,7 @@ const CreateDatabaseForm: React.FC = () => {
 
   // Submit handler
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-   const  token = Cookies.get('access')
+
    console.log(data)
     try {
       const response = await apiClient.post(`/api/database/`, data,{
