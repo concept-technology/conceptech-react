@@ -10,7 +10,6 @@ import PrivacyPolicy from "./privacy/Privacy_policy";
 import Support from "./privacy/support";
 import SignupPage from "./authentication/SignUpage";
 import LoginPage from "./authentication/LoginPage";
-import ResetPassword from "./user/resetPassword";
 import Profile from "./user/Profile";
 import NotFound from "./Home-page/components/NotFound";
 import ContactForm from "./Home-page/components/ContactForm";
@@ -28,6 +27,8 @@ import CheckoutPage from "./products/Checkout";
 import PaymentGate from "./products/PaymentGate";
 import SuccessPage from "./products/PaymentSuccess";
 import PrivateRoute from "./authentication/PrivateRoutes";
+import PasswordRestForm from "./user/PasswordResetForm";
+import ChangePasswordForm from "./user/ChangePassword";
 
 
 
@@ -91,10 +92,7 @@ function App() {
               path="account/profile"
               element={<PrivateRoute><Profile /></PrivateRoute>}
             />
-            <Route
-              path="reset-password"
-              element={<PrivateRoute><ResetPassword /></PrivateRoute>}
-            />
+
             <Route path="create/database" element={<CreateDatabaseForm />} />
             <Route path="database/view" element={<DatabaseDetailView />} />
             <Route path="database/" element={<DatabaseHomePage />} />
@@ -104,6 +102,8 @@ function App() {
             <Route path="order/payment" element={<PrivateRoute><PaymentGate /></PrivateRoute>}/>
             <Route path="order/payment/success" element={<PrivateRoute><SuccessPage/></PrivateRoute>}/>
             <Route path="order/payment/cancelled" element={<PrivateRoute><SuccessPage/></PrivateRoute>}/>
+            <Route path="/reset-password/:uid/:token" element={<PasswordRestForm/>} />
+            <Route path="change-password"element={<PrivateRoute><ChangePasswordForm/></PrivateRoute>}/>
           </Routes>
         </Box>
       </GridItem>

@@ -1,39 +1,36 @@
 import { Box, Text, Button, VStack, useBreakpointValue } from "@chakra-ui/react";
-
-import {  useState } from "react";
+import { useState } from "react";
 import UserAccount from "./UserAccount";
-import PaidOrderDetails from "./OderPaid";
 import Logout from "../authentication/LogOut";
-
-
+import PaidOrderDetails from "./OderPaid";
 
 const Profile = () => {
   // Define the valid keys for the pages object
-  type PageKey = "Profile" | "Orders" | "Services" | "Contact"| "logout";
+  type PageKey = "Profile" | "Orders" | "Services" | "Contact" | "logout";
   const [currentPage, setCurrentPage] = useState<PageKey>("Profile");
-  
+
   const pages: Record<PageKey, JSX.Element> = {
     Profile: <UserAccount />,
     Orders: <PaidOrderDetails />,
     Services: <Text fontSize="xl">These are our Services.</Text>,
     Contact: <Text fontSize="xl">Get in touch with us on the Contact Page.</Text>,
-    logout: <Logout/>
+    logout: <Logout />,
   };
 
   // Use Chakra's responsive `flexDirection` for layout
-  const flexDirection = useBreakpointValue({ base: "column", md: "row" });
+  
   const leftColumnWidth = useBreakpointValue({ base: "100%", md: "10%" });
   const rightColumnWidth = useBreakpointValue({ base: "100%", md: "90%" });
 
   return (
-    <Box display="flex" flexDirection={flexDirection} height="100vh" >
+    <Box display="flex" flexDirection={{ base: "column", md: "row" }} height="100vh">
       {/* Left Column */}
       <Box width={leftColumnWidth} bg="gray.100" p={4}>
         <VStack spacing={4} align="stretch">
-          {Object.keys(pages).map((page) => (
+          {(Object.keys(pages) as PageKey[]).map((page) => (
             <Button
               key={page}
-              onClick={() => setCurrentPage(page as PageKey)}
+              onClick={() => setCurrentPage(page)}
               colorScheme="teal"
               variant={currentPage === page ? "solid" : "outline"}
             >
@@ -52,4 +49,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

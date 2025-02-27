@@ -23,7 +23,7 @@ const PasswordResetConfirm: React.FC = () => {
     }
 
     try {
-      await apiClient.post('/auth/users/reset_password_confirm/', {
+      await apiClient.post('password-reset/confirm/', {
         uid,
         token,
         new_password: newPassword,

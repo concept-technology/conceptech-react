@@ -158,7 +158,7 @@ const UserAccount: React.FC = () => {
             <Button onClick={onOpen} colorScheme="blue">
               Edit Profile
             </Button>
-            <Button onClick={() => navigate("/reset-password")} colorScheme="red">
+            <Button onClick={() => navigate("/change-password")} colorScheme="red">
               Reset Password
             </Button>
           </Stack>
