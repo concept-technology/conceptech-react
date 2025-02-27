@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -24,7 +23,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import apiClient from "../../authentication/ApiClint";
 import Cookies from "js-cookie";
-import { useAuth } from "../../authentication/AuthContext";
+import { useAuth, validateToken } from "../../authentication/AuthContext";
 interface FormData {
   name: string;
   email: string;
@@ -45,12 +44,13 @@ const ContactForm: React.FC = () => {
   const [captchaValidated, setCaptchaValidated] = useState(false);
 
   const onSubmit = async (data: FormData) => {
+    validateToken()
     const token = Cookies.get("access");
-  
-    // if (!captchaValidated) {
-    //   alert("Please complete the CAPTCHA");
-    //   return;
-    // }
+    console.log(data)
+    if (!captchaValidated) {
+      alert("Please complete the CAPTCHA");
+      return;
+    }
   
     try {
       const response = await apiClient.post(
@@ -188,18 +188,17 @@ const ContactForm: React.FC = () => {
                     <FormErrorMessage>{errors.message && errors.message.message}</FormErrorMessage>
                   </FormControl>
 
-                  {/* <Box>
+                  <Box>
                     <ReCAPTCHA
-                      ref={recaptchaRef}
+                      ref={recaptchaRef} 
                       sitekey="6LfsolYqAAAAAFQHMfwc8y6-ErwehLSMnA2luE1e"
                       onChange={handleCaptchaChange}
                     />
-                  </Box> */}
-
+                  </Box> 
                   <Button
                     type="submit"
                     colorScheme="blue"
-                    // disabled={!captchaValidated}
+                    disabled={!captchaValidated}
                   >
                     Send Message
                   </Button>

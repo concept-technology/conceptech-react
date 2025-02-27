@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { CanceledError } from "axios";
 import apiClient from "../../authentication/ApiClint";
-import { useAuth } from "../../authentication/AuthContext";
 
 const useFetch = <T>(endpoint: string, token?: string) => {
   const [data, setData] = useState<T[]>([]); // State is an array of type T
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
   const [status, setStatus] = useState(false);
+  
   useEffect(() => {
-
     const controller = new AbortController();
     setLoading(true);
 

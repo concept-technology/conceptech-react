@@ -26,7 +26,6 @@ interface LoginFormData {
   username: string;
   password: string;
 }
-
 const LoginPage: React.FC = () => {
   const {
     handleSubmit,
@@ -35,22 +34,29 @@ const LoginPage: React.FC = () => {
   } = useForm<LoginFormData>();
   const toast = useToast();
   const navigate = useNavigate();
-  const { isAuthenticated} = useAuth();
+  const { isAuthenticated, login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
     if (isAuthenticated) {
       navigate("/account/profile");
     }
+  }, [isAuthenticated, navigate]);
+
+  const handleLogin = async () => {
+    await login();
+  };
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     setIsLoading(true);
     try {
       const response = await apiClient.post(`/api/auth/user/login/`, data);
-      Cookies.set("access", response.data.__AccessTOKen__, { secure: false });
-      Cookies.set('refresh',response.data.__AccessTOKenref__)
-      setIsLoading(false)
-      navigate("/account/profile");
-      // Display success message
+      Cookies.set("accessToken", response.data.__AccessTOKen__, { secure: false });
+      Cookies.set("refresh", response.data.__AccessTOKenref__);
+
+      await login(); // Call login function from AuthProvider
+
+      setIsLoading(false);
       toast({
         title: "Login successful.",
         description: `Welcome back, ${data.username}!`,
@@ -58,26 +64,19 @@ const LoginPage: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-      
-      
+
+      navigate("/account/profile");
     } catch (error: any) {
       console.error("Login error:", error);
-      
-      const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.error ||
-      "An unknown error occurred.";
-      
-      // Display error message
-      setIsLoading(false)
+      setIsLoading(false);
       toast({
         title: "Invalid login attempt.",
-        description: errorMessage,
+        description: error.response?.data?.detail || "An unknown error occurred.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-    } 
+    }
   };
 
   return (

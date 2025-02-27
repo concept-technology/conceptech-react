@@ -38,7 +38,7 @@ interface FormValues {
   zipCode: string;
   country: string;
   telephone: string;
-  paymentOption: string;
+  denomination: string;
 }
 
 const CheckoutPage = () => {
@@ -63,7 +63,7 @@ const CheckoutPage = () => {
       zipCode: "",
       country: "",
       telephone: "",
-      paymentOption: "",
+      denomination: "",
     },
   });
 
@@ -212,19 +212,18 @@ const CheckoutPage = () => {
                   isReadOnly
                 />
               </FormControl>
-              <FormControl isInvalid={!!errors.paymentOption} isRequired>
-                <FormLabel>Payment Option</FormLabel>
+              <FormControl isInvalid={!!errors.denomination} isRequired>
+                <FormLabel>Denomination</FormLabel>
                 <Select
-                  {...register("paymentOption", { required: "Payment Option is required" })}
-                  placeholder="Select Payment Option"
+                  {...register("denomination", { required: "Payment Option is required" })}
+                  placeholder="Select Denomianation"
                 >
-                  <option value="paystack">Credit Card</option>
-                  <option value="paypal">PayPal</option>
-                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="NGN">NGN</option>
+                  <option value="USD">USD</option>
                 </Select>
-                {errors.paymentOption && (
+                {errors.denomination && (
                   <Text color="red.500" fontSize="sm">
-                    {errors.paymentOption.message}
+                    {errors.denomination.message}
                   </Text>
                 )}
               </FormControl>

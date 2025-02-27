@@ -29,19 +29,20 @@ export interface Props {
   features: Features[];
   is_active: boolean;
   id: number;
-  slug:string
-  image:string
+  slug: string;
+  image: string;
 }
 
 export interface ProductsProps {
-  product: Props[];
+  product: Props[]; // Ensuring it's always an array
 }
 
-const ProductsCard = ({ product }: ProductsProps) => {
-  const navigate = useNavigate()
+const ProductsCard = ({ product}: ProductsProps) => {
+  const navigate = useNavigate();
+
   return (
-    <HStack wrap="wrap" justify="center" spacing={6}>
-      {product.map((item) => (
+    <HStack flexWrap="wrap" justifyContent="center" spacing={6}>
+      {product.length ? product.map((item) => (
         <Card
           key={item.id}
           maxW="sm"
@@ -52,10 +53,11 @@ const ProductsCard = ({ product }: ProductsProps) => {
           _dark={{ bg: "gray.800" }}
         >
           <Image
-            src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+            src={item.image || "https://via.placeholder.com/300?text=No+Image"}
             alt={item.name}
             objectFit="cover"
             h="200px"
+            w="full"
           />
           <CardBody p={6}>
             <CardHeader>
@@ -89,21 +91,20 @@ const ProductsCard = ({ product }: ProductsProps) => {
                 <Text fontWeight="bold" mb={2}>
                   Features:
                 </Text>
-
-                {item.features &&
-                <List spacing={2}>
-                  {item.features.map((feature) => (
-                    <ListItem
-                      key={feature.id}
-                      display="flex"
-                      alignItems="center"
-                    >
-                      <Icon as={ImCheckmark2} color="teal.500" mr={2} />
-                      {feature.feature}
-                    </ListItem>
-                  ))}
-                </List>
-}
+                {(item.features || []).length > 0 ? (
+                  <List spacing={2}>
+                    {item.features.map((feature) => (
+                      <ListItem key={feature.id} display="flex" alignItems="center">
+                        <Icon as={ImCheckmark2} color="teal.500" mr={2} />
+                        {feature.feature}
+                      </ListItem>
+                    ))}
+                  </List>
+                ) : (
+                  <Text fontSize="sm" color="gray.500">
+                    No features available.
+                  </Text>
+                )}
               </Box>
               <Button
                 variant="solid"
@@ -111,19 +112,20 @@ const ProductsCard = ({ product }: ProductsProps) => {
                 w="full"
                 size="lg"
                 mt={4}
-                onClick={(e)=>{navigate(`/products/${item.id}/${item.slug}`)
-                e.preventDefault()
-                console.log(item.slug, item.id)
-              }}
-
-
+                onClick={() => navigate(`/products/${item.id}/${item.slug}`)}
               >
                 Get Started
               </Button>
             </VStack>
           </CardFooter>
         </Card>
-      ))}
+      )): 
+      <Box textAlign="center" mt={10}>
+      <Text fontSize="lg" fontWeight="bold" color="gray.600">
+        No products found.
+      </Text>
+    </Box>
+      }
     </HStack>
   );
 };

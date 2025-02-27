@@ -22,7 +22,7 @@ import {
 import Logout from "../authentication/LogOut";
 import { useNavigate } from "react-router-dom";
 import apiClient, { token } from "../authentication/ApiClint";
-import { validateToken } from "../authentication/AuthContext";
+import { useAuth} from "../authentication/AuthContext";
 import useFetch from "../Blog-Page/hooks/useFetch";
 
 
@@ -42,8 +42,14 @@ const UserAccount: React.FC = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const {data} = useFetch<User>(`/api/users/me/`,token)
+  const { isAuthenticated} = useAuth();
 
-  validateToken()
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
   useEffect(()=>{
     const fetchUser =  () => {
       try{
@@ -78,8 +84,10 @@ const UserAccount: React.FC = () => {
       }
     };
 
-    fetchUser();
-  },[loading])
+    if (isAuthenticated) {
+      fetchUser();
+    }
+  },[isAuthenticated])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

@@ -1,5 +1,4 @@
 import { Box, Flex, Image, Text, Heading } from '@chakra-ui/react';
-import pic from '../../assets/img/blog/1.jpg';
 import useBlog from '../../Blog-Page/hooks/useBlog';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
@@ -25,7 +24,7 @@ const BlogSection = () => {
 
         <Flex direction={{ base: 'column', lg: 'row' }} justify="center" align="flex-start" >
             {data.map(blog=> 
-          <Box maxW="sm" bg="white" borderRadius="md" boxShadow="lg" overflow="hidden">
+          <Box maxW="sm" bg="white" borderRadius="md" boxShadow="lg" overflow="hidden" key={blog.id}>
             <Image src={blog.image} alt="Blog post" objectFit="cover" boxSize="full" />
             <Box p={6}>
               <Box display="flex" justifyContent="space-between" mb={4}>

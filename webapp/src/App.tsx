@@ -10,7 +10,6 @@ import PrivacyPolicy from "./privacy/Privacy_policy";
 import Support from "./privacy/support";
 import SignupPage from "./authentication/SignUpage";
 import LoginPage from "./authentication/LoginPage";
-import PrivateRoute from "./authentication/PrivateRoutes";
 import ResetPassword from "./user/resetPassword";
 import Profile from "./user/Profile";
 import NotFound from "./Home-page/components/NotFound";
@@ -28,6 +27,7 @@ import ProductDetail from "./products/ProductDetail";
 import CheckoutPage from "./products/Checkout";
 import PaymentGate from "./products/PaymentGate";
 import SuccessPage from "./products/PaymentSuccess";
+import PrivateRoute from "./authentication/PrivateRoutes";
 
 
 
@@ -103,6 +103,7 @@ function App() {
             <Route path="product/:id/:slug/checkout" element={<PrivateRoute><CheckoutPage/></PrivateRoute>}/>
             <Route path="order/payment" element={<PrivateRoute><PaymentGate /></PrivateRoute>}/>
             <Route path="order/payment/success" element={<PrivateRoute><SuccessPage/></PrivateRoute>}/>
+            <Route path="order/payment/cancelled" element={<PrivateRoute><SuccessPage/></PrivateRoute>}/>
           </Routes>
         </Box>
       </GridItem>

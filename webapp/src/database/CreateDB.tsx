@@ -12,10 +12,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import apiClient, { token }  from "../authentication/ApiClint";
 import Footer from "../Home-page/components/Footer";
+import { validateToken } from "../authentication/AuthContext";
 
 // Define the form input types
 type FormInputs = {
@@ -36,13 +36,12 @@ const CreateDatabaseForm: React.FC = () => {
 
   // Submit handler
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-
+validateToken()
    console.log(data)
     try {
       const response = await apiClient.post(`/api/database/`, data,{
         headers:{Authorization:`Bearer ${token}`}
       });
-
       toast({
         title: "Success",
         description: response.data.message,

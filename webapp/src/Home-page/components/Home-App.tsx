@@ -26,7 +26,7 @@ interface Product{
 
   
 const HomeApp = () => {
-    const {data:products} = useFetch<Product>(`/api/products/view/`,token)
+    const {data:products} = useFetch<Product>(`/api/products/view/`)
     return (
     <>
         <CarouselComponent/>

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "flutterwave-react-v3": "^1.0.7",
     "react-owl-carousel": "^2.3.3"
   }
 }
