@@ -12,9 +12,9 @@ import BlogSlide from "./SwiperSlide";
 import RightBlogCard from "./RightBlogCard";
 import Footer from "../Home-page/components/Footer";
 import Categories from "./Categories";
-import useFetch from "./hooks/useFetch";
-import { Blog } from "./hooks/useBlog";
-import { token } from "../authentication/ApiClint";
+import useFetch from "../hooks/useFetch";
+import { Blog } from "../hooks/useBlog";
+import { token } from "../api/apiClient";
 
 const BlogHome = () => {
   const { data = [] } = useFetch<Blog>("/api/blog/", token); // Ensure data is initialized to an empty array

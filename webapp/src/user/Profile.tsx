@@ -11,6 +11,7 @@ const Profile = () => {
 
   const pages: Record<PageKey, JSX.Element> = {
     Profile: <UserAccount />,
+    
     Orders: <PaidOrderDetails />,
     Services: <Text fontSize="xl">These are our Services.</Text>,
     Contact: <Text fontSize="xl">Get in touch with us on the Contact Page.</Text>,

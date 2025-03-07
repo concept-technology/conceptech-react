@@ -1,5 +1,5 @@
 import { Button, HStack, List, ListItem, VStack , Image, Show, MenuItem, Menu} from "@chakra-ui/react"
-import useBlog from "./hooks/useBlog"
+import useBlog from "../hooks/useBlog"
 
 const Categories = ()=>{
 

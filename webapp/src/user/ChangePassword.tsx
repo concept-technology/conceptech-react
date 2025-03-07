@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, useToast, IconButton } from '@chakra-ui/react';
 import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import apiClient, { token } from '../authentication/ApiClint';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../utils/BackButton';
+import apiClient from '../api/authApi';
+import { token } from '../api/apiClient';
 
 const ChangePasswordForm: React.FC = () => {
   const toast = useToast();
@@ -13,7 +14,7 @@ const ChangePasswordForm: React.FC = () => {
   const [showPassword, setShowShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
-  const navigate = useNavigate(); // ✅ Corrected use of useNavigate()
+  const navigate = useNavigate();
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       toast({

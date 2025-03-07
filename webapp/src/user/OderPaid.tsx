@@ -11,8 +11,8 @@ import {
     useColorModeValue,
     Divider,
   } from '@chakra-ui/react';
-  import useFetch from '../Blog-Page/hooks/useFetch';
-import { token } from '../authentication/ApiClint';
+  import useFetch from '../hooks/useFetch';
+import { token } from '../api/apiClient';
   
   interface Product {
     id: number;

@@ -1,10 +1,10 @@
 import {useColorModeValue, Badge, Box, Button, Divider, Heading, HStack, VStack, Image, Text, ListItem, List, Icon } from "@chakra-ui/react"
 import BackButton from "../utils/BackButton"
-import useFetch from "../Blog-Page/hooks/useFetch"
+import useFetch from "../hooks/useFetch"
 import { useNavigate, useParams } from "react-router-dom"
 import { Props } from "./ProductsCard"
 import { ImCheckmark2 } from "react-icons/im"
-import { token } from "../authentication/ApiClint"
+import { token } from "../api/apiClient"
 
 
 const ProductDetail = () => {

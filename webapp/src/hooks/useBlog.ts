@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { CanceledError } from "axios";
-import apiClient from "../../authentication/ApiClint";
-
+import apiClient from "../api/authApi";
 
  export interface Blog{
   title: string;

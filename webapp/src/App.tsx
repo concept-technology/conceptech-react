@@ -26,9 +26,10 @@ import ProductDetail from "./products/ProductDetail";
 import CheckoutPage from "./products/Checkout";
 import PaymentGate from "./products/PaymentGate";
 import SuccessPage from "./products/PaymentSuccess";
-import PrivateRoute from "./authentication/PrivateRoutes";
 import PasswordRestForm from "./user/PasswordResetForm";
 import ChangePasswordForm from "./user/ChangePassword";
+import OAuthCallback from "./authentication/OAuthCallback";
+import PrivateRoute from "./routes/PrivateRoute";
 
 
 
@@ -104,6 +105,7 @@ function App() {
             <Route path="order/payment/cancelled" element={<PrivateRoute><SuccessPage/></PrivateRoute>}/>
             <Route path="/reset-password/:uid/:token" element={<PasswordRestForm/>} />
             <Route path="change-password"element={<PrivateRoute><ChangePasswordForm/></PrivateRoute>}/>
+            <Route path="/auth/callback" element={<OAuthCallback />} />
           </Routes>
         </Box>
       </GridItem>

@@ -13,7 +13,7 @@ import {
     Button,
   } from '@chakra-ui/react';
   import { ProductsProps } from '../products/ProductsCard';
-  import useFetch from '../Blog-Page/hooks/useFetch';
+  import useFetch from '../hooks/useFetch';
 import { token } from './UserAccount';
   
   interface order {

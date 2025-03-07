@@ -15,9 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { FaDatabase } from "react-icons/fa"; // Database Icon
 import { FiCopy, FiSave } from "react-icons/fi"; // Copy and Save Icons
-import apiClient from "../authentication/ApiClint";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import apiClient from "../api/authApi";
 
 
 interface DatabaseDetail {

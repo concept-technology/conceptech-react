@@ -1,6 +1,6 @@
 
 import { token } from '../../authentication/ApiClint'
-import useFetch from '../../Blog-Page/hooks/useFetch'
+import useFetch from '../../hooks/useFetch'
 
 import ProductsCard from '../../products/ProductsCard'
 

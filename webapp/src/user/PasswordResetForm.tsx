@@ -13,7 +13,7 @@ import {
   IconButton 
 } from '@chakra-ui/react';
 import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import apiClient from '../authentication/ApiClint';
+import apiClient from '../api/authApi';
 
 
 const PasswordResetForm: React.FC = () => {

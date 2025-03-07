@@ -1,6 +1,6 @@
 import { Card, CardBody, CardHeader, Heading, Img } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
-import { Blog } from './hooks/useBlog';
+import { Blog } from '../hooks/useBlog';
 
 
 

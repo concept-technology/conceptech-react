@@ -1,5 +1,5 @@
 import { Box, Flex, Image, Text, Heading } from '@chakra-ui/react';
-import useBlog from '../../Blog-Page/hooks/useBlog';
+import useBlog from '../../hooks/useBlog';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
 

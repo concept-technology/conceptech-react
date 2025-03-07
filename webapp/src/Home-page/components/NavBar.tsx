@@ -24,7 +24,8 @@ import { HiOutlineMenu, HiOutlineSearch } from "react-icons/hi";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAppStoreIos, FaRegUser } from "react-icons/fa";
-import { token } from "../../authentication/ApiClint";
+import { token } from "../../api/apiClient";
+
 
 
 interface NavItem {

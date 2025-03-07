@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
   Button,
@@ -19,88 +19,53 @@ import {
   Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../app/store";
+import { fetchUser, updateUser } from "../features/user/userThunks";
 import Logout from "../authentication/LogOut";
 import { useNavigate } from "react-router-dom";
-import apiClient, { token } from "../authentication/ApiClint";
-import { useAuth} from "../authentication/AuthContext";
-import useFetch from "../Blog-Page/hooks/useFetch";
-
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  profile_picture?: string;
-}
-// export const token = Cookies.get('access')
+import { useGetUserDetailsQuery } from "../app/services/auth/authService";
+import { setCredentials } from "../features/auth/authSlice";
 
 const UserAccount: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [updatedUser, setUpdatedUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const {data} = useFetch<User>(`/api/users/me/`,token)
-  const { isAuthenticated} = useAuth();
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  
+  const { data:user, isFetching, error} = useGetUserDetailsQuery('userDetails', {
+    // Perform a refetch every 4 minutes
+    pollingInterval: 240000, 
+  });
+  
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth) || { isAuthenticated: false };
 
+  const [updatedUser, setUpdatedUser] = useState({ username: "", email: "" });
+  const [saving, setSaving] = useState(false);
+  
+  // Prevent unnecessary re-fetching
   useEffect(() => {
-    if (isAuthenticated === false) {
-      navigate("/login");
-    }
-  }, [isAuthenticated, navigate]);
+    if (user) dispatch(setCredentials(user))
+  }, [user, dispatch])
+  const fetchedRef = useRef(false);
+  console.log('fetched user', user)
 
-  useEffect(()=>{
-    const fetchUser =  () => {
-      try{
-        setUser(data);
-        setUpdatedUser(data);
-      } catch (error: any) {
-        console.error("Failed to fetch user:", error);
-        if (error.response?.status === 401) {
-          try{
-            
-          }catch{
-            toast({
-              title: "Session expired",
-              description: "Please log in again.",
-              status: "warning",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
-          
-        } else {
-          toast({
-            title: "Error",
-            description: "Unable to fetch user details.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isAuthenticated) {
-      fetchUser();
+  // Update local state when user data is available
+  useEffect(() => {
+    if (user?.username?.trim()) {
+      setUpdatedUser({ username: user.username, email: user.email });
     }
-  },[isAuthenticated])
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUpdatedUser((prev) => (prev ? { ...prev, [name]: value } : null));
+    setUpdatedUser((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
-    setLoading(true);
     try {
-      const response = await apiClient.patch(`/api/users/me/`, updatedUser, {
-        headers:{Authorization: `Bearer ${token}` }
-      });
-      setUser(response.data);
+      setSaving(true);
+      await dispatch(updateUser(updatedUser)).unwrap();
       toast({
         title: "Profile updated.",
         description: "Your profile has been successfully updated.",
@@ -109,21 +74,20 @@ const UserAccount: React.FC = () => {
         isClosable: true,
       });
       onClose();
-    } catch (error: any) {
-      console.error("Failed to update user:", error);
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Unable to update profile.",
+        description: error || "Unable to update profile.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  if (loading) {
+  if (isFetching) {
     return (
       <Box display="flex" justifyContent="center" py={10}>
         <Spinner size="xl" color="purple.500" />
@@ -131,28 +95,35 @@ const UserAccount: React.FC = () => {
     );
   }
 
-  if (!user) return <p>User details were not found.</p>;
+  if (error) {
+    return (
+      <Box textAlign="center" py={10}>
+        <Text color="red.500">Error: </Text>
+      </Box>
+    );
+  }
+
+  if (!user?.username?.trim()) return <p>User details were not found.</p>;
 
   const hasChanges =
-    updatedUser?.username !== user?.username ||
-    updatedUser?.email !== user?.email;
+    updatedUser.username !== user.username || updatedUser.email !== user.email;
 
   return (
     <>
-      {token && (
-        <Box maxW="lg" mx="auto" py={10} px={6} bg='gray.100' borderRadius={14}>
+      {isAuthenticated && (
+        <Box maxW="lg" mx="auto" py={10} px={6} bg="gray.100" borderRadius={14}>
           <Heading as="h1" mb={4} textAlign="center" color="purple.600">
-            Welcome!
+            Welcome, {user.username}!
           </Heading>
           <Box display="flex" justifyContent="center" mb={6}>
             <Avatar
               size="2xl"
               name={user.username}
-              src={user.profile_picture ?? "/placeholder.png"}
+              src={user.profile_picture ? user.profile_picture : "/placeholder.png"}
             />
           </Box>
           <Text fontSize="lg" textAlign="center" mb={6}>
-             {user.email}
+            {user.email}
           </Text>
           <Stack direction="row" spacing={4} justify="center" mb={6}>
             <Button onClick={onOpen} colorScheme="blue">
@@ -171,7 +142,7 @@ const UserAccount: React.FC = () => {
                 <FormControl mb={4} isRequired>
                   <FormLabel>Username</FormLabel>
                   <Input
-                    value={updatedUser?.username || ""}
+                    value={updatedUser.username}
                     name="username"
                     onChange={handleChange}
                     placeholder="Enter your new username"
@@ -181,7 +152,7 @@ const UserAccount: React.FC = () => {
                   <FormLabel>Email</FormLabel>
                   <Input
                     type="email"
-                    value={updatedUser?.email || ""}
+                    value={updatedUser.email}
                     name="email"
                     onChange={handleChange}
                     placeholder="Enter your new email"
@@ -192,7 +163,7 @@ const UserAccount: React.FC = () => {
                 <Button
                   onClick={handleSave}
                   colorScheme="blue"
-                  isLoading={loading}
+                  isLoading={saving}
                   isDisabled={!hasChanges}
                 >
                   Save

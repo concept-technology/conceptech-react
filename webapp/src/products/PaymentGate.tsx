@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import  { useEffect, useState } from 'react';
 import {
   Box,
   Stack,
@@ -12,18 +13,21 @@ import {
   useColorModeValue,
   Divider,
   Spinner,
+  Button,
+  useToast,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter
 } from '@chakra-ui/react';
 import { PaystackButton } from 'react-paystack';
-import useFetch from '../Blog-Page/hooks/useFetch';
-import apiClient, { token } from '../authentication/ApiClint';
+import useFetch from '../hooks/useFetch';
 import { useNavigate } from 'react-router-dom';
-import PayPalCheckoutButton from './PayPalButton';
-import { PayPalScriptProvider } from '@paypal/react-paypal-js';
-import FlutterwavePayment from './FlutterwavePayment';
-
-const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID;
-const apiBaseUrl = import.meta.env.VITE_API_URL;
-const paystackPublicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+import { token } from '../api/apiClient';
 
 // Order Interface
 interface Order {
@@ -34,7 +38,7 @@ interface Order {
   date: string;
   denomination?: string;
   product: ProductProps[];
-  user: UserProps;
+  user: UserProps |null;
 }
 
 // Product Interface
@@ -60,120 +64,122 @@ interface PaystackResponse {
   message: string;
 }
 
-const PaymentGate: React.FC = () => {
-  const { data: orders = [] } = useFetch<Order[]>(`/api/orders/get/`, token);
+
+const paystackPublicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+
+const PaymentGate = () => {
+  const { data: orders} = useFetch<Order>(`/api/orders/get/`, token);
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const bgColor = useColorModeValue('white', 'gray.700');
   const cardBg = useColorModeValue('gray.50', 'gray.800');
   const textColor = useColorModeValue('gray.700', 'gray.200');
   const [loading, setLoading] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order>();
+  const [success, setSuccess] = useState(false)
   const navigate = useNavigate();
 
-  const handlePaymentSuccess = async (response: PaystackResponse, orderRef: string) => {
+
+    if(!orders){
+    navigate('/account/profile')
+    }
+
+  const handlePaymentSuccess = async (response:PaystackResponse) => {
     setLoading(true);
+    setSuccess(true)
     try {
-      const apiResponse = await apiClient.post(
+      await apiClient.post(
         `/api/payment/${response.reference}/verify/`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log('Payment verified:', apiResponse.data);
+      toast({ title: 'Payment Successful!', status: 'success', duration: 3000, isClosable: true });
       navigate('/order/payment/success');
     } catch (error) {
-      console.error('Payment verification failed:', error);
+      toast({ title: 'Payment Verification Failed', description: error.message, status: 'error', duration: 3000, isClosable: true });
     } finally {
       setLoading(false);
     }
   };
 
   const handlePaymentClose = () => {
-    console.log('Payment closed');
+    toast({ title: 'Payment Window Closed', status: 'info', duration: 2000, isClosable: true });
   };
 
-  const handleFlutterwavePaymentSuccess = async (transactionId: string) => {
-    try {
-      const response = await fetch(`${apiBaseUrl}/api/verify-payment/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transaction_id: transactionId }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        alert('Payment successful!');
-      } else {
-        alert('Payment verification failed.');
-      }
-    } catch (error) {
-      console.error('Error verifying payment:', error);
-    }
+  const openPaymentModal = (order) => {
+    setSelectedOrder(order);
+    onOpen();
   };
 
   return (
-    <PayPalScriptProvider options={{ clientId: paypalClientId, currency: 'USD' }}>
-      <Stack spacing={8} mx='auto' maxW='800px' p={4}>
-        <Heading size='lg' textAlign='center' color={textColor}>My Orders</Heading>
-        {orders.map((order) => (
-          <Box key={order.ref_number} bg={cardBg} p={6} borderRadius='lg' shadow='md' _hover={{ shadow: 'lg' }}>
-            {loading ? (
-              <VStack spacing={4} align='center'>
-                <Spinner size='lg' color='teal.500' />
-                <Text color='teal.500' fontWeight='bold'>Processing payment, please wait...</Text>
+    <Stack spacing={8} mx='auto' maxW='800px' p={4}>
+      <Heading size='lg' textAlign='center' color={textColor}>My Orders</Heading>
+      {orders.map((order) => (
+        <Box key={order.ref_number} bg={cardBg} p={6} borderRadius='lg' shadow='md' _hover={{ shadow: 'lg' }}>
+          {loading ? (
+            <VStack spacing={4} align='center'>
+              <Spinner size='lg' color='teal.500' />
+              <Text color='teal.500' fontWeight='bold'>Processing payment, please wait...</Text>
+            </VStack>
+          ) : (
+            <>
+              <VStack align='start' spacing={4}>
+                <Heading size='md' color={textColor}>Order Details</Heading>
+                <Text><strong>Order Ref:</strong> {order.ref_number}</Text>
+                <Text><strong>Order Date:</strong> {order.date}</Text>
+                <Text fontSize='lg' fontWeight='bold' color='teal.500'>Total Amount: ₦{order.total_price}</Text>
               </VStack>
-            ) : (
-              <>
-                <VStack align='start' spacing={4}>
-                  <Heading size='md' color={textColor}>Order Details</Heading>
-                  <Text><strong>Order Ref:</strong> {order.ref_number}</Text>
-                  <Text><strong>Order ID:</strong> {order.id}</Text>
-                  <Text><strong>Order Date:</strong> {order.date}</Text>
-                  <Text fontSize='lg' fontWeight='bold' color='teal.500'>
-                    {/* <strong>Total Amount:</strong> ₦{order.total_price} */}
-                  </Text>
-                </VStack>
-                <Divider my={6} />
-                <Heading size='sm' mb={4} color={textColor}>Products</Heading>
-                <Stack spacing={4}>
-                  {order.product.map((product) => (
-                    <Flex key={product.id} bg={bgColor} p={4} borderRadius='md' shadow='sm' _hover={{ shadow: 'lg' }}>
-                      <Box boxSize='100px' flexShrink={0} mr={4}>
-                        <Image src={product.img} alt={product.name} boxSize='100%' objectFit='cover' borderRadius='md' />
-                      </Box>
-                      <VStack align='start' spacing={1} flex='1'>
-                        <Text fontWeight='bold' fontSize='lg' color={textColor}>{product.name}</Text>
-                        <Text fontSize='sm' color='gray.500'>{product.description}</Text>
-                        <HStack>
-                          <Badge colorScheme='blue'>Quantity: {product.quantity}</Badge>
-                        </HStack>
-                      </VStack>
-                    </Flex>
-                  ))}
-                </Stack>
-                {order.denomination === 'NGN' ? (
-                  <PaystackButton
-                    amount={order.total_price * 100}
-                    email={order.user.email}
-                    publicKey={paystackPublicKey}
-                    text={`Pay ₦${order.total_price}`}
-                    reference={order.ref_number}
-                    onSuccess={(response) => handlePaymentSuccess(response as PaystackResponse, order.ref_number)}
-                    onClose={handlePaymentClose}
-                    className='chakra-button'
-                  />
-                ) : (
-                  <FlutterwavePayment
-                    amount={order.total_price}
-                    email={order.user.email}
-                    username={order.user.username}
-                    transactionId={order.ref_number}
-                    phone={order.user.phonenumber}
-                    onSuccess={handleFlutterwavePaymentSuccess}
-                  />
-                )}
-              </>
-            )}
-          </Box>
-        ))}
-      </Stack>
-    </PayPalScriptProvider>
+              <Divider my={6} />
+              <Heading size='sm' mb={4} color={textColor}>Products</Heading>
+              <Stack spacing={4}>
+                {order.product.map((product) => (
+                  <Flex key={product.id} bg={bgColor} p={4} borderRadius='md' shadow='sm' _hover={{ shadow: 'lg' }}>
+                    <Box boxSize='100px' flexShrink={0} mr={4}>
+                      <Image src={product.img} alt={product.name} boxSize='100%' objectFit='cover' borderRadius='md' />
+                    </Box>
+                    <VStack align='start' spacing={1} flex='1'>
+                      <Text fontWeight='bold' fontSize='lg' color={textColor}>{product.name}</Text>
+                      <Text fontSize='sm' color='gray.500'>{product.description}</Text>
+                      <HStack>
+                        <Badge colorScheme='blue'>Quantity: {product.quantity}</Badge>
+                      </HStack>
+                    </VStack>
+                  </Flex>
+                ))}
+              </Stack>
+              <Button mt={4} colorScheme='teal' onClick={() => openPaymentModal(order)}>
+                Proceed to Pay
+              </Button>
+            </>
+          )}
+        </Box>
+      ))}
+
+{!success &&      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Payment</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Are you sure you want to proceed with the payment for order <strong>{selectedOrder?.ref_number}</strong>?</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme='red' mr={3} onClick={onClose}>Cancel</Button>
+            <PaystackButton
+              amount={selectedOrder?.total_price *100}
+              email={selectedOrder?.user?.email}
+              publicKey={paystackPublicKey}
+              text={`Pay ₦${selectedOrder?.total_price}`}
+              reference={selectedOrder?.ref_number}
+              onSuccess={(response)=>handlePaymentSuccess(response)}
+              onClose={handlePaymentClose}
+              className='chakra-button'
+              disabled={loading}
+            />
+          </ModalFooter>
+        </ModalContent>
+      </Modal>}
+    </Stack>
   );
 };
 

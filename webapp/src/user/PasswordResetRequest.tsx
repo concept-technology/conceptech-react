@@ -10,9 +10,9 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { SITE_DOMAIN } from '../authentication/ApiClint';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { SITE_DOMAIN } from '../api/apiClient';
 
 const PasswordResetRequest = () => {
   const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm();

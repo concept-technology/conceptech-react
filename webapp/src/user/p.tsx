@@ -12,7 +12,7 @@ import {
     Badge,
     
   } from "@chakra-ui/react";
-  import useFetch from "../Blog-Page/hooks/useFetch";
+  import useFetch from "../hooks/useFetch";
   import { token } from "./UserAccount";
   
   interface Product {

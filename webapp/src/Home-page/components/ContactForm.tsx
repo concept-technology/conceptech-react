@@ -21,9 +21,8 @@ import { PhoneIcon, EmailIcon } from "@chakra-ui/icons";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import apiClient from "../../authentication/ApiClint";
 import Cookies from "js-cookie";
-import { useAuth, validateToken } from "../../authentication/AuthContext";
+import apiClient from "../../api/authApi";
 interface FormData {
   name: string;
   email: string;
@@ -34,7 +33,6 @@ interface FormData {
 const ContactForm: React.FC = () => {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [phone, setPhone] = useState("");
-  const {login} = useAuth()
   const {
     register,
     handleSubmit,
@@ -44,7 +42,6 @@ const ContactForm: React.FC = () => {
   const [captchaValidated, setCaptchaValidated] = useState(false);
 
   const onSubmit = async (data: FormData) => {
-    validateToken()
     const token = Cookies.get("access");
     console.log(data)
     if (!captchaValidated) {
@@ -69,7 +66,6 @@ const ContactForm: React.FC = () => {
       setCaptchaValidated(false);
     } catch (error) {
       console.error(error);
-      login();
     }
   };
   

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CanceledError } from "axios";
-import apiClient from "../../authentication/ApiClint";
+import apiClient from "../api/authApi";
+
 
 const useFetch = <T>(endpoint: string, token?: string) => {
   const [data, setData] = useState<T[]>([]); // State is an array of type T

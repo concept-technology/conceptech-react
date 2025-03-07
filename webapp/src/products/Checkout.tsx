@@ -18,11 +18,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import BackButton from "../utils/BackButton";
-import useFetch from "../Blog-Page/hooks/useFetch";
+import useFetch from "../hooks/useFetch";
 import { useNavigate, useParams } from "react-router-dom";
-import { SITE_DOMAIN, token } from "../authentication/ApiClint";
 import axios from "axios";
-import { useAuth } from "../authentication/AuthContext";
+import { SITE_DOMAIN, token } from "../api/apiClient";
 
 interface Props {
   name: string;
@@ -44,7 +43,6 @@ interface FormValues {
 const CheckoutPage = () => {
   const { id, slug } = useParams<{ id: string; slug: string }>();
   const { data } = useFetch<Props[]>(`/api/products/${id}/${slug}/`, token);
-  const { login } = useAuth();
   const toast = useToast();
   const navigate = useNavigate()
 

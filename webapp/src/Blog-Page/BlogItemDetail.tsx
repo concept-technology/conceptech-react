@@ -25,7 +25,6 @@ import {
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import apiClient from "../authentication/ApiClint";
 import Footer from "../Home-page/components/Footer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -37,6 +36,8 @@ import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from "re
 import { BsTwitterX } from "react-icons/bs";
 import BlogHeader from "./BlogHeader";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import apiClient from "../api/authApi";
+
 interface RelatedBlogProps {
   id: number;
   title: string;
