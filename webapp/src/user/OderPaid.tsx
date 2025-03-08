@@ -72,14 +72,14 @@ import { token } from '../api/apiClient';
                     <strong>Order Date:</strong> {new Date(product.purchase_date).toLocaleString()}
                   </Text>
                   <Text fontSize="lg" fontWeight="bold" color="teal.500">
-                    <strong>Total Amount:</strong> ${parseFloat(product.amount).toFixed(2)}
+                    {/* <strong>Total Amount:</strong> ${parseFloat(product.total_price).toFixed(2)} */}
                   </Text>
                 </VStack>
   
                 <Divider my={6} />
   
                 <Heading size="sm" mb={4} color={textColor}>
-                  Products
+                  {/* Products */}
                 </Heading>
                 <Stack spacing={4}>
                   {product.order.product.map((product) => (

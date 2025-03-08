@@ -25,6 +25,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAppStoreIos, FaRegUser } from "react-icons/fa";
 import { token } from "../../api/apiClient";
+import { useGetUserDetailsQuery } from "../../app/services/auth/authService";
 
 
 
@@ -45,6 +46,10 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const { data:user} = useGetUserDetailsQuery('userDetails', {
+      // Perform a refetch every 4 minutes
+      pollingInterval: 240000, 
+    });
 
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -56,9 +61,9 @@ const NavBar = () => {
 
     {
       id: 4,
-      text: token ?  'acount': "login",
+      text: user ?  user.username: "login",
       icon: <FaRegUser />,
-      link: token ? "/account/profile" : "/login",
+      link: user ? "/account/profile" : "/login",
     },
   ];
 

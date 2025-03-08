@@ -1,5 +1,5 @@
 
-import  { useEffect, useState } from 'react';
+import  { useState } from 'react';
 import {
   Box,
   Stack,
@@ -28,6 +28,7 @@ import { PaystackButton } from 'react-paystack';
 import useFetch from '../hooks/useFetch';
 import { useNavigate } from 'react-router-dom';
 import { token } from '../api/apiClient';
+import apiClient from '../api/authApi';
 
 // Order Interface
 interface Order {

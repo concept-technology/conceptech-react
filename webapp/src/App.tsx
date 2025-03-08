@@ -31,10 +31,9 @@ import ChangePasswordForm from "./user/ChangePassword";
 import OAuthCallback from "./authentication/OAuthCallback";
 import PrivateRoute from "./routes/PrivateRoute";
 
-
-
 function App() {
   return (
+    <>
     <Grid
       templateRows="auto 1fr"
       templateAreas={{
@@ -93,12 +92,10 @@ function App() {
               path="account/profile"
               element={<PrivateRoute><Profile /></PrivateRoute>}
             />
-
             <Route path="create/database" element={<CreateDatabaseForm />} />
             <Route path="database/view" element={<DatabaseDetailView />} />
             <Route path="database/" element={<DatabaseHomePage />} />
             <Route path="/products/:id/:slug" element={<ProductDetail />} />
-
             <Route path="product/:id/:slug/checkout" element={<PrivateRoute><CheckoutPage/></PrivateRoute>}/>
             <Route path="order/payment" element={<PrivateRoute><PaymentGate /></PrivateRoute>}/>
             <Route path="order/payment/success" element={<PrivateRoute><SuccessPage/></PrivateRoute>}/>
@@ -110,6 +107,8 @@ function App() {
         </Box>
       </GridItem>
     </Grid>
+    </>
+
   );
 }
 

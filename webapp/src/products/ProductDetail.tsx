@@ -13,9 +13,7 @@ const ProductDetail = () => {
     const {status} = useFetch('/api/address/check/', token)
 
     const navigate = useNavigate()
-    // const data =[
-    //     {id: 1, image:'', name:'saome produts', description:'some descriptions', basse_price:200, discount_price:300, }
-    // ]
+
     return(
         <Box
         maxW="7xl"

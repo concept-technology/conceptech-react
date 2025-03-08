@@ -1,4 +1,5 @@
 
+import { useGetProductsQuery } from '../../app/services/auth/authService'
 import { token } from '../../authentication/ApiClint'
 import useFetch from '../../hooks/useFetch'
 
@@ -26,7 +27,9 @@ interface Product{
 
   
 const HomeApp = () => {
-    const {data:products} = useFetch<Product>(`/api/products/view/`)
+    // const {data:products} = useFetch<Product>(`/api/products/view/`)
+    const { data: products,  } = useGetProductsQuery('products');
+
     return (
     <>
         <CarouselComponent/>

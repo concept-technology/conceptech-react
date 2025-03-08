@@ -1,30 +1,37 @@
 import { Box, Text, Button, VStack, useBreakpointValue } from "@chakra-ui/react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import UserAccount from "./UserAccount";
 import Logout from "../authentication/LogOut";
 import PaidOrderDetails from "./OderPaid";
+import LoginPage from "../authentication/LoginPage";
+import { RootState } from "@reduxjs/toolkit/query";
+import { useGetUserDetailsQuery } from "../app/services/auth/authService";
+import SessionExpired from "./SessionExpired";
 
 const Profile = () => {
-  // Define the valid keys for the pages object
+  const { data:user, isFetching, error} = useGetUserDetailsQuery('userDetails', {
+    // Perform a refetch every 4 minutes
+    pollingInterval: 240000, 
+    
+  });
   type PageKey = "Profile" | "Orders" | "Services" | "Contact" | "logout";
   const [currentPage, setCurrentPage] = useState<PageKey>("Profile");
 
   const pages: Record<PageKey, JSX.Element> = {
     Profile: <UserAccount />,
-    
     Orders: <PaidOrderDetails />,
     Services: <Text fontSize="xl">These are our Services.</Text>,
     Contact: <Text fontSize="xl">Get in touch with us on the Contact Page.</Text>,
-    logout: <Logout />,
+    // logout: isAuthenticated ? <Logout /> : <LoginPage />,
   };
 
-  // Use Chakra's responsive `flexDirection` for layout
-  
   const leftColumnWidth = useBreakpointValue({ base: "100%", md: "10%" });
   const rightColumnWidth = useBreakpointValue({ base: "100%", md: "90%" });
 
   return (
-    <Box display="flex" flexDirection={{ base: "column", md: "row" }} height="100vh">
+    <>
+    {user ?     <Box display="flex" flexDirection={{ base: "column", md: "row" }} height="100vh">
       {/* Left Column */}
       <Box width={leftColumnWidth} bg="gray.100" p={4}>
         <VStack spacing={4} align="stretch">
@@ -45,7 +52,9 @@ const Profile = () => {
       <Box width={rightColumnWidth} bg="gray.50" p={8}>
         {pages[currentPage]}
       </Box>
-    </Box>
+    </Box> : <SessionExpired/>}
+
+    </>
   );
 };
 

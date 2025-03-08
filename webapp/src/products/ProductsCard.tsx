@@ -42,7 +42,7 @@ const ProductsCard = ({ product}: ProductsProps) => {
 
   return (
     <HStack flexWrap="wrap" justifyContent="center" spacing={6}>
-      {product.length ? product.map((item) => (
+      {product? product.map((item) => (
         <Card
           key={item.id}
           maxW="sm"

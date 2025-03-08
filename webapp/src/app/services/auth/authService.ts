@@ -1,31 +1,63 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { SITE_DOMAIN } from '../../../api/apiClient'
-import Cookies from 'js-cookie'
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import Cookies from "js-cookie";
+import { SITE_DOMAIN } from "../../../api/apiClient";
+
 export const authApi = createApi({
-  reducerPath: 'authApi',
+  reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    // base url of backend API
     baseUrl: SITE_DOMAIN,
-    // prepareHeaders is used to configure the header of every request and gives access to getState which we use to include the token from the store
-    prepareHeaders: (headers, ) => {
-      const token = Cookies.get('accessToken')
-      if (token) {
-       // include token in req header
-        headers.set('authorization', `Bearer ${token}`)  
-        return headers
+    prepareHeaders: (headers, { endpoint }) => {
+      const token = Cookies.get("accessToken");
+
+      // List of endpoints that do NOT require authentication
+      const publicEndpoints = ["getProducts"];
+
+      if (token && !publicEndpoints.includes(endpoint)) {
+        headers.set("authorization", `Bearer ${token}`);
       }
+      return headers;
     },
   }),
   endpoints: (builder) => ({
     getUserDetails: builder.query({
       query: () => ({
-        url: '/api/users/me/',
-        method: 'GET',
+        url: "/api/users/me/",
+        method: "GET",
       }),
     }),
-  }),
-})
 
-// export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
-export const { useGetUserDetailsQuery } = authApi
+    getProducts: builder.query({
+      query: () => ({
+        url: "/api/products/view/",
+        method: "GET",
+      }),
+    }),
+
+    refreshToken: builder.mutation({
+      query: () => {
+        const refreshToken = Cookies.get("refreshToken");
+        if (!refreshToken) {
+          throw new Error("No refresh token available");
+        }
+
+        return {
+          url: "/api/token/refresh/",
+          method: "POST",
+          body: { refresh: refreshToken },
+        };
+      },
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          Cookies.set("accessToken", data.accessToken); // Store new access token
+        } catch (error) {
+          console.error("Token refresh failed", error);
+          Cookies.remove("accessToken");
+          Cookies.remove("refreshToken");
+        }
+      },
+    }),
+  }),
+});
+
+export const { useGetUserDetailsQuery, useRefreshTokenMutation, useGetProductsQuery } = authApi;
