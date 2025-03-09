@@ -1,27 +1,15 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
-import { refreshToken } from "../../../features/auth/authThunks";
+import apiClient from "../../../api/authApi";
 
-const TokenRefresh = () => {
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      dispatch(refreshToken())
-        .unwrap()
-        .then((newToken) => {
-          Cookies.set("accessToken", newToken);
-        })
-        .catch(() => {
-          console.error("Failed to refresh token");
-        });
-    }, 10 * 60 * 1000); // Refresh every 10 minutes (adjust as needed)
+export const refreshToken = async()=>{
+  try {
+  const response = await apiClient.post("/api/token/refresh/",
+    {}, {withCredentials:true});
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [dispatch]);
+    console.log("new_refreshToken", response.data.message);
+  }catch (error: any) {
+    return error.messages;
+  }
 
-  return null; // This component doesn't render anything
-};
-
-export default TokenRefresh;
+}

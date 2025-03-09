@@ -33,6 +33,14 @@ export const authApi = createApi({
       }),
     }),
 
+
+    getBlogPost: builder.query({
+      query: () => ({
+        url: "/api/blog/",
+        method: "GET",
+      }),
+    }),
+
     refreshToken: builder.mutation({
       query: () => {
         const refreshToken = Cookies.get("refreshToken");
@@ -60,4 +68,4 @@ export const authApi = createApi({
   }),
 });
 
-export const { useGetUserDetailsQuery, useRefreshTokenMutation, useGetProductsQuery } = authApi;
+export const { useGetUserDetailsQuery, useRefreshTokenMutation, useGetProductsQuery, useGetBlogPostQuery } = authApi;

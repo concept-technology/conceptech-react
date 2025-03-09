@@ -26,17 +26,15 @@ import { useNavigate } from "react-router-dom";
 import { useGetUserDetailsQuery } from "../app/services/auth/authService";
 import { setCredentials } from "../features/auth/authSlice";
 import { updateUser } from "../features/user/userThunks";
+
+
 const UserAccount: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   
-  const { data:user, isFetching, error} = useGetUserDetailsQuery('userDetails', {
-    // Perform a refetch every 4 minutes
-    pollingInterval: 240000, 
-    
-  });
+  const { data:user, isFetching, error} = useGetUserDetailsQuery('userDetails', {});
   
   const { isAuthenticated } = useSelector((state: RootState) => state.auth) || { isAuthenticated: false };
 
@@ -47,7 +45,7 @@ const UserAccount: React.FC = () => {
   useEffect(() => {
     if (user) dispatch(setCredentials(user))
   }, [user, dispatch])
-  const fetchedRef = useRef(false);
+  
   useEffect(() => {
     if (user?.username?.trim()) {
       setUpdatedUser({ username: user.username, email: user.email });

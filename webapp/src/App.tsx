@@ -75,7 +75,7 @@ function App() {
             <Route path="privacy" element={<PrivacyPolicy />} />
             <Route path="support" element={<Support />} />
             <Route path="signup" element={<SignupPage />} />
-            <Route path="login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/social-auth" element={<SocialAuthHandler />} />
             <Route path="/login/callback" element={<LoginCallback />} />
             <Route path="password-reset/request" element={<PasswordResetRequest />} />
