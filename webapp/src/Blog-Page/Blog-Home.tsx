@@ -16,7 +16,7 @@ import useFetch from "../hooks/useFetch";
 import { Blog } from "../hooks/useBlog";
 
 const BlogHome = () => {
-  const { data = [] } = useFetch<Blog>("/api/blog/",); // Ensure data is initialized to an empty array
+  const { data} = useFetch<Blog>("/api/blog/",); // Ensure data is initialized to an empty array
 
   return (
     <>
@@ -43,7 +43,7 @@ const BlogHome = () => {
 
         {/* Main Content */}
         <GridItem area="main">
-          {data.length > 0 ? (
+          {data ? (
             <>
               {/* Featured Blog Slide */}
               <SimpleGrid columns={{ base: 1, lg: 4 }} gap={6} mb={8}>

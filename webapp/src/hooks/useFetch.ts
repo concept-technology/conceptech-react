@@ -19,12 +19,10 @@ const useFetch = <T>(endpoint: string, token?: string) => {
           signal: controller.signal,
           headers: token ? { Authorization: `Bearer ${token}` } : {}, // Conditionally add the Authorization header
         });
-        setData(response.data);
-        console.log(response.data)
+        setData(response.data.results);
         if (response.status === 200) {
           setStatus(true);
         }
-        console.log(response.data);
         setLoading(false);
       } catch (err: any) {
         if (err instanceof CanceledError) return; // Handle cancelation error

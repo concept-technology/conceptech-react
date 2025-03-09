@@ -37,6 +37,9 @@ import { BsTwitterX } from "react-icons/bs";
 import BlogHeader from "./BlogHeader";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import apiClient from "../api/authApi";
+import useFetch from "../hooks/useFetch";
+import { Blog } from "../hooks/useBlog";
+import { refreshToken } from "../app/services/auth/refreshToken";
 
 interface RelatedBlogProps {
   id: number;
@@ -94,58 +97,21 @@ const BlogDetail = () => {
   const { register, handleSubmit, reset } = useForm<{ content: string }>();
 
   const navigate = useNavigate()
-  const url =`/api/blog/${id}/${slug}/`
+  const {data} = useFetch(`/api/blog/${id}/${slug}/`)
+  const {data:getRelataedStories} = useFetch(`/api/blog/related/${id}`)
 
   useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const response = await apiClient.get(url);
-        const data = response.data;
-        console.log(data)
-        setBlog({
-          title: data.title,
-          content: data.content,
-          images: data.images.map((img: any) => img.image),
-          codeSnippets: data.code_snippets,
-          videos: data.videos,
-        });
-      } catch (error) {
-        console.error("Failed to fetch blog data", error);
-      }
-    };
-    fetchBlog();
-  }, [id, slug]);
-
-  useEffect(() => {
-    const fetchRelatedStories = async () => {
-      setLoadingRelated(true);
-      try {
-        const response = await apiClient.get(`/api/blog/related/${id}`);
-        setRelatedStories(response.data);
-      } catch (error) {
-        console.error("Failed to fetch related blog", error);
-      } finally {
-        setLoadingRelated(false);
-      }
-    };
-    fetchRelatedStories();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await apiClient.get(`/api/blog/comments/list/${id}/`);
-        
-        setComments(response.data.comments);
-      } catch (error) {
-        console.error("Failed to fetch comments", error);
-      }
-    };
-    fetchComments();
-  }, [id]);
-
+    if (data) {
+      setBlog(data);
+      setRelatedStories(getRelataedStories)
+      setLoadingRelated(false)
+      console.log(data)
+    }
+  }, [data, getRelataedStories]);
+  
   const onSubmit = async (data: { content: string }) => {
-    const token = Cookies.get("access");
+    const token = Cookies.get("accessToken");
+    refreshToken()
     if (!token) {
       console.error("User is not authenticated.");
       return;
@@ -171,22 +137,27 @@ const BlogDetail = () => {
     }
   };
 
-  const mergeContentAndImages = (content: string, images: string[]) => {
-    const paragraphs = content.split(".");
-    const mergedContent = [];
-    const maxLength = Math.max(paragraphs.length, images.length);
 
+
+  const mergeContentAndImages = (content: string | undefined, images: imgprops[] | undefined) => {
+    const paragraphs = content ? content.split(".") : []; // Ensure content is not undefined
+    const imageUrls = images ? images.map(img => img.image) : []; // Extract image URLs safely
+  
+    const mergedContent = [];
+    const maxLength = Math.max(paragraphs.length, imageUrls.length);
+  
     for (let i = 0; i < maxLength; i++) {
       if (i < paragraphs.length && paragraphs[i].trim()) {
         mergedContent.push({ type: "paragraph", value: paragraphs[i].trim() });
       }
-      if (i < images.length) {
-        mergedContent.push({ type: "image", value: images[i] });
+      if (i < imageUrls.length) {
+        mergedContent.push({ type: "image", value: imageUrls[i] });
       }
     }
+  
     return mergedContent;
   };
-
+  
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
     alert("Link copied to clipboard!");
@@ -210,7 +181,7 @@ const BlogDetail = () => {
 
                 {blog.videos && <VideoPlayer videos={blog.videos} />}
 
-                {mergeContentAndImages(blog.content, blog.images).map(
+                {mergeContentAndImages(blog?.content, blog?.images).map(
                   (block, index) =>
                     block.type === "paragraph" ? (
                       <Text key={index} fontSize="lg" color="gray.800">
@@ -229,12 +200,12 @@ const BlogDetail = () => {
                     )
                 )}
 
-                {blog.codeSnippets.length > 0 && (
-                  <Box w={{ base: "90%", lg: "500px" }}>
+                {blog.code_snippets?.length > 0 &&(
+                  <Box w={{ base: "100%"}}>
                     <Heading fontSize="2xl" color="teal.500" mb={4}>
                       Code Snippets
                     </Heading>
-                    {blog.codeSnippets.map((snippet, index) => (
+                    {blog.code_snippets.map((snippet, index) => (
                       <Box
                         key={index}
                         mb={8}
@@ -260,12 +231,12 @@ const BlogDetail = () => {
  
 <Divider my={6} />
             <Flex align="center" justify="space-between" mb={4}>
-              <Heading fontSize="2xl" color="blue.600">
-                Comments
-              </Heading>
+            
               <Flex align="center">
                 <Text fontSize="md" color="gray.600" mr={2} onClick={onOpen}>
-                  {comments.length} Comments
+                <Text color="blue.600">
+                {comments.length} comments
+              </Text>
                 </Text>
                 <IconButton
                   icon={<FaComments />}
@@ -308,13 +279,7 @@ const BlogDetail = () => {
                                   aria-label="Copy Link"
                                 />
                               </Tooltip>
-                            {/* <Flex gap={2}>
-                              {reactions.map((reaction) => (
-                                <Text key={reaction.emoji}>
-                                  {reaction.emoji} {reaction.count}
-                                </Text>
-                              ))}
-                            </Flex> */}
+                        
               </Flex>
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -327,7 +292,7 @@ const BlogDetail = () => {
                     {comments.length > 0 ? (
                       comments.map((comment, index) => (
                         <>
-                        <Stack direction="row" h="20">
+                        <Stack direction="row" h="20" key={comment.content}>
                       <Avatar
                       name={comment.user}
                       src={comment.profile_picture || undefined}
@@ -426,3 +391,4 @@ const BlogDetail = () => {
 
           )}
 export default BlogDetail
+

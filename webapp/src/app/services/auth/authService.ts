@@ -41,31 +41,7 @@ export const authApi = createApi({
       }),
     }),
 
-    refreshToken: builder.mutation({
-      query: () => {
-        const refreshToken = Cookies.get("refreshToken");
-        if (!refreshToken) {
-          throw new Error("No refresh token available");
-        }
-
-        return {
-          url: "/api/token/refresh/",
-          method: "POST",
-          body: { refresh: refreshToken },
-        };
-      },
-      async onQueryStarted(_, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          Cookies.set("accessToken", data.accessToken); // Store new access token
-        } catch (error) {
-          console.error("Token refresh failed", error);
-          Cookies.remove("accessToken");
-          Cookies.remove("refreshToken");
-        }
-      },
-    }),
   }),
 });
 
-export const { useGetUserDetailsQuery, useRefreshTokenMutation, useGetProductsQuery, useGetBlogPostQuery } = authApi;
+export const { useGetUserDetailsQuery, useGetProductsQuery, useGetBlogPostQuery } = authApi;
