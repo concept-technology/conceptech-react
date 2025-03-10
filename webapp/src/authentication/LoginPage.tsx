@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -10,25 +10,31 @@ import {
   Heading,
   Text,
   Icon,
-  useToast,
   Link as ChakraLink,
 } from "@chakra-ui/react";
-import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../app/store";
-import { loginUser } from "../features/auth/authThunks";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { GOOGLE_CLIENT_ID } from "../api/apiClient";
+import { Helmet } from "react-helmet-async";
+import Seo from "../app/services/auth/seo";
+import SeoOptimizer from "../app/services/auth/seo";
 
-interface LoginFormData {
+export interface LoginFormData {
   username: string;
   password: string;
 }
 
-const LoginPage: React.FC = () => {
+interface LoginProps {
+  onGoogleLogin: (response: any) => void; // Google login success callback
+  onLoginSubmit: (data: LoginFormData) => void; // Form submission handler
+}
+
+const LoginPage: React.FC<LoginProps> = ({onGoogleLogin,onLoginSubmit}:LoginProps) => {
   const { handleSubmit, register, formState: { errors } } = useForm<LoginFormData>();
-  const toast = useToast();
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
 
   // Get Redux auth state
   const { isAuthenticated, loading, error } = useSelector((state: RootState) => state.auth);
@@ -39,29 +45,16 @@ const LoginPage: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    try {
-      await dispatch(loginUser(data)).unwrap();
-      toast({
-        title: "Login successful.",
-        description: `Welcome back, ${data.username}!`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      navigate("/account/profile");
-    } catch (error) {
-      toast({
-        title: "Invalid login attempt.",
-        description: error || "An unknown error occurred.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
+
+
 
   return (
+    <>
+    <Helmet>
+      <title>account | login</title>
+      <meta property="og:description" content="Login to your account and access our products and services" />
+      <meta property="description" content="Login to your account and access our products and services" />
+    </Helmet>
     <Box
       minHeight="100vh"
       display="flex"
@@ -75,7 +68,7 @@ const LoginPage: React.FC = () => {
           Login
         </Heading>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onLoginSubmit)}>
           <Stack spacing={4}>
             <FormControl isInvalid={!!errors.username}>
               <FormLabel htmlFor="username">Username</FormLabel>
@@ -117,9 +110,14 @@ const LoginPage: React.FC = () => {
 
             <Text textAlign="center" mt={4}>OR</Text>
 
-            <Button leftIcon={<Icon as={FaGoogle} />} colorScheme="red" variant="outline" width="full">
-              Login with Google
-            </Button>
+            <GoogleOAuthProvider  clientId={GOOGLE_CLIENT_ID}>
+
+          <GoogleLogin
+            onSuccess={onGoogleLogin}
+            onError={()=>navigate('/')}
+            />
+            </GoogleOAuthProvider>
+
 
             <Button leftIcon={<Icon as={FaFacebook} />} colorScheme="facebook" variant="outline" width="full">
               Login with Facebook
@@ -142,6 +140,8 @@ const LoginPage: React.FC = () => {
         </form>
       </Box>
     </Box>
+    </>
+
   );
 };
 

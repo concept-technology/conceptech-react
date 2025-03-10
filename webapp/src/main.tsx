@@ -4,13 +4,13 @@ import App from "./App.tsx";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import theme from "./Home-page/components/ColorMode.tsx";
 import { BrowserRouter } from "react-router-dom";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Provider } from "react-redux"; // Import Redux Provider
 import { store } from "./app/store.ts"; // Import Redux store
-
+import { HelmetProvider } from "react-helmet-async";
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <GoogleOAuthProvider clientId="293789754225-j40l223bopqvcedji6oks147omf7al2s.apps.googleusercontent.com">
     <React.StrictMode>
+      <HelmetProvider>
+
       <Provider store={store}> {/* Wrap app with Redux Provider */}
         <ChakraProvider theme={theme}>
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
@@ -19,6 +19,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           </BrowserRouter>
         </ChakraProvider>
       </Provider>
+      </HelmetProvider>
     </React.StrictMode>
-  </GoogleOAuthProvider>
 );

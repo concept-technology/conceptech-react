@@ -76,8 +76,8 @@ interface props{
   title: string
   images: imgprops[]
   comments: Comment[]
-  codeSnippets:code[]
-  videoss:VideoProps[]
+  code_snippets:code[]
+  videos:VideoProps[]
 }
 
 
@@ -88,7 +88,7 @@ const BlogDetail = () => {
   const [blog, setBlog] = useState<props>({
     title: "",
     content: "",
-    codeSnippets: [],
+    code_snippets: [],
     images: [],
     videos: [],
   });
