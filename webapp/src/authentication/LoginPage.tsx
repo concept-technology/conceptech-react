@@ -113,11 +113,6 @@ const LoginPage: React.FC<LoginProps> = ({onGoogleLogin,onLoginSubmit}:LoginProp
             />
             </GoogleOAuthProvider>
 
-
-            {/* <Button leftIcon={<Icon as={FaFacebook} />} colorScheme="facebook" variant="outline" width="full">
-              Login with Facebook
-            </Button> */}
-
             <Text textAlign="center" mt={2}>
               Don't have an account?{" "}
               <ChakraLink as={Link} to="/signup" color="blue.500">
