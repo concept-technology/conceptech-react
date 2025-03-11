@@ -1,16 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, Button } from '@chakra-ui/react';
-import { token } from '../api/apiClient';
+import Cookies from 'js-cookie';
+
 const Logout: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const handleLogout = async () => {
     try {
-      if (!token) {
-        throw new Error("No token found");
-      }
 
+      Cookies.remove('accessToken')
+      Cookies.remove('refreshToken')
       navigate('/');
       location.reload()
            

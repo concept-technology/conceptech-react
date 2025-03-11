@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -21,12 +21,14 @@ import {
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../app/store";
-import Logout from "../authentication/LogOut";
 import { useNavigate } from "react-router-dom";
 import { useGetUserDetailsQuery } from "../app/services/auth/authService";
 import { setCredentials } from "../features/auth/authSlice";
 import { updateUser } from "../features/user/userThunks";
-
+import Logout from "../authentication/LogOut";
+import apiClient from "../api/authApi";
+import { token } from "../api/apiClient";
+import Cookies from "js-cookie";
 
 const UserAccount: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -55,6 +57,45 @@ const UserAccount: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUpdatedUser((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleDelete = async () => {
+    try {
+      setSaving(true);
+      const response = await apiClient.post('/api/acount/delete/',{}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.status === 200) {
+        toast({
+          title: "Account Deleted",
+          description: "Your account has been successfully deleted.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        Cookies.remove('accessToken')
+        Cookies.remove('refreshToken')
+        location.reload()
+        navigate("/");
+      } else {
+        toast({
+          title: "Error",
+          description: "Unable to delete your account.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Something went wrong.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSave = async () => {
@@ -124,9 +165,11 @@ const UserAccount: React.FC = () => {
             <Button onClick={onOpen} colorScheme="blue">
               Edit Profile
             </Button>
-            <Button onClick={() => navigate("/change-password")} colorScheme="red">
-              Reset Password
+            <Button onClick={() => navigate("/change-password")} colorScheme="teal">
+              Chage Password
             </Button>
+
+
           </Stack>
           <Logout />
           <Modal isOpen={isOpen} onClose={onClose}>
@@ -169,6 +212,9 @@ const UserAccount: React.FC = () => {
               </ModalFooter>
             </ModalContent>
           </Modal>
+          <Button onClick={handleDelete}>
+              Delete My account
+            </Button>
         </Box>
       )}
     </>

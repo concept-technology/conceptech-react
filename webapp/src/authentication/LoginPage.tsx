@@ -9,25 +9,21 @@ import {
   Stack,
   Heading,
   Text,
-  Icon,
   Link as ChakraLink,
 } from "@chakra-ui/react";
-import { FaFacebook } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { GOOGLE_CLIENT_ID } from "../api/apiClient";
 import { Helmet } from "react-helmet-async";
-import Seo from "../app/services/auth/seo";
-import SeoOptimizer from "../app/services/auth/seo";
 
 export interface LoginFormData {
   username: string;
   password: string;
 }
 
-interface LoginProps {
+export interface LoginProps {
   onGoogleLogin: (response: any) => void; // Google login success callback
   onLoginSubmit: (data: LoginFormData) => void; // Form submission handler
 }
@@ -71,11 +67,11 @@ const LoginPage: React.FC<LoginProps> = ({onGoogleLogin,onLoginSubmit}:LoginProp
         <form onSubmit={handleSubmit(onLoginSubmit)}>
           <Stack spacing={4}>
             <FormControl isInvalid={!!errors.username}>
-              <FormLabel htmlFor="username">Username</FormLabel>
+              <FormLabel htmlFor="username">E-mail or Username</FormLabel>
               <Input
                 id="username"
                 type="text"
-                placeholder="Enter your username"
+                placeholder="Enter E-mail or username"
                 {...register("username", {
                   required: "Username is required",
                   minLength: { value: 4, message: "Username must be at least 4 characters" },
@@ -111,7 +107,6 @@ const LoginPage: React.FC<LoginProps> = ({onGoogleLogin,onLoginSubmit}:LoginProp
             <Text textAlign="center" mt={4}>OR</Text>
 
             <GoogleOAuthProvider  clientId={GOOGLE_CLIENT_ID}>
-
           <GoogleLogin
             onSuccess={onGoogleLogin}
             onError={()=>navigate('/')}
@@ -119,9 +114,9 @@ const LoginPage: React.FC<LoginProps> = ({onGoogleLogin,onLoginSubmit}:LoginProp
             </GoogleOAuthProvider>
 
 
-            <Button leftIcon={<Icon as={FaFacebook} />} colorScheme="facebook" variant="outline" width="full">
+            {/* <Button leftIcon={<Icon as={FaFacebook} />} colorScheme="facebook" variant="outline" width="full">
               Login with Facebook
-            </Button>
+            </Button> */}
 
             <Text textAlign="center" mt={2}>
               Don't have an account?{" "}
