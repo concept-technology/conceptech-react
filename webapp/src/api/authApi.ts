@@ -30,8 +30,7 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const newToken = await store.dispatch(refreshToken()).unwrap();  
-        
+        const newToken = await store.dispatch(refreshToken()).unwrap();     
         Cookies.set("accessToken", newToken);
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return apiClient(originalRequest); // Retry failed request
