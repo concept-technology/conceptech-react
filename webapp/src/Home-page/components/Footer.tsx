@@ -46,6 +46,9 @@ const Footer = () => {
         <Link href="/privacy" fontWeight="bold" _hover={{ color: "teal.400" }}>
           Privacy
         </Link>
+        <Link href="https://api.conceptsoftwares.com/admin" fontWeight="bold" _hover={{ color: "teal.400" }}>
+          admin
+        </Link>
       </Flex>
 
       {/* Footer Curve (Optional) */}
