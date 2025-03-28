@@ -4,6 +4,7 @@ import UserAccount from "./UserAccount";
 import PaidOrderDetails from "./OderPaid";
 import { useGetUserDetailsQuery } from "../app/services/auth/authService";
 import SessionExpired from "./SessionExpired";
+import LoginPage from "../authentication/LoginPage";
 
 const Profile = () => {
   const { data:user,} = useGetUserDetailsQuery('userDetails', {});
@@ -44,7 +45,7 @@ const Profile = () => {
       <Box width={rightColumnWidth} bg="gray.50" p={8}>
         {pages[currentPage]}
       </Box>
-    </Box> : <SessionExpired/>}
+    </Box> : <LoginPage/>}
 
     </>
   );

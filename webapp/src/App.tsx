@@ -1,5 +1,5 @@
-import { Grid, GridItem, Box, useToast } from "@chakra-ui/react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Grid, GridItem, Box } from "@chakra-ui/react";
+import { Routes, Route } from "react-router-dom";
 import NavBar from "./Home-page/components/NavBar";
 import GameApp from "./RawgGame/components/GameApp";
 import HomeApp from "./Home-page/components/Home-App";
@@ -26,110 +26,13 @@ import SuccessPage from "./products/PaymentSuccess";
 import PasswordRestForm from "./user/PasswordResetForm";
 import ChangePasswordForm from "./user/ChangePassword";
 import PrivateRoute from "./routes/PrivateRoute";
-import axios from "axios";
-import { SITE_DOMAIN } from "./api/apiClient";
-import { SubmitHandler} from "react-hook-form";
-import { loginUser } from "./features/auth/authThunks";
-import { useDispatch} from "react-redux";
-import { AppDispatch } from "./app/store";
-import { CredentialResponse } from "@react-oauth/google";
-import LoginPage, { LoginFormData } from "./authentication/LoginPage";
+import LoginPage from "./authentication/LoginPage";
 
 
-
-interface GoogleLoginApiResponse {
-  success: boolean;
-  user: {
-    username: string;
-    email: string;
-  };
-  message?: string;
-}
 
 function App() {
-  const toast = useToast();
-  const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>();
 
 
-  const handleGoogleLoginSuccess = async (response:CredentialResponse) => {
-    try {
-  
-      const googleToken = response.credential;
-  
-      if (!googleToken) {
-        throw new Error("Google login failed: No token received.");
-      }
-  
-      const res = await axios.post<GoogleLoginApiResponse>(
-        `${SITE_DOMAIN}/api/auth/google/login/`,
-        { token: googleToken }, // ✅ Send full token, not googleId
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true, // If using cookies
-        }
-      );
-      const data = res.data;
-  
-      if (data.success) {
-        navigate("/account/profile");
-        toast({
-          title: "Google login successful.",
-          description: `Welcome back, ${data.user.username}!`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Google login failed.",
-          description: data.message || "An error occurred.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (error: any) {
-      console.error("Axios Error:", error.response?.data || error.message);
-  
-      toast({
-        title: "Login error.",
-        description:
-          error.response?.data?.message || "An unexpected error occurred.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-  
-  const handleLoginFormSubit: SubmitHandler<LoginFormData> = async (data: any) => {
-    try {
-      await dispatch(loginUser(data)).unwrap();
-      toast({
-        title: "Login successful.",
-        description: `Welcome back, ${data.username}!`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-  
-      navigate("/account/profile");
-  
-
-    } catch (error: any) {
-      toast({
-        title: "Invalid login attempt.",
-        description: error || "An unknown error occurred.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-  
 
 
   return (
@@ -174,11 +77,11 @@ function App() {
             <Route path="/blog/:id/:slug" element={<BlogItemDetail />} />
             <Route path="privacy" element={<PrivacyPolicy />} />
             <Route path="support" element={<Support />} />
-            <Route path="signup" element={<SignupPage onGoogleLogin={handleGoogleLoginSuccess} />} />
+            <Route path="signup" element={<SignupPage />} />
 
             <Route
             path="/login"
-            element={<LoginPage onGoogleLogin={handleGoogleLoginSuccess} onLoginSubmit={handleLoginFormSubit}/>}
+            element={<LoginPage/>}
           />
 
             <Route path="password-reset/request" element={<PasswordResetRequest />} />
