@@ -40,7 +40,6 @@ const userSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(updateUser.fulfilled, (state, action: PayloadAction<UserState>) => {
-        console.log("User data stored in Redux:", action.payload);
         state.username = action.payload.username;
         state.email = action.payload.email;
         state.profile_picture = action.payload.profile_picture;

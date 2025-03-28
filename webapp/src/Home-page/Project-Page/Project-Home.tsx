@@ -14,11 +14,15 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { cardItems } from "./Project-Object";
+import { useGetProductsQuery } from "../../app/services/auth/authService";
+import ProductsCard from "../../products/ProductsCard";
 
 interface projectProps {
   projectItems: cardItems[];
 }
 const ProjectHome = ({ projectItems }: projectProps) => {
+
+      const { data: products,  } = useGetProductsQuery('products');
   return (
     <Box p={5} id="project" position={'absolute'} top={10}>
 
@@ -27,7 +31,7 @@ const ProjectHome = ({ projectItems }: projectProps) => {
         <Center>
 
         <Heading p={2} m={3}>
-            products and services
+            services
         </Heading>
         </Center>
       </Box>
@@ -67,6 +71,13 @@ const ProjectHome = ({ projectItems }: projectProps) => {
           </Card>
         ))}
       </SimpleGrid>
+      <Center>
+      <Heading p={2} m={3}>
+            Web apps
+        </Heading>
+      </Center>
+        
+      <ProductsCard product={products}/>
     </Box>
   );
 };

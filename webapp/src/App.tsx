@@ -50,6 +50,8 @@ function App() {
   const toast = useToast();
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>();
+
+
   const handleGoogleLoginSuccess = async (response:CredentialResponse) => {
     try {
   
@@ -103,7 +105,7 @@ function App() {
     }
   };
   
-  const handleLoginFormSubit: SubmitHandler<LoginFormData> = async (data:any) => {
+  const handleLoginFormSubit: SubmitHandler<LoginFormData> = async (data: any) => {
     try {
       await dispatch(loginUser(data)).unwrap();
       toast({
@@ -113,8 +115,11 @@ function App() {
         duration: 3000,
         isClosable: true,
       });
+  
       navigate("/account/profile");
-    } catch (error:any) {
+  
+
+    } catch (error: any) {
       toast({
         title: "Invalid login attempt.",
         description: error || "An unknown error occurred.",
@@ -124,7 +129,7 @@ function App() {
       });
     }
   };
-
+  
 
 
   return (
@@ -169,7 +174,7 @@ function App() {
             <Route path="/blog/:id/:slug" element={<BlogItemDetail />} />
             <Route path="privacy" element={<PrivacyPolicy />} />
             <Route path="support" element={<Support />} />
-            <Route path="signup" element={<SignupPage />} />
+            <Route path="signup" element={<SignupPage onGoogleLogin={handleGoogleLoginSuccess} />} />
 
             <Route
             path="/login"

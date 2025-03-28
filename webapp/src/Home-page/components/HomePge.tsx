@@ -4,14 +4,12 @@ import {
   Heading,
   Text,
   Button,
-  Image,
   VStack,
 
 } from "@chakra-ui/react";
-import clogo from '../../assets/Images/logo.jpg'
 
 import { Link, useNavigate } from "react-router-dom";
-import logo from '../../assets/mylogo.png'
+
 const HomePage = () => {
     const navigate = useNavigate();
 
@@ -41,17 +39,11 @@ const HomePage = () => {
             software solutions. Let’s build something extraordinary together.
           </Text>
           <Link to="/contact">
-          <Button colorScheme="teal" bg="white" color="teal.500" size="lg">
+          <Button colorScheme="teal" bg="white" color="teal.500" size="lg" onClick={handleGetQuoteClick}>
             Contact Us
           </Button>
           </Link>
         </VStack>
-        <Image
-          src={clogo}
-          alt="Hero Image"
-          maxW="500px"
-          mt={{ base: 8, md: 0 }}
-        />
       </Flex>
 
       {/* About Section */}

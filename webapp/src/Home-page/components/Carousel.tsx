@@ -7,6 +7,7 @@ import bgImage1 from "../../assets/img/bg1.jpg";
 import bgImage2 from "../../assets/img/bg2.jpg";
 import bgImage3 from "../../assets/img/bg4.jpg";
 import { Pagination, EffectFade, Autoplay } from "swiper/modules";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const slides = [
   {
@@ -97,6 +98,7 @@ const CarouselComponent = () => {
                   >
                     {slide.description}
                   </Text>
+                  <Link to='/products/services'>
                   <Button
                     colorScheme="teal"
                     size="lg"
@@ -106,9 +108,11 @@ const CarouselComponent = () => {
                     fontWeight="semibold"
                     fontFamily="Poppins, sans-serif"
                     _hover={{ bg: "teal.400" }}
-                  >
+                    
+                    >
                     Explore Our Services
                   </Button>
+                    </Link>
                 </VStack>
               </Flex>
             </Box>

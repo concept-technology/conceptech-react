@@ -27,14 +27,10 @@ interface Product{
 
   
 const HomeApp = () => {
-    // const {data:products} = useFetch<Product>(`/api/products/view/`)
-    const { data: products,  } = useGetProductsQuery('products');
-
     return (
     <>
         <CarouselComponent/>
         <HomePage/>
-        <ProductsCard product={products}/>
         <ProcessSection/>
         <About_us/>
         
