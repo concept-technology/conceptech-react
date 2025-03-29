@@ -15,32 +15,16 @@ import {
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../app/store";
-import { CredentialResponse, GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-import { GOOGLE_CLIENT_ID, SITE_DOMAIN } from "../api/apiClient";
 import { Helmet } from "react-helmet-async";
 import { loginUser } from "../features/auth/authThunks";
-import axios from "axios";
+import GoogleLoginHandler from "./GoogleLogin";
 
 export interface LoginFormData {
   username: string;
   password: string;
 }
 
-export interface LoginProps {
-  onGoogleLogin: (response: any) => void; // Google login success callback
-  onLoginSubmit: (data: LoginFormData) => void; // Form submission handler
-}
-
-interface GoogleLoginApiResponse {
-  success: boolean;
-  user: {
-    username: string;
-    email: string;
-  };
-  message?: string;
-}
-
-const LoginPage: React.FC<LoginProps> =() => {
+const LoginPage: React.FC =() => {
   const { handleSubmit, register, formState: { errors } } = useForm<LoginFormData>();
   const navigate = useNavigate();
   const toast = useToast();
@@ -81,65 +65,10 @@ const LoginPage: React.FC<LoginProps> =() => {
       });
     }
   };
-  
-  const handleGoogleLoginSuccess = async (response:CredentialResponse) => {
-    try {
-  
-      const googleToken = response.credential;
-  
-      if (!googleToken) {
-        throw new Error("Google login failed: No token received.");
-      }
-  
-      const res = await axios.post<GoogleLoginApiResponse>(
-        `${SITE_DOMAIN}/api/auth/google/login/`,
-        { token: googleToken }, // ✅ Send full token, not googleId
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true, // If using cookies
-        }
-      );
-      const data = res.data;
-  
-      if (data.success) {
-        navigate("/account/profile");
-        toast({
-          title: "Google login successful.",
-          description: `Welcome back, ${data.user.username}!`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Google login failed.",
-          description: data.message || "An error occurred.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (error: any) {
-      console.error("Axios Error:", error.response?.data || error.message);
-  
-      toast({
-        title: "Login error.",
-        description:
-          error.response?.data?.message || "An unexpected error occurred.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-  
-
   return (
     <>
     <Helmet>
-      <title>concept tech | login</title>
+      <title>concept Technologies | login</title>
       <meta property="og:description" content="Login to your account and access our products and services" />
       <meta property="description" content="Login to your account and access our products and services" />
     </Helmet>
@@ -198,13 +127,7 @@ const LoginPage: React.FC<LoginProps> =() => {
 
             <Text textAlign="center" mt={4}>OR</Text>
 
-            <GoogleOAuthProvider  clientId={GOOGLE_CLIENT_ID}>
-          <GoogleLogin
-            onSuccess={handleGoogleLoginSuccess}
-            onError={()=>navigate('/')}
-            />
-            </GoogleOAuthProvider>
-
+            <GoogleLoginHandler/>
             <Text textAlign="center" mt={2}>
               Don't have an account?{" "}
               <ChakraLink as={Link} to="/signup" color="blue.500">

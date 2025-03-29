@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet-async';
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { GOOGLE_CLIENT_ID } from '../api/apiClient';
 import { LoginProps } from './LoginPage';
+import GoogleLoginHandler from './GoogleLogin';
 
 
 interface SignupFormData {
@@ -31,7 +32,7 @@ const isStrongPassword = (password: string): boolean => {
   return passwordRegex.test(password);
 };
 
-const SignupPage: React.FC<LoginProps> = ({ onGoogleLogin }: LoginProps) => {
+const SignupPage: React.FC = () => {
   const { handleSubmit, register, formState: { errors }, getValues } = useForm<SignupFormData>();
   const toast = useToast();
   const navigate = useNavigate();
@@ -181,9 +182,7 @@ const SignupPage: React.FC<LoginProps> = ({ onGoogleLogin }: LoginProps) => {
 
               <Text textAlign="center" mt={4}>OR</Text>
 
-              <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>    
-                <GoogleLogin onSuccess={onGoogleLogin} onError={() => navigate('/')} />
-              </GoogleOAuthProvider>
+           <GoogleLoginHandler/>
 
               <Text textAlign="center" mt={2}>
                 Already have an account? <Link to="/login">Log in</Link>

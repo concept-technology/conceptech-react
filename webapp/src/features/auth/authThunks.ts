@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import apiClient from "../../api/authApi";
+import axios from "axios";
+import { SITE_DOMAIN } from "../../api/apiClient";
 
 
 export const loginUser = createAsyncThunk(
@@ -26,9 +28,23 @@ export const refreshToken = createAsyncThunk(
 
       const response = await apiClient.post("/api/token/refresh/", { refresh });
       Cookies.set("accessToken", response.data.accessToken);
+      Cookies.set("refreshToken", response.data.refreshToken);
       return response.data.accessToken;
     } catch (error: any) {
       return rejectWithValue("Session expired, please login again");
+    }
+  }
+);
+export const googleLogin = createAsyncThunk(
+  "auth/loginWithGoogle",
+  async (token: string, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${SITE_DOMAIN}/api/auth/google/login/`, {
+        token,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || "Google login failed");
     }
   }
 );
