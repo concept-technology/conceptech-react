@@ -31,14 +31,10 @@ import LoginPage from "./authentication/LoginPage";
 
 
 function App() {
-
-
-
-
   return (
     <>
     <Grid
-      templateRows="auto 1fr"
+      templateRows="auto 3fr "
       templateAreas={{
         base: `"nav" "main"`,
       }}
@@ -120,6 +116,7 @@ function App() {
           </Routes>
         </Box>
       </GridItem>
+
     </Grid>
     </>
 

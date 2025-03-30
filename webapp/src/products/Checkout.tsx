@@ -22,6 +22,7 @@ import useFetch from "../hooks/useFetch";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SITE_DOMAIN, token } from "../api/apiClient";
+import { formatPrice } from "./ProductDetail";
 
 interface Props {
   name: string;
@@ -251,7 +252,7 @@ const CheckoutPage = () => {
               <Divider />
               <Flex justify="space-between" fontWeight="bold">
                 <Text>Total</Text>
-                <Text>${product.discount_price}</Text>
+                <Text>&#8358;{formatPrice(product.discount_price)}</Text>
               </Flex>
             </Stack>
           ))}

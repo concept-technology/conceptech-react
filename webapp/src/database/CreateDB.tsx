@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -15,8 +15,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Footer from "../Home-page/components/Footer";
 import apiClient from "../api/authApi";
-import { token } from "../api/apiClient";
-
+import { refreshToken } from "../app/services/auth/refreshToken";
+import Cookies from 'js-cookie'
 // Define the form input types
 type FormInputs = {
   name: string;
@@ -38,6 +38,9 @@ const CreateDatabaseForm: React.FC = () => {
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
    console.log(data)
     try {
+        refreshToken()
+
+      const token = Cookies.get('accessToken')
       const response = await apiClient.post(`/api/database/`, data,{
         headers:{Authorization:`Bearer ${token}`}
       });

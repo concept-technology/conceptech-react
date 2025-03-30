@@ -63,7 +63,7 @@ const ProjectHome = ({ projectItems }: projectProps) => {
               <CardFooter>
                 <Link to={project.link}>
                   <Button color={"white"} colorScheme="blue" fontSize={"xl"}>
-                    view
+                    explore
                   </Button>
                 </Link>
               </CardFooter>

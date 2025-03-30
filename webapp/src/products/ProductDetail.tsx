@@ -20,9 +20,10 @@ import { Props } from "./ProductsCard";
 import { ImCheckmark2 } from "react-icons/im";
 import { token } from "../api/apiClient";
 import ProductDetailSkelenton from "./ProductDetailSkelenton";
+import Footer from "../Home-page/components/Footer";
 
 
-const formatPrice = (price: number) => {
+export const formatPrice = (price: number) => {
   return new Intl.NumberFormat("en-US").format(price);
 };
 
@@ -41,6 +42,7 @@ const ProductDetail = () => {
   if (loading) return <ProductDetailSkelenton />;
 
   return (
+    <>
     <Box
       maxW="7xl"
       mx="auto"
@@ -48,7 +50,7 @@ const ProductDetail = () => {
       bg={useColorModeValue("white", "gray.800")}
       borderRadius="lg"
       boxShadow="lg"
-    >
+      >
       <BackButton />
       
       {Array.isArray(data) && data.length > 0 ? (
@@ -95,7 +97,7 @@ const ProductDetail = () => {
                       fontSize="lg"
                       color="gray.500"
                       textDecoration="line-through"
-                    >
+                      >
                       &#8358;{formatPrice(product.base_price)}
                     </Text>
                     <Badge colorScheme="green" fontSize="sm">
@@ -148,6 +150,8 @@ const ProductDetail = () => {
         <Text>No product found</Text>
       )}
     </Box>
+    <Footer/>
+                      </>
   );
 };
 
