@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import NavBar from "./Home-page/components/NavBar";
 import GameApp from "./RawgGame/components/GameApp";
 import HomeApp from "./Home-page/components/Home-App";
-import ExpenseApp from "./ExpenseTraker/components/ExpenseApp";
 import BlogHome from "./Blog-Page/Blog-Home";
 import BlogItemDetail from "./Blog-Page/BlogItemDetail";
 import PrivacyPolicy from "./privacy/Privacy_policy";
@@ -27,10 +26,24 @@ import PasswordRestForm from "./user/PasswordResetForm";
 import ChangePasswordForm from "./user/ChangePassword";
 import PrivateRoute from "./routes/PrivateRoute";
 import LoginPage from "./authentication/LoginPage";
-
+import ContactSuccessPage from "./Home-page/components/Success";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
+import { refreshToken } from "./app/services/auth/refreshToken";
 
 
 function App() {
+  const token = Cookies.get("accessToken");
+  useEffect(() => {
+    if (token) {
+      const intervalId = setInterval(() => {
+        refreshToken();
+      }, 300000); // Refresh token every 5 minutes
+
+      return () => clearInterval(intervalId); // Cleanup on unmount
+    }
+  }, [token]);
+
   return (
     <>
     <Grid
@@ -69,7 +82,6 @@ function App() {
             <Route path="/" element={<HomeApp />} />
             <Route path="blog/" element={<BlogHome />} />
             <Route path="gamehub" element={<GameApp />} />
-            <Route path="expenseTracker" element={<ExpenseApp />} />
             <Route path="/blog/:id/:slug" element={<BlogItemDetail />} />
             <Route path="privacy" element={<PrivacyPolicy />} />
             <Route path="support" element={<Support />} />
@@ -113,6 +125,7 @@ function App() {
             <Route path="/reset-password/:uid/:token" element={<PasswordRestForm/>} />
 
             <Route path="change-password"element={<PrivateRoute><ChangePasswordForm/></PrivateRoute>}/>
+            <Route path="sucessful" element={<PrivateRoute><ContactSuccessPage/></PrivateRoute> }/>
           </Routes>
         </Box>
       </GridItem>

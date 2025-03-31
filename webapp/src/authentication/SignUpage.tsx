@@ -70,7 +70,7 @@ const SignupPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Account | Signup</title>
+        <title>concept tehnologies | Account | Signup</title>
         <meta property="og:description" content="Create a new account and access our products and services" />
         <meta property="description" content="Create a new account and access our products and services" />
       </Helmet>

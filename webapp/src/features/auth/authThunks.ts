@@ -4,7 +4,6 @@ import apiClient from "../../api/authApi";
 import axios from "axios";
 import { SITE_DOMAIN } from "../../api/apiClient";
 
-
 export const loginUser = createAsyncThunk(
   "auth/login",
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
@@ -26,15 +25,15 @@ export const refreshToken = createAsyncThunk(
       const refresh = Cookies.get("refreshToken");
       if (!refresh) throw new Error("No refresh token available");
 
-      const response = await apiClient.post("/api/token/refresh/", { refresh });
-      Cookies.set("accessToken", response.data.accessToken);
-      Cookies.set("refreshToken", response.data.refreshToken);
+      const response = await apiClient.post("/api/token/refresh/", {},      
+        {withCredentials:true});
       return response.data.accessToken;
     } catch (error: any) {
       return rejectWithValue("Session expired, please login again");
     }
   }
 );
+
 export const googleLogin = createAsyncThunk(
   "auth/loginWithGoogle",
   async (token: string, { rejectWithValue }) => {
@@ -42,12 +41,19 @@ export const googleLogin = createAsyncThunk(
       const response = await axios.post(`${SITE_DOMAIN}/api/auth/google/login/`, {
         token,
       });
+      Cookies.set("accessToken", response.data.accessToken);
+      Cookies.set("refreshToken", response.data.refreshToken, {
+       
+        sameSite: "Lax",
+      });
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Google login failed");
     }
   }
 );
+
+
 
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
   Cookies.remove("accessToken");

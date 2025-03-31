@@ -36,7 +36,6 @@ import { token } from '../api/apiClient';
     const bgColor = useColorModeValue('white', 'gray.700');
     const cardBg = useColorModeValue('gray.50', 'gray.800');
     const textColor = useColorModeValue('gray.700', 'gray.200');
-  
     if (!data || data.length === 0) {
       return (
         <Text align="center" fontSize="lg" color={textColor}>

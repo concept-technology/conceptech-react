@@ -23,6 +23,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Cookies from "js-cookie";
 import apiClient from "../../api/authApi";
+import { useNavigate } from "react-router-dom";
 interface FormData {
   name: string;
   email: string;
@@ -33,6 +34,8 @@ interface FormData {
 const ContactForm: React.FC = () => {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [phone, setPhone] = useState("");
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -42,28 +45,34 @@ const ContactForm: React.FC = () => {
   const [captchaValidated, setCaptchaValidated] = useState(false);
 
   const onSubmit = async (data: FormData) => {
-    const token = Cookies.get("access");
-    console.log(data)
+    setLoading(true)
     if (!captchaValidated) {
       alert("Please complete the CAPTCHA");
       return;
     }
   
+    if (!phone) {
+      alert("Please enter your phone number");
+      return;
+    }
+  
+    const token = Cookies.get("access");
     try {
-      const response = await apiClient.post(
-        "/api/contact/submit/",
-        {
-          ...data,
-          phone_number: phone, // Include the phone number in the payload
-          captcha: recaptchaRef.current?.getValue(),
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      console.log(response.data);
+      const payload = {
+        ...data,
+        phone_number: phone, // Manually include phone number
+        captcha: recaptchaRef.current?.getValue(),
+      };
+      console.log(payload)
+  
+      const response = await apiClient.post("/api/contact/submit/", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       reset();
-      setPhone(""); // Clear the phone input
+      setPhone(""); // Clear phone input
       recaptchaRef.current?.reset();
       setCaptchaValidated(false);
+      navigate('/sucessful')
     } catch (error) {
       console.error(error);
     }
@@ -101,11 +110,12 @@ const ContactForm: React.FC = () => {
                 </Text>
               </Box>
               <HStack>
-                <Icon as={PhoneIcon} w={[4, 6]} h={[4, 6]} color="blue.500" />
+                <a href="tel:+2348143006319">
                 <Box>
-                  <Text fontWeight="bold">Phone:</Text>
-                  <Text color="gray.600">+234 814 300 6319</Text>
+                <Icon as={PhoneIcon} w={[4, 6]} h={[4, 6]} color="blue.500" />
+                  <Text fontWeight="bold"> +234 814 300 6319</Text>
                 </Box>
+                    </a>
               </HStack>
               <HStack>
                 <Icon as={EmailIcon} w={[4, 6]} h={[4, 6]} color="blue.500" />
@@ -157,7 +167,7 @@ const ContactForm: React.FC = () => {
                       value={phone}
                       onChange={(phone) => setPhone(phone)}
                       inputProps={{
-                        name: "phone",
+                        name: "phone_number",
                         required: true,
                         autoFocus: false,
                       }}
@@ -187,17 +197,24 @@ const ContactForm: React.FC = () => {
                   <Box>
                     <ReCAPTCHA
                       ref={recaptchaRef} 
-                      sitekey="6LfsolYqAAAAAFQHMfwc8y6-ErwehLSMnA2luE1e"
+                      sitekey={import.meta.env.VITE_GOOOGLE_ReCAPTCHA_key}
                       onChange={handleCaptchaChange}
                     />
                   </Box> 
-                  <Button
+                  { !loading ? <Button
                     type="submit"
                     colorScheme="blue"
                     disabled={!captchaValidated}
                   >
                     Send Message
-                  </Button>
+                  </Button>:
+                                    <Button
+                                    type="submit"
+                                    colorScheme="blue"
+                                    isLoading={loading} loadingText="contacting admin"
+                                  >
+                                    loading
+                                  </Button>}
                 </VStack>
               </form>
             </Box>

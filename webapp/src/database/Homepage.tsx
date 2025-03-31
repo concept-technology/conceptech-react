@@ -11,8 +11,7 @@ const DatabaseHomePage: React.FC = () => {
     <Container maxW="container.lg" py={10} mt={50}>
             <Button onClick={()=>navigate(-1)}>back</Button>
       <VStack spacing={8} align="center">
-        {/* Heading Section */}
-        
+        {/* Heading Section */}     
         <Heading as="h1" size="2xl" color="teal.500" textAlign="center">
           Welcome to the Database Service
         </Heading>
