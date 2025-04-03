@@ -10,6 +10,7 @@ import {
   Alert,
   AlertIcon,
   useToast,
+  FormHelperText,
 } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +18,7 @@ import Footer from "../Home-page/components/Footer";
 import apiClient from "../api/authApi";
 import { refreshToken } from "../app/services/auth/refreshToken";
 import Cookies from 'js-cookie'
+import { Field } from "../components/ui/field";
 // Define the form input types
 type FormInputs = {
   name: string;
@@ -67,15 +69,16 @@ const CreateDatabaseForm: React.FC = () => {
   return (
     <>
     <Box
-      maxW="md"
-      mx="auto"
-      mt={10}
-      p={6}
-      borderWidth="1px"
-      borderRadius="lg"
-      boxShadow="lg"
-      bg="white"
+        maxW="md"
+        mx="auto"
+        mt={10}
+        p={6}
+        borderWidth="1px"
+        borderRadius="lg"
+        boxShadow="lg"
+        bg="white"
     >
+
     <Button onClick={()=>navigate(-1)}>back</Button>
       <Heading size="lg" mb={4} textAlign="center">
         Create Database
@@ -94,42 +97,9 @@ const CreateDatabaseForm: React.FC = () => {
                 {errors.name.message}
               </Alert>
             )}
+            <FormHelperText>when created, the server will automatically generate usename and password</FormHelperText>
           </FormControl>
 
-          <FormControl id="user_name" isInvalid={!!errors.user_name}>
-            <FormLabel>Username</FormLabel>
-            <Input
-              placeholder="Enter username"
-              {...register("user_name", { required: "Username is required" })}
-              />
-            {errors.user_name && (
-              <Alert status="error" mt={2}>
-                <AlertIcon />
-                {errors.user_name.message}
-              </Alert>
-            )}
-          </FormControl>
-
-          <FormControl id="password" isInvalid={!!errors.password}>
-            <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              placeholder="Enter password"
-              {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                      value: 6,
-                      message: "Password must be at least 6 characters",
-                    },
-              })}
-              />
-            {errors.password && (
-              <Alert status="error" mt={2}>
-                <AlertIcon />
-                {errors.password.message}
-              </Alert>
-            )}
-          </FormControl>
 
           <Button
             type="submit"
@@ -141,9 +111,10 @@ const CreateDatabaseForm: React.FC = () => {
           </Button>
         </VStack>
       </form>
+
     </Box>
     <Footer/>
-              </>
+    </>
   );
 };
 

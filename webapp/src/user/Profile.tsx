@@ -8,6 +8,7 @@ import projecObject from "../Home-page/Project-Page/Project-Object";
 import LoginPage from "../authentication/LoginPage";
 import PrivateRoute from "../routes/PrivateRoute";
 import ContactForm from "../Home-page/components/ContactForm";
+import { Helmet } from "react-helmet-async";
 
 
 const Profile = () => {
@@ -28,6 +29,9 @@ const Profile = () => {
 
   return (
     <>
+    <Helmet>
+      <title> concept technologies | account | dashboard </title>
+    </Helmet>
     {user?     <Box display="flex" flexDirection={{ base: "column", md: "row" }} height="100vh">
       {/* Left Column */}
       <Box width={leftColumnWidth} bg="gray.100" p={4}>

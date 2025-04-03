@@ -1,6 +1,6 @@
 import { Box, Flex, Image, Text, VStack, Icon, Heading } from '@chakra-ui/react';
 import { FaDesktop, FaBolt, FaHeadset } from 'react-icons/fa';
-import pic from '../../assets/Images/pic.jpg';
+// import pic from '../../assets/Images/pic.jpg';
 
 const ImageSection = () => {
   return (
@@ -8,10 +8,10 @@ const ImageSection = () => {
       <Box maxW="7xl" mx="auto" px={4}>
         <Flex align="center" justify="space-between" direction={{ base: 'column', lg: 'row' }}>
           <Box mb={{ base: 8, lg: 0 }} flex="1">
-            <Image src={pic} alt="Samuel Andrew" borderRadius="md" boxSize="full" objectFit="cover" />
+            {/* <Image src={pic} alt="Samuel Andrew" borderRadius="md" boxSize="full" objectFit="cover" /> */}
             <Box mt={5} p={6} bg="white" boxShadow="lg" borderRadius="md">
-              <Heading as="h5" size="sm" color="gray.700" mb={2}>Samuel Andrew</Heading>
-              <Text color="gray.500" fontSize="sm">Founder of Concept Technologies</Text>
+              <Heading as="h5" size="sm" color="gray.700" mb={2}>Custom software applications</Heading>
+              <Text color="gray.500" fontSize="sm">tailored for your business needs</Text>
             </Box>
           </Box>
           

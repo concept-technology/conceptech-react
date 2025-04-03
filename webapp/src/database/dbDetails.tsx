@@ -44,9 +44,13 @@ const DatabaseDetailView: React.FC = () => {
   const navigate = useNavigate();
   const [viewPassword, setViewPassword] = useState(false);
   const [viewTable, setViewTable] = useState(false)
+
+
+
+
   useEffect(() => {
     const fetchDatabaseDetail = async () => {
-      const token = Cookies.get('access');
+      const token = Cookies.get('accessToken');
       try {
         setLoading(true);
         const response = await apiClient.get(`/api/database/view/`, {
@@ -63,13 +67,15 @@ const DatabaseDetailView: React.FC = () => {
     fetchDatabaseDetail();
   }, []);
 
+
+
   const fetchTables = async (db_name: string) => {
     setSelectedDatabase(db_name);
     setViewTable(true)
     setTables([]);
     try {
       const token = Cookies.get('accessToken');
-      const response = await apiClient.get(`/api/list/database/tables/${db_name}/`, {
+      const response = await apiClient.post(`/api/list/database/tables/${db_name}/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTables(response.data.tables);
@@ -94,6 +100,44 @@ const DatabaseDetailView: React.FC = () => {
     });
   };
 
+  const handleDeleteTables = async (db_name: string) => {
+    const token = Cookies.get("accessToken");
+    console.log(db_name);
+  
+    try {
+      const response = await apiClient.post(
+        `/api/database/delete/${db_name}/`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      // ✅ Correct response check
+      if ([200, 201, 204].includes(response.status)) {
+        toast({
+          title: "Success",
+          description: "Database deleted successfully",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        throw new Error("Unexpected response");
+      }
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: "Failed to delete database",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+  
+
+
   return (
     <>
       <Helmet>
@@ -117,7 +161,7 @@ const DatabaseDetailView: React.FC = () => {
             </Thead>
             <Tbody>
               {databaseDetail.map((db) => (
-                <Tr key={db.id}>
+                <Tr key={db.db_name}>
                   <Td>{db.db_name}</Td>
                   <Td>{db.db_username}</Td>
                   <Td>
@@ -141,9 +185,18 @@ const DatabaseDetailView: React.FC = () => {
                   </Td>
                   <Td>
                     {! viewTable? 
-                                      <Button size="sm" colorScheme="blue" onClick={() => fetchTables(db.db_name)}>
+
+                                    <Flex>
+
+                                      <Button size="sm" m={2} colorScheme="blue" onClick={() => fetchTables(db.db_name)}>
                                       Tables
-                                    </Button>:
+                                    </Button>
+                                    <Button size="sm" m={2} colorScheme="red" onClick={() => handleDeleteTables(db.db_name)}>
+                                      delete 
+                                    </Button>
+                                    </Flex>
+                                    
+                                    :
                                       <Button size="sm" colorScheme="blue" onClick={() => setViewTable(false)}>
                                         close table
                                     </Button>  

@@ -24,7 +24,7 @@ const ProjectHome = ({ projectItems }: projectProps) => {
 
       const { data: products,  } = useGetProductsQuery('products');
   return (
-    <Box p={5} id="project" position={'absolute'} top={10}>
+    <Box p={5} id="project" position={'absolute'}  overflow='hidden'>
 
 
       <Box m={["auto"]} w={"90%"}>

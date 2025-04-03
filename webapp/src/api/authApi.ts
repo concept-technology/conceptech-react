@@ -10,37 +10,39 @@ const apiClient = axios.create({
 });
 
 
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// apiClient.interceptors.request.use(
+//   (config) => {
+//     const token = Cookies.get("accessToken");
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
-apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+// apiClient.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+//     if (error.response?.status === 401 && !originalRequest._retry) {
+//       originalRequest._retry = true;
 
-      try {
-        const newToken = await store.dispatch(refreshToken()).unwrap();     
-        Cookies.set("accessToken", newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return apiClient(originalRequest); // Retry failed request
-      } catch (refreshError) {
-        console.error("Session expired. Please log in again.");
-      }
-    }
+//       try {
+//         const newToken = await store.dispatch(refreshToken()).unwrap();     
+//         Cookies.set("accessToken", newToken);
+//         originalRequest.headers.Authorization = `Bearer ${newToken}`;
+//         return apiClient(originalRequest); // Retry failed request
+//       } catch (refreshError) {
+//         console.error("Session expired. Please log in again.");
+//       }
+//     }
 
-    return Promise.reject(error);
-  }
-);
+//     return Promise.reject(error);
+//   }
+// );
+
+
 
 export default apiClient;

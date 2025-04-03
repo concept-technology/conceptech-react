@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -18,6 +18,11 @@ import {
   ModalFooter,
   Spinner,
   useDisclosure,
+  Popover,
+  Portal,
+  PopoverArrow,
+  PopoverFooter,
+  
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../app/store";
@@ -35,7 +40,6 @@ const UserAccount: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  
   const { data:user, isFetching, error} = useGetUserDetailsQuery('userDetails', {});
   
   const { isAuthenticated } = useSelector((state: RootState) => state.auth) || { isAuthenticated: false };
@@ -146,6 +150,9 @@ const UserAccount: React.FC = () => {
 
   return (
     <>
+
+
+
       {isAuthenticated && (
         <Box maxW="lg" mx="auto" py={10} px={6} bg="gray.100" borderRadius={14}>
           <Heading as="h1" mb={4} textAlign="center" color="purple.600">

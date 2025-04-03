@@ -118,11 +118,13 @@ const ContactForm: React.FC = () => {
                     </a>
               </HStack>
               <HStack>
+                <a href="tel:info@concept-techsolutions.dev">
                 <Icon as={EmailIcon} w={[4, 6]} h={[4, 6]} color="blue.500" />
                 <Box>
                   <Text fontWeight="bold">Email:</Text>
-                  <Text color="gray.600">samuelandrew145@gmail.com</Text>
+                  <Text color="gray.600">info@concept-techsolutions.dev</Text>
                 </Box>
+                </a>
               </HStack>
               <HStack>
                 <Icon as={FaMapMarkerAlt} w={[4, 6]} h={[4, 6]} color="blue.500" />
