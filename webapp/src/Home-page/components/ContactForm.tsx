@@ -118,7 +118,7 @@ const ContactForm: React.FC = () => {
                     </a>
               </HStack>
               <HStack>
-                <a href="tel:info@concept-techsolutions.dev">
+                <a href="mailto:info@concept-techsolutions.dev">
                 <Icon as={EmailIcon} w={[4, 6]} h={[4, 6]} color="blue.500" />
                 <Box>
                   <Text fontWeight="bold">Email:</Text>

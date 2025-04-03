@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Heading,
@@ -12,13 +11,11 @@ import {
   FaPhoneAlt,
   FaEnvelope,
   FaQuestionCircle,
-  FaArrowLeft,
+
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import Footer from "../Home-page/components/Footer";
 
 const Support = () => {
-  const navigate = useNavigate();
 
   return (
     <>
@@ -62,11 +59,11 @@ const Support = () => {
               Send us an email, and we’ll get back to you as soon as possible:
             </Text>
             <Link
-              href="mailto:support@concept-techsolutions.com"
+              href="mailto:in@concept-techsolutions.dev"
               color="teal.400"
               fontWeight="bold"
             >
-              support@concept-tech.dev
+              support@concept-techsolutions.dev
             </Link>
           </Box>
 
